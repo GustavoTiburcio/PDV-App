@@ -50,6 +50,7 @@ export default function AppListProdutos(){
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
       />
+      <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Produtos</Text>
       <FlatList 
         style={{marginTop: 35}}
         contentContainerStyle={{marginHorizontal: 20}}
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: '#F3F3F3',
     padding: 25,
-    marginTop: 20,
+    marginTop: 15,
     borderRadius: 10
   },
   listText:{
