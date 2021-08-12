@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator} from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator, Alert} from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
 
@@ -47,6 +47,8 @@ export default function AppListProdutos(){
         //onPress={() => alert("onPress")}
         onChangeText={(text) => setPesquisa(text)}
         onSearchPress={() => novaPesquisa()}
+        returnKeyType="go"
+        onSubmitEditing={() => novaPesquisa()}
       />
       <FlatList 
         style={{marginTop: 35}}
@@ -58,6 +60,15 @@ export default function AppListProdutos(){
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
       />
+    </View>
+  )
+}
+
+function FooterList( Load ){
+  if(!Load) return null;
+  return(
+    <View style={styles.loading}>
+    <ActivityIndicator size={25} color="#121212" />
     </View>
   )
 }
@@ -84,15 +95,6 @@ function ListItem( {data} ){
       <Text style={styles.listText}>Matriz: {data.estEst1}                     Andre: {data.estEst2}</Text>
       <Text style={styles.listText}>Alexandre: {data.estEst3}               Fabio: {data.estEst4}</Text>
       <Text style={styles.listText}>Cilas: {data.estEst5}</Text>
-    </View>
-  )
-}
-
-function FooterList( Load ){
-  if(!Load) return null;
-  return(
-    <View style={styles.loading}>
-    <ActivityIndicator size={25} color="#121212" />
     </View>
   )
 }
