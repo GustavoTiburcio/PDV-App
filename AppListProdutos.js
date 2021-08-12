@@ -2,7 +2,6 @@ import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator} from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
-import axios from 'axios';
 
 export default function AppListProdutos(){
 
@@ -15,9 +14,9 @@ export default function AppListProdutos(){
     loadApi();
   },[data])
 
-  useEffect(() =>{
-    console.log(pesquisa);
-  })
+  // useEffect(() =>{
+  //   console.log(pesquisa);
+  // })
 
   async function loadApi(){
     if(loading) return;
@@ -80,7 +79,7 @@ function ListItem( {data} ){
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       {/* <Text style={styles.listText}>Codbar: {data.codBar}</Text> */}
-      <Text style={styles.listText}>{currencyFormat(data.valVenMin)}</Text>
+      <Text style={styles.listText}>{currencyFormat(data.valVenMin).replace('.',',')}</Text>
       <Text style={styles.listText}>Estoque {data.estEst1}</Text>
       <Text style={styles.listText}>Matriz: {data.estEst1}                     Andre: {data.estEst2}</Text>
       <Text style={styles.listText}>Alexandre: {data.estEst3}               Fabio: {data.estEst4}</Text>
