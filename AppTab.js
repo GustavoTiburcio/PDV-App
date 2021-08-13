@@ -1,18 +1,19 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
- 
-import AppVenda from './AppVenda';
+import {createStackNavigator} from '@react-navigation/stack'
+
 import AppListProdutos from './AppListProdutos';
 import AppCarrinho from './AppCarrinho';
+import ListaCarrinho from './ListaCarrinho';
 import AppVendasFinalizadas from './AppVendasFinalizadas';
  
-const {Navigator, Screen} = createBottomTabNavigator();
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
  
-function AppTab(){
+function Tabs(){
     return (
-        <NavigationContainer>
-            <Navigator
+            <Tab.Navigator
                 tabBarOptions={{
                     style: {
                         elevation: 0,
@@ -34,29 +35,34 @@ function AppTab(){
                     activeTintColor: '#32264d'
                 }}
             >             
-                <Screen name="AppListProdutos" component={AppListProdutos}
+                <Tab.Screen name="AppListProdutos" component={AppListProdutos}
                     options={{
                         tabBarLabel: "Produtos"
                     }}
                 />
-                {/* <Screen name="AppVenda" component={AppVenda}
-                    options={{
-                        tabBarLabel: "Venda"
-                    }}
-                /> */}
-                <Screen name="AppCarrinho" component={AppCarrinho}
+                <Tab.Screen name="AppCarrinho" component={AppCarrinho}
                     options={{
                         tabBarLabel: "Carrinho"
                     }}
                 />
-                <Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas}
+                <Tab.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas}
                     options={{
                         tabBarLabel: "Histórico"
                     }}
                 />
-            </Navigator>
+            </Tab.Navigator>
+    );
+}
+
+export default function App(){
+    return(
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="AppListProdutos">
+                <Stack.Screen name="AppListProdutos" component={Tabs}/>
+                <Stack.Screen name="AppCarrinho" component={AppCarrinho}/>
+                <Stack.Screen name="ListaCarrinho" component={ListaCarrinho}/>
+                <Stack.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas}/>
+            </Stack.Navigator>
         </NavigationContainer>
     );
 }
- 
-export default AppTab;
