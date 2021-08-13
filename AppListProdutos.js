@@ -14,10 +14,6 @@ export default function AppListProdutos(){
     loadApi();
   },[data])
 
-  // useEffect(() =>{
-  //   console.log(pesquisa);
-  // })
-
   async function loadApi(){
     if(loading) return;
 
@@ -25,10 +21,7 @@ export default function AppListProdutos(){
 
     const response = await api.get(`/mercador/pesquisar?page=${page}&pesquisa=${pesquisa}&CODTABPRE=0`)
 
-    //console.log(response.data.content);
-    //console.log('passou')
     setData([...data, ...response.data.content])
-    //console.log(data)
     setPage(page + 1);
     setLoading(false);
 
@@ -79,13 +72,19 @@ function ListItem( {data} ){
   function currencyFormat(num) {
     return 'R$ ' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }
-
+  function foto( linkfoto ){
+    if (linkfoto == null) {
+      return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
+    }else{
+      return 'https://' + linkfoto;
+    }
+  }
   return(
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
          source={{
-         uri: 'https://' + data.linkFot,
+         uri: foto(data.linkFot),
         }}
       />
       <Text></Text>
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
   },
   imagemDosProdutos: {
     width: 280,
-    height: 200,
+    height: 240,
    },
   listItem: {
     backgroundColor: '#F3F3F3',
