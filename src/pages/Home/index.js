@@ -6,7 +6,7 @@ export default function Home({ navigation }) {
     <View>
       <Text> Home </Text>
       <Button title="Perfil"
-      onPress={() => navigation.navigate('Perfil')}
+      onPress={() => navigation.navigate('AppCarrinho')}
       />
     </View>
   );

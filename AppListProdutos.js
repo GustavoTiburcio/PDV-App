@@ -1,8 +1,9 @@
 import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator, Alert} from 'react-native';
 import api from './api';
+import {StatusBar} from 'expo-status-bar'
 import SearchBar from "react-native-dynamic-search-bar";
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+//import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 export default function AppListProdutos(){
 
@@ -35,6 +36,7 @@ export default function AppListProdutos(){
 
   return(
     <View style={styles.container}>
+      <StatusBar style="light" />
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do produto"
@@ -46,7 +48,6 @@ export default function AppListProdutos(){
       />
       <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Produtos</Text>
       <FlatList 
-        style={{marginTop: 35}}
         contentContainerStyle={{marginHorizontal: 20}}
         data={data}
         keyExtractor={item => String(item.codBar)}
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
    },
   listItem: {
     backgroundColor: '#F3F3F3',
-    padding: 25,
+    padding: 22,
     marginTop: 15,
     borderRadius: 10
   },
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   },
   SearchBar: {
     backgroundColor: '#F3F3F3',
-    marginTop: 50,
+    marginTop: 20,
   },
   table: {
     flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'
