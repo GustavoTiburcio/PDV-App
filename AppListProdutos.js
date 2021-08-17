@@ -86,9 +86,7 @@ function ListItem( {data} ){
   }
   return(
     <TouchableWithoutFeedback 
-    onPress={() => { navigation.navigate('ListaCarrinho',
-     {cod: data.codBar, mer: data.mer, valor: currencyFormat(data.valVenMin).replace('.',',')} )}}
-    >
+    onPress={() => { navigation.navigate('ListaCarrinho', {cod: data.codBar, mer: data.mer, valor: data.valVenMin})}}>
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
