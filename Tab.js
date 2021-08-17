@@ -5,7 +5,9 @@ import { createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
 //import Home from './src/pages/Home'
 import AppListProdutos from './AppListProdutos';
-import AppCarrinho from './AppCarrinho';
+//import AppCarrinho from './AppCarrinho';
+import Carrinho from './Carrinho';
+import ListaCarrinho from './ListaCarrinho';
 import AppVendasFinalizadas from './AppVendasFinalizadas';
 
 const Stack = createNativeStackNavigator();
@@ -37,7 +39,8 @@ function Tabs(){
     >
       {/* <Tab.Screen name="Home" component = {Home} /> */}
       <Tab.Screen name="Produtos" component = {AppListProdutos} />
-      <Tab.Screen name="Carrinho" component = {AppCarrinho} />
+      {/* <Tab.Screen name="Carrinho" component = {AppCarrinho} /> */}
+      <Tab.Screen name="Carrinho" component = {Carrinho} />
       <Tab.Screen name="Histórico" component = {AppVendasFinalizadas} />
     </Tab.Navigator>
   )
@@ -59,7 +62,9 @@ export default function App() {
           headerTintColor: '#FFF'
         }}
         />
-        <Stack.Screen name="AppCarrinho" component={AppCarrinho} />
+        {/* <Stack.Screen name="AppCarrinho" component={AppCarrinho} /> */}
+        <Stack.Screen name="Carrinho" component={Carrinho} />
+        <Stack.Screen name="ListaCarrinho" component={ListaCarrinho} />
         <Stack.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas} />
       </Stack.Navigator>
     </NavigationContainer>

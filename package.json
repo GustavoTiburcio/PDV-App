@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@freakycoder/react-native-bounceable": "^0.2.5",
+    "@react-native-async-storage/async-storage": "^1.15.6",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/bottom-tabs": "^5.11.11",
@@ -29,6 +30,7 @@
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-search-bar": "^3.5.1",
+    "react-native-sqlite-storage": "^5.0.0",
     "react-native-table-component": "^1.2.1",
     "react-native-web": "~0.13.12",
     "react-number-format": "^4.6.4",

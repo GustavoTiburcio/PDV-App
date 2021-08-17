@@ -1,8 +1,9 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator, Alert} from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator, Alert, TouchableWithoutFeedback} from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar'
 import SearchBar from "react-native-dynamic-search-bar";
+import {useNavigation} from '@react-navigation/native';
 //import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 export default function AppListProdutos(){
@@ -71,6 +72,8 @@ function FooterList( Load ){
 
 function ListItem( {data} ){  
 
+  const navigation = useNavigation();
+
   function currencyFormat(num) {
     return 'R$ ' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }
@@ -82,6 +85,7 @@ function ListItem( {data} ){
     }
   }
   return(
+    <TouchableWithoutFeedback onPress={() => { navigation.navigate('ListaCarrinho', { cod: data.codBar, mer: data.mer, valor: data.valVenMin }) }}>
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
@@ -104,6 +108,7 @@ function ListItem( {data} ){
           </TableWrapper> */}
         {/* </Table> */}
     </View>
+    </TouchableWithoutFeedback>
   )
 }
 
