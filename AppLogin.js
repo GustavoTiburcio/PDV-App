@@ -1,0 +1,150 @@
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, KeyboardAvoidingView, Image, TextInput, TouchableOpacity, Animated, Keyboard, Alert } from 'react-native';
+import {StatusBar} from 'expo-status-bar'
+import api from './api';
+
+export default function AppLogin({navigation}) {
+  
+  const [offset] = useState(new Animated.ValueXY({x: 0, y: 95}));
+  const [opacity] = useState(new Animated.Value(0));
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginData, setLoginData] = useState([]);
+
+  async function loginAuthenticate(){
+    const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
+    setLoginData(response.data)
+    console.log(loginData)
+    if (response.data == []) {
+      Alert.alert('Usuário ou senha incorretos')
+    }else{
+      navigation.navigate('AppListProdutos')
+      console.log(loginData)
+    }
+  }
+
+  useEffect(() => {
+
+    Animated.parallel([
+      Animated.spring(offset.y, {
+        toValue: 0,
+        speed: 4,
+        bounciness: 20,
+        useNativeDriver: true
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true
+      })
+    ]).start();
+
+  },[]);
+
+  return (
+    <KeyboardAvoidingView style={styles.background}>
+      <StatusBar style="light" />
+      <View style={styles.containerLogo}>
+        <Image 
+        style={{
+          width: 400,
+          height: 221
+        }}
+        source={require('./assets/logo.png')}
+        />
+      </View>
+
+      <Animated.View
+       style={[
+         styles.container,
+         {
+           opacity: opacity,
+           transform: [
+             { translateY: offset.y}
+             
+           ]
+         }
+        ]}
+      >
+        <TextInput 
+        style={styles.input}
+        placeholder="Usuário"
+        autoCorrect={false}
+        onChangeText={(text) => {
+          setUsername(text)
+          console.log(username)
+        }}
+        />
+
+        <TextInput 
+        style={styles.input}
+        placeholder="Senha"
+        autoCorrect={false}
+        secureTextEntry={true}
+        onChangeText={(text) => {
+          setPassword(text)
+          console.log(password)
+        }}
+        returnKeyType="go"
+        onSubmitEditing={() => loginAuthenticate()}
+        />
+
+        <TouchableOpacity style={styles.btnSubmit} onPress= {() => loginAuthenticate()}>
+          <Text style={styles.submitText}>Acessar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btnRegister}>
+          <Text style={styles.registerText}>Criar conta gratuita</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  background:{
+    flex:1,
+    alignItems:'center',
+    justifyContent: 'center',
+    backgroundColor: '#d1ac97'
+  },
+  containerLogo:{
+    flex: 1,
+    justifyContent: 'center',
+  },
+  container:{
+    flex:1,
+    alignItems: 'center',
+    justifyContent:'center',
+    width: '90%',
+    paddingBottom: 100
+  },
+  input: {
+    backgroundColor: '#FFF',
+    width: '90%',
+    marginBottom: 15,
+    color: '#222',
+    fontSize: 17,
+    borderRadius: 7,
+    padding: 10
+  },
+  btnSubmit: {
+    backgroundColor: '#35AAFF',
+    width: '90%',
+    height: 45,
+    alignItems: 'center',
+    justifyContent:'center',
+    borderRadius: 7,
+  },
+  submitText:{
+   color: '#FFF',
+   fontSize: 18
+  },
+  btnRegister:{
+    marginTop: 10,
+
+  },
+  registerText: {
+    color: '#FFF'
+  }
+});

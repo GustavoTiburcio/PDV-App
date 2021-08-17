@@ -3,17 +3,16 @@ import {NavigationContainer} from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
-//import Home from './src/pages/Home'
 import AppListProdutos from './AppListProdutos';
-//import AppCarrinho from './AppCarrinho';
 import Carrinho from './Carrinho';
 import ListaCarrinho from './ListaCarrinho';
 import AppVendasFinalizadas from './AppVendasFinalizadas';
+import AppLogin from './AppLogin';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function Tabs(){
+function Tabs({route}){
   return(
     <Tab.Navigator
     tabBarOptions={{
@@ -37,9 +36,7 @@ function Tabs(){
       activeTintColor: '#32264d'
     }}
     >
-      {/* <Tab.Screen name="Home" component = {Home} /> */}
       <Tab.Screen name="Produtos" component = {AppListProdutos} />
-      {/* <Tab.Screen name="Carrinho" component = {AppCarrinho} /> */}
       <Tab.Screen name="Carrinho" component = {Carrinho} />
       <Tab.Screen name="Histórico" component = {AppVendasFinalizadas} />
     </Tab.Navigator>
@@ -47,9 +44,10 @@ function Tabs(){
 }
 
 export default function App() {
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AppListProdutos">
+      <Stack.Navigator initialRouteName="AppLogin">
         <Stack.Screen 
         name="AppListProdutos" 
         component={Tabs}
@@ -62,8 +60,6 @@ export default function App() {
           headerTintColor: '#FFF'
         }}
         />
-        {/* <Stack.Screen name="AppCarrinho" component={AppCarrinho} /> */}
-        <Stack.Screen name="Carrinho" component={Carrinho} />
         <Stack.Screen 
         name="ListaCarrinho" 
         component={ListaCarrinho} 
@@ -76,6 +72,14 @@ export default function App() {
           headerTintColor: '#FFF'
         }}
         />
+        <Stack.Screen
+        name="AppLogin" 
+        component={AppLogin} 
+        options={{
+          headerShown: false
+        }} 
+        />
+        <Stack.Screen name="Carrinho" component={Carrinho} />
         <Stack.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas} />
       </Stack.Navigator>
     </NavigationContainer>
