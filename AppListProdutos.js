@@ -75,7 +75,7 @@ function ListItem( {data} ){
   const navigation = useNavigation();
 
   function currencyFormat(num) {
-    return 'R$ ' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }
   function foto( linkfoto ){
     if (linkfoto == null) {
@@ -85,7 +85,10 @@ function ListItem( {data} ){
     }
   }
   return(
-    <TouchableWithoutFeedback onPress={() => { navigation.navigate('ListaCarrinho', { cod: data.codBar, mer: data.mer, valor: data.valVenMin }) }}>
+    <TouchableWithoutFeedback 
+    onPress={() => { navigation.navigate('ListaCarrinho',
+     {cod: data.codBar, mer: data.mer, valor: currencyFormat(data.valVenMin).replace('.',',')} )}}
+    >
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
@@ -95,7 +98,7 @@ function ListItem( {data} ){
       />
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
-      <Text style={styles.listText}>{currencyFormat(data.valVenMin).replace('.',',')}</Text>
+      <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
       <Text style={styles.listText}>Estoque</Text>
       <Text style={styles.listText}>Matriz: {data.estEst1}                     Andre: {data.estEst2}</Text>
       <Text style={styles.listText}>Alexandre: {data.estEst3}               Fabio: {data.estEst4}</Text>

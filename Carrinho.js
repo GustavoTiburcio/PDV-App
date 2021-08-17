@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
         width: '85%',
         padding: 1,
         fontSize: 20,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         textAlignVertical: "center",
         alignSelf: "center",
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
         width: '30%',
         padding: 1,
         fontSize: 17,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         textAlignVertical: "center",
         alignSelf: "flex-start",
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     },
     valorItem: {
         fontSize: 17,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         borderRadius: 40,
         padding: 3,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
 
     valorTotalItem: {
         fontSize: 17,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         borderRadius: 40,
         padding: 3,
@@ -240,12 +240,13 @@ const styles = StyleSheet.create({
     textCliente: {
         width: '20%',
         fontSize: 20,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         alignSelf: "flex-start",
         alignItems: 'flex-start',
     },
     textinput: {
+        paddingTop: 10,
         width: '80%',
         fontSize: 20,
         borderBottomColor: '#000000',
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
         paddingTop: 11,
         width: '50%',
         fontSize: 20,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         alignSelf: "flex-start",
         alignItems: 'flex-start',
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
 
     valorTotalPedido: {
         fontSize: 17,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         borderRadius: 40,
         padding: 3,
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         width: '100%',
         fontSize: 20,
-        color: "#666666",
+        color: "#000000",
         fontWeight: "bold",
         alignSelf: "center",
         alignItems: "center",

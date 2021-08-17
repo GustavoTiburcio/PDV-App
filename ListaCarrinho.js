@@ -62,28 +62,28 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     textcadastro: {
-        color: '#ff5500',
+        color: '#000000',
         fontSize: 20,
         fontWeight: 'bold',
     },
     item: {
-        color: '#555555',
+        color: '#000000',
         fontSize: 20,
         marginTop: 15,
         alignItems: 'center',
     },
     text: {
-        color: '#555555',
+        color: '#000000',
         fontSize: 16,
         marginTop: 15,
     },
     textinput: {
         fontSize: 20,
         borderBottomColor: '#000000',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
     },
     texto: {
-        color: '#005500',
+        color: '#000000',
         alignSelf: 'center',
     },
     listItem: {

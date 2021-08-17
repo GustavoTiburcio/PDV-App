@@ -64,7 +64,18 @@ export default function App() {
         />
         {/* <Stack.Screen name="AppCarrinho" component={AppCarrinho} /> */}
         <Stack.Screen name="Carrinho" component={Carrinho} />
-        <Stack.Screen name="ListaCarrinho" component={ListaCarrinho} />
+        <Stack.Screen 
+        name="ListaCarrinho" 
+        component={ListaCarrinho} 
+        options={{
+          title: 'Inserir item',
+          headerStyle: {
+            backgroundColor: '#121212',
+            padding: 40,
+          },
+          headerTintColor: '#FFF'
+        }}
+        />
         <Stack.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas} />
       </Stack.Navigator>
     </NavigationContainer>
