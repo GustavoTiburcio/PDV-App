@@ -8,6 +8,7 @@ import Carrinho from './Carrinho';
 import ListaCarrinho from './ListaCarrinho';
 import AppVendasFinalizadas from './AppVendasFinalizadas';
 import AppLogin from './AppLogin';
+import AppClientes from './AppClientes';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,8 +80,32 @@ export default function App() {
           headerShown: false
         }} 
         />
-        <Stack.Screen name="Carrinho" component={Carrinho} />
-        <Stack.Screen name="AppVendasFinalizadas" component={AppVendasFinalizadas} />
+        <Stack.Screen 
+        name="Carrinho" 
+        component={Carrinho}
+        options={{
+          headerShown: false
+        }}  
+        />
+        <Stack.Screen 
+        name="AppVendasFinalizadas" 
+        component={AppVendasFinalizadas} 
+        options={{
+          headerShown: false
+        }} 
+        />
+        <Stack.Screen 
+        name="AppClientes" 
+        component={AppClientes}
+        options={{
+          title: 'Selecionar Cliente',
+          headerStyle: {
+            backgroundColor: '#121212',
+            padding: 40,
+          },
+          headerTintColor: '#FFF'
+        }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

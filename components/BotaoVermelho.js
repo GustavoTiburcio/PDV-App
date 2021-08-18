@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 
   SubmitButtonStyle: {
-    marginTop: 45,
+    marginTop: 25,
     height:50,
     padding: 15,
     borderRadius: 25,
@@ -42,6 +42,6 @@ const styles = StyleSheet.create({
   TextStyle: {
     color: '#fff',
     textAlign: 'center',
-    fontSize: 20
+    fontSize: 20,
   },
 });

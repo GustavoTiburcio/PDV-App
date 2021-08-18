@@ -14,17 +14,7 @@ const Carrinho = ({ route, navigation }) => {
     const [valorBruto, setValorBruto] = useState(0);
     const isFocused = useIsFocused();
     const [nomeCliente, setNomeCliente] = useState();
-    const [codigoVendedor, setCodigoVendedor] = useState();
-    const [clientes, setClientes] = useState([]);
-
-    async function getClientes(){
-        const response = await api.get(`/usuarios/listarTodos`)
-        setClientes(response.data)
-      }
-
-    useEffect(()=>{
-        getClientes();
-    },[])  
+    const [codigoVendedor, setCodigoVendedor] = useState();  
 
     async function deleteClick(mer) {
         if (mer != null) {
@@ -63,7 +53,7 @@ const Carrinho = ({ route, navigation }) => {
                     //salvarSqlLite();
                     setItensCarrinho(null);
                     setValorBruto(0);
-                    navigation.navigate('ListaSecao');
+                    navigation.navigate('AppListProdutos');
                 });
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         });
@@ -179,8 +169,12 @@ const Carrinho = ({ route, navigation }) => {
                             <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2)}</Text>
                         </View>
                         <View flexDirection="row">
-                            <Text style={styles.textCliente}> Cliente: </Text>
-                            <TextInput style={styles.textinput} color="black" placeholder='Nome Cliente ...' onChangeText={value => setNomeCliente(value)} ></TextInput>
+                            {/* <Text style={styles.textCliente}> Cliente: </Text>
+                            <TextInput style={styles.textinput} color="black" placeholder='Nome Cliente ...' onChangeText={value => setNomeCliente(value)} ></TextInput> */}
+                            <BotaoVermelho 
+                                text={'Selecionar Cliente'}
+                                onPress={() => navigation.navigate('AppClientes')}
+                            />
                         </View>
 
                         <BotaoVermelho

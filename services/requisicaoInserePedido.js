@@ -2,13 +2,14 @@
 import axios from 'axios';
 import { buscarLinkBanco } from '../controle/CarrinhoStorage';
 
-const urlbruta = buscarLinkBanco();
+//const urlbruta = buscarLinkBanco();
 
 export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
-    let link = urlbruta._W;
+    //let link = urlbruta._W;
+    let link = 'https://goldchaves-api.herokuapp.com/api';
     if (link !== null) {
         let url = link;
-        if (url === 'http://45.170.26.9:8085/api') {
+        if (url === 'https://goldchaves-api.herokuapp.com/api') {
             link = url + '/pedidos/salvarPed';
             return axios.post(link, {
                 headers: {
@@ -21,16 +22,17 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
                     reject("erro ao salvar pedido")
                 }
             }).catch(error => reject(error));
-        } else {
-            link = url + '/InserePedido' + dadosPedido;
-            return axios.put(link).then(resp => {
-                if (resp.data) {
-                    resolve(resp.data)
-                } else {
-                    reject("erro ao salvar pedido")
-                }
-            }).catch(error => reject(error));
         }
+        // } else {
+        //     link = url + '/InserePedido' + dadosPedido;
+        //     return axios.put(link).then(resp => {
+        //         if (resp.data) {
+        //             resolve(resp.data)
+        //         } else {
+        //             reject("erro ao salvar pedido")
+        //         }
+        //     }).catch(error => reject(error));
+        // }
     } else {
         reject("erro ao salvar pedido");
     }
