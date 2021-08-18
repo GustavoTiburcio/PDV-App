@@ -7,6 +7,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
+import api from './api';
 
 const Carrinho = ({ route, navigation }) => {
     const [itensCarrinho, setItensCarrinho] = useState();
@@ -14,6 +15,17 @@ const Carrinho = ({ route, navigation }) => {
     const isFocused = useIsFocused();
     const [nomeCliente, setNomeCliente] = useState();
     const [codigoVendedor, setCodigoVendedor] = useState();
+    const [clientes, setClientes] = useState([]);
+
+    async function getClientes(){
+        const response = await api.get(`/usuarios/listarTodos`)
+        setClientes(response.data)
+      }
+
+    useEffect(()=>{
+        getClientes();
+    },[])  
+
     async function deleteClick(mer) {
         if (mer != null) {
             await deletarItenCarrinhoNoBanco(mer);

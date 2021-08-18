@@ -14,12 +14,10 @@ export default function AppLogin({navigation}) {
   async function loginAuthenticate(){
     const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
     setLoginData(response.data)
-    console.log(loginData)
     if (response.data == []) {
       Alert.alert('Usuário ou senha incorretos')
     }else{
       navigation.navigate('AppListProdutos')
-      console.log(loginData)
     }
   }
 
@@ -72,7 +70,6 @@ export default function AppLogin({navigation}) {
         autoCorrect={false}
         onChangeText={(text) => {
           setUsername(text)
-          console.log(username)
         }}
         />
 
@@ -83,7 +80,6 @@ export default function AppLogin({navigation}) {
         secureTextEntry={true}
         onChangeText={(text) => {
           setPassword(text)
-          console.log(password)
         }}
         returnKeyType="go"
         onSubmitEditing={() => loginAuthenticate()}

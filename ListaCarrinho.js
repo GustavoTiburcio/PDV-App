@@ -16,7 +16,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const salvaPedido = () => {
         let itens = { codmer: cod, quantidade: quantidade, item: item, valor: valorItem };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {
-            Alert.alert('Sucesso', 'Item Salvo Com Sucesso.', [{ text: 'OK' }]);
+            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
         });
     };
