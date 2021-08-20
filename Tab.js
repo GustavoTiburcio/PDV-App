@@ -9,6 +9,7 @@ import ListaCarrinho from './ListaCarrinho';
 import AppVendasFinalizadas from './AppVendasFinalizadas';
 import AppLogin from './AppLogin';
 import AppClientes from './AppClientes';
+import AppEstoque from './AppEstoque';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -99,6 +100,18 @@ export default function App() {
         component={AppClientes}
         options={{
           title: 'Selecionar Cliente',
+          headerStyle: {
+            backgroundColor: '#121212',
+            padding: 40,
+          },
+          headerTintColor: '#FFF'
+        }}
+        />
+        <Stack.Screen 
+        name="AppEstoque" 
+        component={AppEstoque}
+        options={{
+          title: 'Estoque',
           headerStyle: {
             backgroundColor: '#121212',
             padding: 40,

@@ -7,13 +7,11 @@ import {
   FlatList, 
   ActivityIndicator, 
   Alert, 
-  TouchableWithoutFeedback, 
   TouchableOpacity} from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar'
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
-//import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 export default function AppListProdutos(){
 
@@ -103,23 +101,12 @@ function ListItem( {data} ){
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
-      {/* <Text style={styles.listText}>Estoque</Text>
-      <Text style={styles.listText}>Matriz: {data.estEst1}                     Andre: {data.estEst2}</Text>
-      <Text style={styles.listText}>Alexandre: {data.estEst3}               Fabio: {data.estEst4}</Text>
-      <Text style={styles.listText}>Cilas: {data.estEst5}</Text> */}
-      {/* <Table borderStyle={{borderWidth: 1}}> */}
-            {/* <Row data={state.tableHead} flexArr={[1, 2, 1, 1]} style={styles.head} textStyle={styles.text}/>
-            <TableWrapper style={styles.wrapper}>
-            <Col data={['Title', 'Title2', 'Title3', 'Title4', 'Title5']} style={styles.title} heightArr={[28,28]} textStyle={styles.text}/>
-            <Rows data={[data.estEst1,data.estEst2,data.estEst3,data.estEst4,data.estEst5,]} flexArr={[2, 1, 1]} style={styles.row} textStyle={styles.text}/>
-          </TableWrapper> */}
-        {/* </Table> */}
         <View style={{ flexDirection:"row" }}>
           <View>
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
-            onPress={() => {}}>
+            onPress={() => {navigation.navigate('AppEstoque')}}>
               <Text style={styles.TextButton}>   Estoque   </Text>
             </TouchableOpacity>
           </View>
@@ -159,24 +146,6 @@ const styles = StyleSheet.create({
   SearchBar: {
     backgroundColor: '#F3F3F3',
     marginTop: 20,
-  },
-  table: {
-    flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'
-  },
-  head:{
-    height: 40, backgroundColor: '#f1f8ff'
-  },
-  wrapper: { 
-    flexDirection: 'row'
-   },
-  title: {
-    flex: 1, backgroundColor: '#f6f8fa'
-  },
-  row: {
-    height: 28  
-  },
-  text:{
-    margin: 6
   },
   loading: {
     padding: 10
