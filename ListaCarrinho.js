@@ -1,18 +1,33 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Text, Alert, View, TextInput } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './controle/CarrinhoStorage';
 import { useIsFocused } from '@react-navigation/native';
+import api from './api';
 
 const ListaCarrinho = ({ route, navigation }) => {
-    //const { cod, item, valor } = route.params;
-    const cod = route.params?.cod;
+    let cod;
+    const codbar = route.params?.codbar;
     const item = route.params?.mer;
     const valor = route.params?.valor;
 
     const [quantidade, setQuantidade] = useState(1);
     const [valorItem, setValorItem] = useState(valor);
+    const [buscaDetalhes, setBuscaDetalhes] = useState([]);
+
+    async function getListarDetalhes(){
+             const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+             var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+             setBuscaDetalhes(prod)
+             cod = prod[0][0];
+             console.log(cod)
+           }
+
+    useEffect(()=>{
+        getListarDetalhes();
+    },[])
+
     const salvaPedido = () => {
         let itens = { codmer: cod, quantidade: quantidade, item: item, valor: valorItem };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {

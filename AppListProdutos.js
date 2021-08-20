@@ -31,7 +31,7 @@ export default function AppListProdutos(){
 
     setLoading(true)
 
-    const response = await api.get(`/mercador/pesquisar?page=${page}&pesquisa=${pesquisa}&CODTABPRE=0`)
+    const response = await api.get(`/mercador/pesquisar?page=${page}&pesquisa=${pesquisa}&CODTABPRE=0&campo=gold`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);
@@ -50,7 +50,6 @@ export default function AppListProdutos(){
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do produto"
-        //onPress={() => alert("onPress")}
         onChangeText={(text) => setPesquisa(text)}
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
@@ -82,13 +81,6 @@ function FooterList( Load ){
 function ListItem( {data} ){  
 
   const navigation = useNavigation();
-  const [infoprod, setInfoProd] = useState([]);
-
-  async function getCod(codbar){
-    const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-    setInfoProd(response.data)
-    //console.log(infoprod);
-  }
 
   function currencyFormat(num) {
     return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -101,8 +93,6 @@ function ListItem( {data} ){
     }
   }
   return(
-    // <TouchableWithoutFeedback 
-    // onPress={() => { navigation.navigate('ListaCarrinho', {cod: data.codBar, mer: data.mer, valor: data.valVenMin})}}>
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
@@ -129,14 +119,7 @@ function ListItem( {data} ){
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
-            onPress={() => {   
-              getCod(data.codBar);
-              //console.log(infoprod.detalhes);
-              var vetor =infoprod.detalhes.map(item => [item.codigo,item.codbar,item.valor])
-              console.log(vetor);
-              //navigation.navigate('ListaCarrinho', {cod: codmer, mer: data.mer, valor: data.valVenMin})
-
-              }}>
+            onPress={() => {}}>
               <Text style={styles.TextButton}>   Estoque   </Text>
             </TouchableOpacity>
           </View>
@@ -144,13 +127,13 @@ function ListItem( {data} ){
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
-            onPress={() => {}}>
+            onPress={() => {navigation.navigate('ListaCarrinho', {codbar: data.codBar, mer: data.mer, valor: data.valVenMin})
+              }}>
               <Text style={styles.TextButton}> Carrinho(+) </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    //</TouchableWithoutFeedback>
   )
 }
 
