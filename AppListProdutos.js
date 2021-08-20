@@ -1,5 +1,14 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, ActivityIndicator, Alert, TouchableWithoutFeedback} from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  Image, 
+  FlatList, 
+  ActivityIndicator, 
+  Alert, 
+  TouchableWithoutFeedback, 
+  TouchableOpacity} from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar'
 import SearchBar from "react-native-dynamic-search-bar";
@@ -73,6 +82,13 @@ function FooterList( Load ){
 function ListItem( {data} ){  
 
   const navigation = useNavigation();
+  const [infoprod, setInfoProd] = useState([]);
+
+  async function getCod(codbar){
+    const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+    setInfoProd(response.data)
+    //console.log(infoprod);
+  }
 
   function currencyFormat(num) {
     return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -85,8 +101,8 @@ function ListItem( {data} ){
     }
   }
   return(
-    <TouchableWithoutFeedback 
-    onPress={() => { navigation.navigate('ListaCarrinho', {cod: data.codBar, mer: data.mer, valor: data.valVenMin})}}>
+    // <TouchableWithoutFeedback 
+    // onPress={() => { navigation.navigate('ListaCarrinho', {cod: data.codBar, mer: data.mer, valor: data.valVenMin})}}>
     <View style={styles.listItem}>
       <Image
          style={styles.imagemDosProdutos}
@@ -97,10 +113,10 @@ function ListItem( {data} ){
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
-      <Text style={styles.listText}>Estoque</Text>
+      {/* <Text style={styles.listText}>Estoque</Text>
       <Text style={styles.listText}>Matriz: {data.estEst1}                     Andre: {data.estEst2}</Text>
       <Text style={styles.listText}>Alexandre: {data.estEst3}               Fabio: {data.estEst4}</Text>
-      <Text style={styles.listText}>Cilas: {data.estEst5}</Text>
+      <Text style={styles.listText}>Cilas: {data.estEst5}</Text> */}
       {/* <Table borderStyle={{borderWidth: 1}}> */}
             {/* <Row data={state.tableHead} flexArr={[1, 2, 1, 1]} style={styles.head} textStyle={styles.text}/>
             <TableWrapper style={styles.wrapper}>
@@ -108,8 +124,33 @@ function ListItem( {data} ){
             <Rows data={[data.estEst1,data.estEst2,data.estEst3,data.estEst4,data.estEst5,]} flexArr={[2, 1, 1]} style={styles.row} textStyle={styles.text}/>
           </TableWrapper> */}
         {/* </Table> */}
-    </View>
-    </TouchableWithoutFeedback>
+        <View style={{ flexDirection:"row" }}>
+          <View>
+            <TouchableOpacity
+            style={styles.CarrinhoButton}
+            activeOpacity={0.5}
+            onPress={() => {   
+              getCod(data.codBar);
+              //console.log(infoprod.detalhes);
+              var vetor =infoprod.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+              console.log(vetor);
+              //navigation.navigate('ListaCarrinho', {cod: codmer, mer: data.mer, valor: data.valVenMin})
+
+              }}>
+              <Text style={styles.TextButton}>   Estoque   </Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity
+            style={styles.CarrinhoButton}
+            activeOpacity={0.5}
+            onPress={() => {}}>
+              <Text style={styles.TextButton}> Carrinho(+) </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    //</TouchableWithoutFeedback>
   )
 }
 
@@ -156,5 +197,19 @@ const styles = StyleSheet.create({
   },
   loading: {
     padding: 10
+  },
+  CarrinhoButton: {
+    marginTop: 25,
+    height:50,
+    padding: 15,
+    borderRadius: 25,
+    borderWidth: 0,
+    marginBottom: 15,
+    marginHorizontal: 20,
+    backgroundColor: '#121212',
+  },
+  TextButton: {
+    fontSize: 14,
+    color:'#FFF'
   }
 });
