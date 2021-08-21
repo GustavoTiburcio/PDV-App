@@ -22,7 +22,7 @@ const ListaCarrinho = ({ route, navigation }) => {
              setBuscaDetalhes(prod)
              cod = prod[0][0];
              console.log(cod)
-           }
+        }
 
     useEffect(()=>{
         getListarDetalhes();

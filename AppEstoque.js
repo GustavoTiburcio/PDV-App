@@ -1,8 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import api from './api';
 
+const AppEstoque = ({ route, navigation }) => {
 
+const codbar = route.params?.codbar;
+const [buscaDetalhes, setBuscaDetalhes] = useState([]);
+
+async function getListarEstoque(){
+  const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+  console.log(response.data)
+  //var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+  //setBuscaDetalhes(prod)
+  //console.log(buscaDetalhes)
+}
+
+useEffect(()=>{
+getListarEstqoeu();
+},[])
+
+}
 export default class App extends Component {
   constructor(props) {
     super(props);

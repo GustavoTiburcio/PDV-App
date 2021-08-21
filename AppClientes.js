@@ -1,45 +1,79 @@
 import React, {useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet} from 'react-native';
+import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
+import {useNavigation} from '@react-navigation/native';
 
 export default function Home({ navigation }) {
 
-  const [clientes, setClientes] = useState([]);
-  const [pesquisa, setPesquisa] = useState('');
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [pesquisa, setPesquisa] = useState('ilson');
 
     async function getClientes(){
-        const response = await api.get(`/usuarios/listarTodos`)
-        setClientes(response.data)
+        if(loading) return;
+        setLoading(true)
+        const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`)
+        console.log(response.data.content)
+        setData([...data, ...response.data.content])
+        setPage(page + 1);
+        setLoading(false);
       }
 
     useEffect(()=>{
         getClientes();
-    },[])
+    },[data])
+
+    function novaPesquisa(){
+      setPage(0);
+      setData([]);
+    }
 
   return (
-    <ScrollView>
     <View style={styles.container}>
     <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do Cliente"
         onChangeText={(text) => setPesquisa(text)}
-        onSearchPress={() => {}}
+        onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
-        onSubmitEditing={() => {}}
+        onSubmitEditing={() => novaPesquisa()}
     />
-    {clientes.filter(item => item.raz.startsWith(pesquisa)).map(item => {
-      return (
-      <View key={item.id}>
-        <TouchableOpacity style={styles.button}>
-        <Text>{item.raz}</Text>
-        </TouchableOpacity>
-      </View>
-      )
-    })}
+    <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Clientes</Text>
+    <FlatList 
+        contentContainerStyle={{marginHorizontal: 20}}
+        data={data}
+        keyExtractor={item => String(item.id)}
+        renderItem={({ item }) => <ListItem data={item}/>}
+        onEndReached={getClientes}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={<FooterList load={loading} />}
+      />
     </View>
-    </ScrollView>
   );
+}
+
+function FooterList( Load ){
+  if(!Load) return null;
+  return(
+    <View style={styles.loading}>
+    <ActivityIndicator size={25} color="#121212" />
+    </View>
+  )
+}
+
+function ListItem( {data} ){  
+  const navigation = useNavigation();
+  return(
+    <View style={styles.listItem}>
+      <Text style={styles.listText}>Razão social: {data.raz}</Text>
+      <Text style={styles.listText}>Nome fantasia: {data.fan}</Text>
+      <Text style={styles.listText}>CPF/CNPJ: {data.cgc}</Text>
+      <Text style={styles.listText}>Fone: {data.fon}</Text>
+      <Text style={styles.listText}>Endereço: {data.log}, {data.num} {data.cid}-{data.uf}</Text>
+      </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -61,4 +95,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     marginTop: 20,
   },
+  listItem: {
+    backgroundColor: '#F3F3F3',
+    padding: 22,
+    marginTop: 15,
+    borderRadius: 10
+  },
+  listText:{
+    fontSize: 14,
+    color:'#000000'
+  }
 });
