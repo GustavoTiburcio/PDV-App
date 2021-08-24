@@ -15,10 +15,11 @@ const Carrinho = ({ route, navigation }) => {
     let forpag = 'Boleto';
     let nomrep = 'Gold';
     let sta = 'Pagamento Futuro';
-    let codcli = 3562;
+    let codcli = 0;
     var date = new Date();
     var dathor = date.toISOString();
 
+    //const codcli = route.params?.codcli;
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
     const isFocused = useIsFocused();
@@ -71,7 +72,7 @@ const Carrinho = ({ route, navigation }) => {
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         });
     }
-
+    
     function salvarApi() {
         const pedido = {
             cod: 1,
@@ -181,17 +182,15 @@ const Carrinho = ({ route, navigation }) => {
                             <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2)}</Text>
                         </View>
                         <View flexDirection="row">
-                            {/* <Text style={styles.textCliente}> Cliente: </Text>
-                            <TextInput style={styles.textinput} color="black" placeholder='Nome Cliente ...' onChangeText={value => setNomeCliente(value)} ></TextInput> */}
                             <BotaoVermelho 
                                 text={'Selecionar Cliente'}
-                                onPress={() => navigation.navigate('AppClientes')}
+                                onPress={() => {navigation.navigate('AppClientes');
+                            }}
                             />
                         </View>
-
-                        <BotaoVermelho
-                            text={`Finalizar Pedido`}
-                            onPress={() => enviaPedido()}></BotaoVermelho>
+                            <BotaoVermelho
+                                text={`Finalizar Pedido`}
+                                onPress={() => enviaPedido()}></BotaoVermelho>
                     </View>
                     : <View>
                         <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text>

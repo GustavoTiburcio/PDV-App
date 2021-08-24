@@ -67,11 +67,22 @@ function ListItem( {data} ){
   const navigation = useNavigation();
   return(
     <View style={styles.listItem}>
+      <Text style={styles.listText}>Código: {data.id}</Text>
       <Text style={styles.listText}>Razão social: {data.raz}</Text>
       <Text style={styles.listText}>Nome fantasia: {data.fan}</Text>
       <Text style={styles.listText}>CPF/CNPJ: {data.cgc}</Text>
       <Text style={styles.listText}>Fone: {data.fon}</Text>
       <Text style={styles.listText}>Endereço: {data.log}, {data.num} {data.cid}-{data.uf}</Text>
+        <View>
+              <TouchableOpacity
+              style={styles.CarrinhoButton}
+              activeOpacity={0.5}
+              onPress={() => {
+                  
+               }}>
+                <Text style={styles.TextButton}> Selecionar </Text>
+              </TouchableOpacity>
+        </View>
       </View>
   )
 }
@@ -104,5 +115,20 @@ const styles = StyleSheet.create({
   listText:{
     fontSize: 14,
     color:'#000000'
+  },
+  CarrinhoButton: {
+    marginTop: 25,
+    height:50,
+    padding: 15,
+    borderRadius: 25,
+    borderWidth: 0,
+    marginBottom: 15,
+    marginHorizontal: 40,
+    backgroundColor: '#121212',
+  },
+  TextButton: {
+    fontSize: 14,
+    color:'#FFF',
+    textAlign: 'center'
   }
 });
