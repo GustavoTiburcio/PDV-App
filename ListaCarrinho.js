@@ -7,7 +7,7 @@ import { useIsFocused } from '@react-navigation/native';
 import api from './api';
 
 const ListaCarrinho = ({ route, navigation }) => {
-    let cod;
+    let codmer;
     const codbar = route.params?.codbar;
     const item = route.params?.mer;
     const valor = route.params?.valor;
@@ -19,24 +19,25 @@ const ListaCarrinho = ({ route, navigation }) => {
     async function getListarDetalhes(){
              const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
              var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
-             setBuscaDetalhes(prod)
-             cod = prod[0][0];
-             console.log(cod)
+             codmer = prod[0][0]
+             console.log('Pegou codmer ao abrir a tela: ' + codmer)
         }
 
     useEffect(()=>{
-        getListarDetalhes();
+        getListarDetalhes()
     },[])
 
     const salvaPedido = () => {
-        let itens = { codmer: cod, quantidade: quantidade, item: item, valor: valorItem };
+        let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {
+            console.log('Adicionado ao carrinho: ')
+            console.log(itens)
             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
         });
     };
     return (
-        <View id={cod} style={styles.container}>
+        <View id={codmer} style={styles.container}>
             <ScrollView>
             <Text style={styles.item}> {item} </Text>
             <Text style={styles.text}>Quantidade:</Text>

@@ -11,13 +11,14 @@ export default function AppLogin({navigation}) {
   const [password, setPassword] = useState('');
   const [loginData, setLoginData] = useState([]);
 
-  async function loginAuthenticate(){
+async function loginAuthenticate(){
     const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
-    setLoginData(response.data)
-    if (response.data == []) {
-      Alert.alert('Usuário ou senha incorretos')
+     if (response.data == []) {
+       Alert.alert('Usuário ou senha incorretos')
     }else{
-      navigation.navigate('AppListProdutos')
+        setLoginData(response.data)
+        console.log(loginData)
+        navigation.navigate('AppListProdutos')
     }
   }
 

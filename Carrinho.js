@@ -7,14 +7,24 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
+import { getLoginData } from './AppLogin';
 import api from './api';
 
 const Carrinho = ({ route, navigation }) => {
+    let codped = '5';
+    let dathor = '2021-08-23T19:52:15.005+0000';
+    let forpag = 'Boleto';
+    let nomrep = 'Gold';
+    let sta = 'Pagamento Futuro';
+    let codcli = 3562;
+    let idface = null;
+
+    
+
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
     const isFocused = useIsFocused();
-    const [nomeCliente, setNomeCliente] = useState();
-    const [codigoVendedor, setCodigoVendedor] = useState();  
+    const [codcat, setCodCat] = useState(1);
 
     async function deleteClick(mer) {
         if (mer != null) {
@@ -34,7 +44,7 @@ const Carrinho = ({ route, navigation }) => {
             }
             setItensCarrinho(resultado);
         });
-        await buscarCodVenBanco().then(resultado => setCodigoVendedor(resultado));
+        //await buscarCodVenBanco().then(resultado => setCodigoVendedor(resultado));
     }
 
     useEffect(() => {
@@ -43,11 +53,17 @@ const Carrinho = ({ route, navigation }) => {
             buscarItens();
         });
     }, [navigation]);
+
     function enviaPedido() {
-        const ite = itensCarrinho.map((iten) => {
-            return '/' + iten.codmer + ',' + iten.quantidade + ',' + iten.valor;
+        
+        const appuser = {id: codcli, idface: idface};
+        const itensPedido = itensCarrinho.map((iten) => {
+            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer}};
         });
-        postPedido('/' + nomeCliente + '/' + codigoVendedor + ite).then(resultado => {
+        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: forpag, nomrep: nomrep,
+        sta: sta, appuser, itensPedido})
+        console.log(ped);
+        postPedido(ped).then(resultado => {
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
                     //salvarSqlLite();
@@ -58,7 +74,6 @@ const Carrinho = ({ route, navigation }) => {
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         });
     }
-
 
     function salvarApi() {
         const pedido = {
