@@ -7,17 +7,18 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
         let url = link;
         if (url === 'https://goldchaves-api.herokuapp.com/api') {
             link = url + '/pedidos/salvarPed';
-            return axios.post(link, {
+            console.log(dadosPedido);
+            return axios.post(link, dadosPedido, {
                 headers: {
-                    'Content-Type': 'application/json',
-                }, data: dadosPedido
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
             }).then(resp => {
                 if (resp.data) {
                     resolve(resp.data)
                 } else {
                     reject("erro ao salvar pedido")
                 }
-            }).catch(error => reject(error));
+            }).catch(error => {reject(error);console.log(error.message)});
         }
     } else {
         reject("erro ao salvar pedido");
