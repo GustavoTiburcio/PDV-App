@@ -1,67 +1,86 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { View, StyleSheet, Text } from 'react-native';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 import api from './api';
 
-const AppEstoque = ({ route, navigation }) => {
+export default function AppEstoque({ route, navigation }) {
 
-const codbar = route.params?.codbar;
-const [buscaDetalhes, setBuscaDetalhes] = useState([]);
-
-async function getListarEstoque(){
-  const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-  console.log(response.data)
-  //var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
-  //setBuscaDetalhes(prod)
-  //console.log(buscaDetalhes)
-}
-
-useEffect(()=>{
-getListarEstqoeu();
-},[])
-
-}
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      HeadTable: ['', 'Estoque'],
-      DataTable: [
-        ['Gold', '2',],
-        ['Andre', '2',],
-        ['Alexandre', '2',],
-        ['Fabio', '2',],
-        ['Cilas', '2',]
-      ]
+    const codbar = route.params?.codbar;
+    const [mercadorDetalhes, setMercadorDetalhes] = useState([[]]);
+    let estoques;
+    
+    async function getListarEstoque(){
+      const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+      estoques = Object.entries(response.data)
+      console.log(estoques[7][1])
+      //var prod =  Object.entries(response.data).map(item => [item.estest1])
+      //setMercadorDetalhes(Object.entries(response.data));
+      //console.log(estoques)
+      //console.log(Object.values(response.data))
+      //console.log(mercadorDetalhes)
     }
-  }
-
-  render() {
-    const state = this.state;
-    return (
-      <View style={styles.container}>
-        <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}>
-          <Row data={state.HeadTable} style={styles.HeadStyle} textStyle={styles.TableText}/>
-          <Rows data={state.DataTable} textStyle={styles.TableText}/>
-        </Table>
-      </View>
-    )
-  }
+    
+    useEffect(()=>{
+    getListarEstoque();
+    },[])
+    
+  return (
+    <View style={styles.container}>
+      <Text>Estoque</Text>
+      <Grid>
+        <Col size={50}>
+          <Row style={styles.cell}>
+            <Text>Matriz</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>Andre</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>Alexandre</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>Fabio</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>Cilas</Text>
+          </Row>
+        </Col>
+        <Col size={25}>
+        <Row style={styles.cell}>
+            <Text>E</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>F</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>G</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>H</Text>
+          </Row>
+          <Row style={styles.cell}>
+            <Text>I</Text>
+          </Row>
+        </Col>
+      </Grid>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
-    padding: 18,
-    paddingTop: 35,
-    backgroundColor: '#ffffff' 
+  container: {
+    width: '100%',
+    height: 300,
+    padding: 16,
+    paddingTop: 100,
+    backgroundColor: '#fff',
   },
-  HeadStyle: { 
-    height: 50,
-    alignContent: "center",
-    backgroundColor: '#ffe0f0'
+  cell: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    flex: 1, 
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  TableText: { 
-    margin: 10
-  }
 });
+

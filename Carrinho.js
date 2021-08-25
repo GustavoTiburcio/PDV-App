@@ -11,7 +11,6 @@ import api from './api';
 
 const Carrinho = ({ route, navigation }) => {
     let codped = uuidv4();
-    let forpag = 'À vista';
     let nomrep = 'Gold';
     let sta = 'Pagamento Futuro';
     // let codcli = 0;
@@ -66,7 +65,7 @@ const Carrinho = ({ route, navigation }) => {
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
         });
-        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: forpag, nomrep: nomrep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomrep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log(ped)
         // postPedido(ped).then(resultado => {

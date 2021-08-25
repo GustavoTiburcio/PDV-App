@@ -25,7 +25,7 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     useEffect(()=>{
         getListarDetalhes()
-    },[])
+    },[quantidade, valorItem])
 
     const salvaPedido = () => {
         let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };

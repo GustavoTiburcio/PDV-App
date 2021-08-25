@@ -106,7 +106,7 @@ function ListItem( {data} ){
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
-            onPress={() => {navigation.navigate('AppEstoque')}}>
+            onPress={() => {navigation.navigate('AppEstoque', {codbar: data.codBar})}}>
               <Text style={styles.TextButton}>   Estoque   </Text>
             </TouchableOpacity>
           </View>
