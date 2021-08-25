@@ -78,7 +78,7 @@ function ListItem( {data} ){
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
               onPress={() => {
-                  
+                  navigation.goBack('Carrinho', {codcli : 1})
                }}>
                 <Text style={styles.TextButton}> Selecionar </Text>
               </TouchableOpacity>

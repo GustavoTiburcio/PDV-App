@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Alert, RefreshControl } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -10,20 +10,26 @@ import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 
 const Carrinho = ({ route, navigation }) => {
-    let codped = '5';
-    //let dathor = '2021-08-23T19:52:15.005+0000';
-    let forpag = 'Boleto';
+    let codped = uuidv4();
+    let forpag = 'À vista';
     let nomrep = 'Gold';
     let sta = 'Pagamento Futuro';
-    let codcli = 0;
+    // let codcli = 0;
     var date = new Date();
     var dathor = date.toISOString();
 
-    //const codcli = route.params?.codcli;
+    const codcli = route.params?.codcli;
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
     const isFocused = useIsFocused();
     const [codcat, setCodCat] = useState('1');
+
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
 
     async function deleteClick(mer) {
         if (mer != null) {
@@ -51,28 +57,34 @@ const Carrinho = ({ route, navigation }) => {
         navigation.addListener('focus', () => {
             buscarItens();
         });
+
     }, [navigation]);
 
     function enviaPedido() {
         
         const appuser = {id: codcli};
         const itensPedido = itensCarrinho.map((iten) => {
-            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: 'teste'}};
+            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
         });
         const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: forpag, nomrep: nomrep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
-        postPedido(ped).then(resultado => {
-            if (resultado != "erro ao salvar pedido") {
-                limparItensCarrinhoNoBanco().then(resultado => {
-                    //salvarSqlLite();
-                    setItensCarrinho(null);
-                    setValorBruto(0);
-                    navigation.navigate('AppListProdutos');
-                });
-            } else { Alert.alert("falhou ao salvar, tente novamente"); }
-        });
+        console.log(ped)
+        // postPedido(ped).then(resultado => {
+        //     if (resultado != "erro ao salvar pedido") {
+        //         limparItensCarrinhoNoBanco().then(resultado => {
+        //             //salvarSqlLite();
+        //             setItensCarrinho(null);
+        //             setValorBruto(0);
+        //             navigation.navigate('AppListProdutos');
+        //         });
+        //     } else { Alert.alert("falhou ao salvar, tente novamente"); }
+        // });
     }
-    
+
+    function refresh() {
+        console.log('teste');
+      }
+      
     function salvarApi() {
         const pedido = {
             cod: 1,
@@ -184,7 +196,9 @@ const Carrinho = ({ route, navigation }) => {
                         <View flexDirection="row">
                             <BotaoVermelho 
                                 text={'Selecionar Cliente'}
-                                onPress={() => {navigation.navigate('AppClientes');
+                                onPress={() => {navigation.navigate('AppClientes', {
+                                    onGoBack: () => Refresh()
+                                });
                             }}
                             />
                         </View>
