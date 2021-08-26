@@ -6,18 +6,13 @@ import api from './api';
 export default function AppEstoque({ route, navigation }) {
 
     const codbar = route.params?.codbar;
-    const [mercadorDetalhes, setMercadorDetalhes] = useState([[]]);
-    let estoques;
+    let teste;
+    const [data, setData] = useState([]);
     
     async function getListarEstoque(){
       const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-      estoques = Object.entries(response.data)
-      console.log(estoques[7][1])
-      //var prod =  Object.entries(response.data).map(item => [item.estest1])
-      //setMercadorDetalhes(Object.entries(response.data));
-      //console.log(estoques)
-      //console.log(Object.values(response.data))
-      //console.log(mercadorDetalhes)
+      teste = response.data.estest1
+      console.log(teste)
     }
     
     useEffect(()=>{
@@ -47,7 +42,7 @@ export default function AppEstoque({ route, navigation }) {
         </Col>
         <Col size={25}>
         <Row style={styles.cell}>
-            <Text>E</Text>
+            <Text>{String(teste)}</Text>
           </Row>
           <Row style={styles.cell}>
             <Text>F</Text>
