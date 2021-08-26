@@ -47,6 +47,17 @@ function Tabs({route}){
 
 export default function App() {
 
+  //   const getData = async () => {
+  //   try {
+  //         const jsonValue = await AsyncStorage.getItem('@login_data')
+  //         return jsonValue != null ? JSON.parse(jsonValue) : null;
+  //   } catch(e) {
+  //         console.log('Erro ao ler login')
+  //       }
+  //   }
+
+  //  let login;
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="AppLogin">

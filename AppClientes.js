@@ -3,6 +3,7 @@ import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet, FlatList,
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home({ navigation }) {
 
@@ -15,11 +16,10 @@ export default function Home({ navigation }) {
         if(loading) return;
         setLoading(true)
         const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`)
-        console.log(response.data.content)
         setData([...data, ...response.data.content])
         setPage(page + 1);
         setLoading(false);
-      }
+    }
 
     useEffect(()=>{
         getClientes();
@@ -65,6 +65,17 @@ function FooterList( Load ){
 
 function ListItem( {data} ){  
   const navigation = useNavigation();
+
+  async function storeClienteId(){
+    try {
+      const jsonValue = JSON.stringify(data.id)
+      await AsyncStorage.setItem('@Cliente_id', jsonValue)
+      console.log('salvou informações do cliente: Id:' + jsonValue)
+    } catch (e) {
+      console.log('erro ao salvar informações de Cliente' + e)
+    }
+  }
+
   return(
     <View style={styles.listItem}>
       <Text style={styles.listText}>Código: {data.id}</Text>
@@ -78,7 +89,8 @@ function ListItem( {data} ){
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
               onPress={() => {
-                  navigation.goBack('Carrinho', {codcli : 1})
+                storeClienteId()
+                navigation.goBack()
                }}>
                 <Text style={styles.TextButton}> Selecionar </Text>
               </TouchableOpacity>

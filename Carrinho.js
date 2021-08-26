@@ -8,20 +8,41 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Carrinho = ({ route, navigation }) => {
     let codped = uuidv4();
-    let nomrep = 'Gold';
-    let sta = 'Pagamento Futuro';
-    // let codcli = 0;
     var date = new Date();
     var dathor = date.toISOString();
 
-    const codcli = route.params?.codcli;
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
     const isFocused = useIsFocused();
-    const [codcat, setCodCat] = useState('1');
+    const [nomRep, setNomRep] = useState('');
+    const [codcat, setCodCat] = useState();
+    const [codCli, setCodCli] = useState();
+    const [dadosLogin, setDadosLogin] = useState({});
+
+    async function getData(){
+     try {
+        const jsonValue = await AsyncStorage.getItem('@login_data')
+        const clienteId = await AsyncStorage.getItem('@Cliente_id')
+        setDadosLogin(JSON.parse(jsonValue));
+        setCodCli(JSON.parse(clienteId));
+        console.log(codCli)
+            } catch(e) {
+         console.log('Erro ao ler login')
+        }
+    }
+    async function getClienteId(){
+        try {
+           const clienteId = await AsyncStorage.getItem('@Cliente_id')
+           //setCodCli(JSON.parse(clienteId));
+           console.log('cliente id' + codCli)
+               } catch(e) {
+            console.log('Erro ao ler login')
+           }
+       }
 
     function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -48,7 +69,6 @@ const Carrinho = ({ route, navigation }) => {
             }
             setItensCarrinho(resultado);
         });
-        //await buscarCodVenBanco().then(resultado => setCodigoVendedor(resultado));
     }
 
     useEffect(() => {
@@ -56,16 +76,26 @@ const Carrinho = ({ route, navigation }) => {
         navigation.addListener('focus', () => {
             buscarItens();
         });
-
     }, [navigation]);
+
+    useEffect(() => {
+        getData();
+    },[])
+
+    useEffect(() => {
+        setNomRep(dadosLogin.username)
+        setCodCat(dadosLogin.codcat)
+        console.log(nomRep + ' ' + codcat);
+      },[getData])
 
     function enviaPedido() {
         
-        const appuser = {id: codcli};
+        getClienteId();
+        const appuser = {id: codCli};
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
         });
-        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomrep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log(ped)
         // postPedido(ped).then(resultado => {
@@ -79,11 +109,7 @@ const Carrinho = ({ route, navigation }) => {
         //     } else { Alert.alert("falhou ao salvar, tente novamente"); }
         // });
     }
-
-    function refresh() {
-        console.log('teste');
-      }
-      
+   
     function salvarApi() {
         const pedido = {
             cod: 1,

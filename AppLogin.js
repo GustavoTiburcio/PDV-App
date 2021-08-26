@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, KeyboardAvoidingView, Image, TextInput, TouchableOpacity, Animated, Keyboard, Alert } from 'react-native';
 import {StatusBar} from 'expo-status-bar'
 import api from './api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AppLogin({navigation}) {
   
@@ -9,7 +10,18 @@ export default function AppLogin({navigation}) {
   const [opacity] = useState(new Animated.Value(0));
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loginData, setLoginData] = useState([]);
+  const [loginData, setLoginData] = useState({});
+
+  async function storeData(){
+    try {
+      const jsonValue = JSON.stringify(loginData)
+      await AsyncStorage.setItem('@login_data', jsonValue)
+      console.log('salvou informações de login')
+      console.log(jsonValue)
+    } catch (e) {
+      console.log('erro ao salvar informações de login')
+    }
+  }
 
 async function loginAuthenticate(){
     const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
@@ -17,10 +29,13 @@ async function loginAuthenticate(){
        Alert.alert('Usuário ou senha incorretos')
     }else{
         setLoginData(response.data)
-        console.log(loginData)
         navigation.navigate('AppListProdutos')
     }
   }
+
+  useEffect(() => {
+    storeData();
+  },[loginData])
 
   useEffect(() => {
 
