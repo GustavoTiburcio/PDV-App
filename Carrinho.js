@@ -108,6 +108,12 @@ const Carrinho = ({ route, navigation }) => {
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         });
     }
+
+    function ImprimeDadosCliente(){
+        if (dadosCliente != null) {
+            return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
+        }
+    }
    
     function salvarApi() {
         const pedido = {
@@ -229,7 +235,7 @@ const Carrinho = ({ route, navigation }) => {
                             }}
                             />
                         </View>
-                        <Text>Cliente: {dadosCliente.raz} - {dadosCliente.fan}</Text>
+                        <Text>Cliente: {ImprimeDadosCliente()}</Text>
                             <BotaoVermelho
                                 text={`Finalizar Pedido`}
                                 onPress={() => enviaPedido()}></BotaoVermelho>
