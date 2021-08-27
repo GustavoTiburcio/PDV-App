@@ -20,7 +20,7 @@ const Carrinho = ({ route, navigation }) => {
     const isFocused = useIsFocused();
     const [nomRep, setNomRep] = useState('');
     const [codcat, setCodCat] = useState();
-    const [clienteId, setClienteId] = useState();
+    const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
 
     async function getData(){
@@ -31,12 +31,12 @@ const Carrinho = ({ route, navigation }) => {
          console.log('Erro ao ler login')
         }
     }
-    async function getClienteId(){
+    async function getCliente(){
         try {
-           const clienteId = await AsyncStorage.getItem('@Cliente_id')
-           console.log(JSON.parse(clienteId))
-           setClienteId(JSON.parse(clienteId))
-           console.log('Pegou dados cliente' + clienteId)
+           const clientedados = await AsyncStorage.getItem('@Cliente_id')
+           console.log(JSON.parse(clientedados))
+           setDadosCliente(JSON.parse(clientedados))
+           console.log('Pegou dados cliente' + clientedados)
                } catch(e) {
             console.log('Erro ao ler login')
            }
@@ -73,7 +73,7 @@ const Carrinho = ({ route, navigation }) => {
         // enviaPedido();
         navigation.addListener('focus', () => {
             buscarItens();
-            getClienteId();
+            getCliente();
         });
     }, [navigation]);
 
@@ -89,7 +89,7 @@ const Carrinho = ({ route, navigation }) => {
 
     function enviaPedido() {
 
-        const appuser = {id: clienteId};
+        const appuser = {id: dadosCliente.id};
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
         });    
@@ -102,6 +102,7 @@ const Carrinho = ({ route, navigation }) => {
                     //salvarSqlLite();
                     setItensCarrinho(null);
                     setValorBruto(0);
+                    Alert.alert("Pedido salvo com sucesso");
                     navigation.navigate('AppListProdutos');
                 });
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
@@ -202,9 +203,12 @@ const Carrinho = ({ route, navigation }) => {
                                             />
                                         </TouchableOpacity>
                                     </View >
-
+                                        <View flexDirection="row">
+                                            <Text style={styles.textCabeçalhoCarrinho}>Qtd</Text>
+                                            <Text style={styles.textCabeçalhoCarrinho}>Vlr Uni</Text>
+                                            <Text style={styles.textCabeçalhoCarrinho}>Total</Text>
+                                        </View>
                                     <View style={styles.itenWiew}>
-
                                         <Text style={styles.textQuantidade}>{itemCar.quantidade}</Text>
                                         <Text style={styles.valorItem}>R$ {Number.parseFloat(itemCar.valor).toFixed(2)}</Text>
                                         <Text style={styles.valorTotalItem}>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2)}</Text>
@@ -225,6 +229,7 @@ const Carrinho = ({ route, navigation }) => {
                             }}
                             />
                         </View>
+                        <Text>Cliente: {dadosCliente.raz} - {dadosCliente.fan}</Text>
                             <BotaoVermelho
                                 text={`Finalizar Pedido`}
                                 onPress={() => enviaPedido()}></BotaoVermelho>
@@ -356,6 +361,16 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         alignItems: "center",
         textAlign: "center"
+    },
+    textCabeçalhoCarrinho: {
+        width: '40%',
+        padding: 1,
+        fontSize: 17,
+        color: "#000000",
+        fontWeight: "bold",
+        textAlignVertical: "center",
+        alignSelf: "flex-start",
+        alignItems: 'flex-start',
     },
 });
 export default Carrinho;

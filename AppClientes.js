@@ -69,7 +69,7 @@ function ListItem( {data} ){
 
   async function storeClienteId(){
     try {
-      const jsonValue = JSON.stringify(data.id)
+      const jsonValue = JSON.stringify(data)
       await AsyncStorage.setItem('@Cliente_id', jsonValue)
       console.log('salvou informações do cliente: Id:' + jsonValue)
     } catch (e) {
