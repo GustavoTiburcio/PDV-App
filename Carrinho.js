@@ -20,16 +20,13 @@ const Carrinho = ({ route, navigation }) => {
     const isFocused = useIsFocused();
     const [nomRep, setNomRep] = useState('');
     const [codcat, setCodCat] = useState();
-    const [codCli, setCodCli] = useState();
+    const [clienteId, setClienteId] = useState();
     const [dadosLogin, setDadosLogin] = useState({});
 
     async function getData(){
      try {
         const jsonValue = await AsyncStorage.getItem('@login_data')
-        const clienteId = await AsyncStorage.getItem('@Cliente_id')
         setDadosLogin(JSON.parse(jsonValue));
-        setCodCli(JSON.parse(clienteId));
-        console.log(codCli)
             } catch(e) {
          console.log('Erro ao ler login')
         }
@@ -37,8 +34,9 @@ const Carrinho = ({ route, navigation }) => {
     async function getClienteId(){
         try {
            const clienteId = await AsyncStorage.getItem('@Cliente_id')
-           //setCodCli(JSON.parse(clienteId));
-           console.log('cliente id' + codCli)
+           console.log(JSON.parse(clienteId))
+           setClienteId(JSON.parse(clienteId))
+           console.log('Pegou dados cliente' + clienteId)
                } catch(e) {
             console.log('Erro ao ler login')
            }
@@ -75,11 +73,12 @@ const Carrinho = ({ route, navigation }) => {
         // enviaPedido();
         navigation.addListener('focus', () => {
             buscarItens();
+            getClienteId();
         });
     }, [navigation]);
 
     useEffect(() => {
-        getData();
+        getData();  
     },[])
 
     useEffect(() => {
@@ -89,25 +88,24 @@ const Carrinho = ({ route, navigation }) => {
       },[getData])
 
     function enviaPedido() {
-        
-        getClienteId();
-        const appuser = {id: codCli};
+
+        const appuser = {id: clienteId};
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
-        });
+        });    
         const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log(ped)
-        // postPedido(ped).then(resultado => {
-        //     if (resultado != "erro ao salvar pedido") {
-        //         limparItensCarrinhoNoBanco().then(resultado => {
-        //             //salvarSqlLite();
-        //             setItensCarrinho(null);
-        //             setValorBruto(0);
-        //             navigation.navigate('AppListProdutos');
-        //         });
-        //     } else { Alert.alert("falhou ao salvar, tente novamente"); }
-        // });
+        postPedido(ped).then(resultado => {
+            if (resultado != "erro ao salvar pedido") {
+                limparItensCarrinhoNoBanco().then(resultado => {
+                    //salvarSqlLite();
+                    setItensCarrinho(null);
+                    setValorBruto(0);
+                    navigation.navigate('AppListProdutos');
+                });
+            } else { Alert.alert("falhou ao salvar, tente novamente"); }
+        });
     }
    
     function salvarApi() {

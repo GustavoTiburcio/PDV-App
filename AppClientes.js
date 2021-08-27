@@ -1,9 +1,10 @@
 import React, {useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
+import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, LogBox} from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function Home({ navigation }) {
 
@@ -75,6 +76,10 @@ function ListItem( {data} ){
       console.log('erro ao salvar informações de Cliente' + e)
     }
   }
+
+  LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
   return(
     <View style={styles.listItem}>
