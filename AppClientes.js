@@ -67,11 +67,11 @@ function FooterList( Load ){
 function ListItem( {data} ){  
   const navigation = useNavigation();
 
-  async function storeClienteId(){
+  async function storeClienteData(){
     try {
       const jsonValue = JSON.stringify(data)
-      await AsyncStorage.setItem('@Cliente_id', jsonValue)
-      console.log('salvou informações do cliente: Id:' + jsonValue)
+      await AsyncStorage.setItem('@Cliente_data', jsonValue)
+      console.log('salvou informações do cliente: ' + jsonValue)
     } catch (e) {
       console.log('erro ao salvar informações de Cliente' + e)
     }
@@ -94,7 +94,7 @@ function ListItem( {data} ){
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
               onPress={() => {
-                storeClienteId()
+                storeClienteData()
                 navigation.goBack()
                }}>
                 <Text style={styles.TextButton}> Selecionar </Text>

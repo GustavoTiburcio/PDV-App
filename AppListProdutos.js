@@ -9,7 +9,7 @@ import {
   Alert, 
   TouchableOpacity} from 'react-native';
 import api from './api';
-import {StatusBar} from 'expo-status-bar'
+import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
 

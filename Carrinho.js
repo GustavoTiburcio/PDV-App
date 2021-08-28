@@ -23,7 +23,7 @@ const Carrinho = ({ route, navigation }) => {
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
 
-    async function getData(){
+    async function getLoginData(){
      try {
         const jsonValue = await AsyncStorage.getItem('@login_data')
         setDadosLogin(JSON.parse(jsonValue));
@@ -31,12 +31,11 @@ const Carrinho = ({ route, navigation }) => {
          console.log('Erro ao ler login')
         }
     }
-    async function getCliente(){
+    async function getClienteData(){
         try {
-           const clientedados = await AsyncStorage.getItem('@Cliente_id')
-           console.log(JSON.parse(clientedados))
+           const clientedados = await AsyncStorage.getItem('@Cliente_data')
            setDadosCliente(JSON.parse(clientedados))
-           console.log('Pegou dados cliente' + clientedados)
+           console.log('Pegou dados cliente: ' + clientedados)
                } catch(e) {
             console.log('Erro ao ler login')
            }
@@ -73,19 +72,19 @@ const Carrinho = ({ route, navigation }) => {
         // enviaPedido();
         navigation.addListener('focus', () => {
             buscarItens();
-            getCliente();
+            getClienteData();
         });
     }, [navigation]);
 
     useEffect(() => {
-        getData();  
+        getLoginData();  
     },[])
 
     useEffect(() => {
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
-        console.log(nomRep + ' ' + codcat);
-      },[getData])
+        console.log('Usuario logado: ' + nomRep + ', categoria: ' + codcat);
+      },[getLoginData])
 
     function enviaPedido() {
 

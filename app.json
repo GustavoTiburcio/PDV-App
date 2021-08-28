@@ -4,7 +4,7 @@
     "slug": "Gold-App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon2.png",
+    "icon": "./assets/icon3.png",
     "splash": {
       "image": "./assets/splash2.png",
       "resizeMode": "contain",
@@ -21,9 +21,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon2.png",
+        "foregroundImage": "./assets/adaptive-icon4.png",
         "backgroundColor": "#d1ac97"
-      }
+      },
+      "package": "com.tifire.tifireapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
