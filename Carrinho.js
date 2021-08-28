@@ -190,10 +190,10 @@ const Carrinho = ({ route, navigation }) => {
     }
 
     return (
-        <View id={"pai"}>
+        <View id={"pai"} >
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
-                    <View id={"itens"}>
+                    <View id={"itens"} >
                         {itensCarrinho.map((itemCar, key) => {
                             return (
                                 <View key={key} style={styles.container}>
@@ -251,8 +251,7 @@ const Carrinho = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        justifyContent: 'space-between',
-
+        justifyContent: 'space-between'
     },
     itenWiew: {
         flexDirection: 'row',

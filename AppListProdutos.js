@@ -131,16 +131,16 @@ const styles = StyleSheet.create({
   },
   imagemDosProdutos: {
     width: 280,
-    height: 240,
+    height: 240
    },
   listItem: {
     backgroundColor: '#F3F3F3',
     padding: 22,
     marginTop: 15,
-    borderRadius: 10
+    borderRadius: 10,
   },
   listText:{
-    fontSize: 14,
+    fontSize: 16,
     color:'#000000'
   },
   SearchBar: {
