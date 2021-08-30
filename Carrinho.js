@@ -9,12 +9,13 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Picker} from '@react-native-picker/picker';
 
 
 const Carrinho = ({ route, navigation }) => {
-    let codped = uuidv4();
     var date = new Date();
     var dathor = date.toISOString();
+    let codped = uuidv4();
 
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
@@ -23,6 +24,8 @@ const Carrinho = ({ route, navigation }) => {
     const [codcat, setCodCat] = useState();
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
+    const [selectedLanguage, setSelectedLanguage] = useState();
+
 
     async function getLoginData(){
      try {
@@ -101,7 +104,7 @@ const Carrinho = ({ route, navigation }) => {
 
         //const navigation = useNavigation();
         if (dadosCliente == null) {
-            console.log('Faltou selecionar o cliente');
+            Alert.alert("Faltou selecionar o cliente");
         }else{
         const appuser = {id: dadosCliente.id};
         const itensPedido = itensCarrinho.map((iten) => {
@@ -110,7 +113,6 @@ const Carrinho = ({ route, navigation }) => {
         const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log(ped)
-            Alert.alert("Selecione o Cliente");
         postPedido(ped).then(resultado => {
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
@@ -251,7 +253,22 @@ const Carrinho = ({ route, navigation }) => {
                             }}
                             />
                         </View>
-                        <Text>Cliente: {ImprimeDadosCliente()}</Text>
+                        <Text style={{fontSize: 16,color:'#000000'}}>Cliente: {ImprimeDadosCliente()}</Text>
+                        {/* <Text style={{fontSize: 16,color:'#000000', paddingTop: 40}}>Forma de pagamento:</Text>
+                        <Picker
+                            selectedValue={selectedLanguage}
+                            style={{paddingTop: 50, marginHorizontal: 100, backgroundColor: 'grey'}}
+                            onValueChange={(itemValue, itemIndex) =>{
+                            setSelectedLanguage(itemValue)
+                            console.log(selectedLanguage)
+                            }
+                        }>
+                            <Picker.Item label="À Vista" value="À Vista" />
+                            <Picker.Item label="Boleto" value="Boleto" />
+                            <Picker.Item label="Cartão" value="Cartão" />
+                            <Picker.Item label="Cheque Pré" value="Cheque Pré" />
+                            <Picker.Item label="Promissória" value="Promissória" />
+                        </Picker> */}
                             <BotaoVermelho
                                 text={`Finalizar Pedido`}
                                 onPress={() => enviaPedido()}></BotaoVermelho>
