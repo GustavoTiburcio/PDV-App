@@ -68,6 +68,16 @@ const Carrinho = ({ route, navigation }) => {
         });
     }
 
+    async function removeClienteValue(key) {
+        try {
+            await AsyncStorage.removeItem(key);
+            return true;
+        }
+        catch(exception) {
+            return false;
+        }
+    }
+
     useEffect(() => {
         // enviaPedido();
         navigation.addListener('focus', () => {
@@ -101,6 +111,7 @@ const Carrinho = ({ route, navigation }) => {
                     //salvarSqlLite();
                     setItensCarrinho(null);
                     setValorBruto(0);
+                    removeClienteValue('@Cliente_data');
                     Alert.alert("Pedido salvo com sucesso");
                     navigation.navigate('AppListProdutos');
                 });
