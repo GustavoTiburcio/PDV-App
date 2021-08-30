@@ -21,8 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon4.png",
-        "backgroundColor": "#d1ac97"
+        "foregroundImage": "./assets/adaptive-icon4.png"
       },
       "package": "com.tifire.tifireapp"
     },

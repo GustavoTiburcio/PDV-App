@@ -270,7 +270,7 @@ const Carrinho = ({ route, navigation }) => {
                             <Picker.Item label="Promissória" value="Promissória" />
                         </Picker> */}
                             <BotaoVermelho
-                                text={`Finalizar Pedido`}
+                                text={`Finalizar Venda`}
                                 onPress={() => enviaPedido()}></BotaoVermelho>
                     </View>
                     : <View>
