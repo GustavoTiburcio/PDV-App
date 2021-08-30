@@ -5,10 +5,11 @@ import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Carrinho = ({ route, navigation }) => {
     let codped = uuidv4();
@@ -98,6 +99,10 @@ const Carrinho = ({ route, navigation }) => {
 
     function enviaPedido() {
 
+        //const navigation = useNavigation();
+        if (dadosCliente == null) {
+            console.log('Faltou selecionar o cliente');
+        }else{
         const appuser = {id: dadosCliente.id};
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
@@ -105,6 +110,7 @@ const Carrinho = ({ route, navigation }) => {
         const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log(ped)
+            Alert.alert("Selecione o Cliente");
         postPedido(ped).then(resultado => {
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
@@ -112,11 +118,11 @@ const Carrinho = ({ route, navigation }) => {
                     setItensCarrinho(null);
                     setValorBruto(0);
                     removeClienteValue('@Cliente_data');
-                    Alert.alert("Pedido salvo com sucesso");
                     navigation.navigate('AppListProdutos');
+                    Alert.alert("Pedido salvo com sucesso");
                 });
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
-        });
+        })};
     }
 
     function ImprimeDadosCliente(){
