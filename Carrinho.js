@@ -121,7 +121,7 @@ const Carrinho = ({ route, navigation }) => {
                     setValorBruto(0);
                     removeClienteValue('@Cliente_data');
                     navigation.navigate('AppListProdutos');
-                    Alert.alert("Pedido salvo com sucesso");
+                    Alert.alert("Venda salva com sucesso");
                 });
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         })};
