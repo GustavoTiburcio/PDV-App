@@ -88,6 +88,7 @@ function ListItem( {data} ){
       <Text style={styles.listText}>Nome fantasia: {data.fan}</Text>
       <Text style={styles.listText}>CPF/CNPJ: {data.cgc}</Text>
       <Text style={styles.listText}>Fone: {data.fon}</Text>
+      <Text style={styles.listText}>CEP: {data.cep}</Text>
       <Text style={styles.listText}>Endereço: {data.log}, {data.num} {data.cid}-{data.uf}</Text>
         <View>
               <TouchableOpacity
