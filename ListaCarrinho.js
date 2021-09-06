@@ -28,13 +28,17 @@ const ListaCarrinho = ({ route, navigation }) => {
     },[quantidade, valorItem])
 
     const salvaPedido = () => {
-        let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
+        if (quantidade != undefined) {
+            let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {
             console.log('Adicionado ao carrinho: ')
             console.log(itens)
             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
         });
+        }else{
+            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+        }
     };
     return (
         <View id={codmer} style={styles.container}>

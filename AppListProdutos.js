@@ -129,10 +129,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  imagemDosProdutos: {
-    width: 280,
-    height: 240
-   },
   listItem: {
     backgroundColor: '#F3F3F3',
     padding: 22,
