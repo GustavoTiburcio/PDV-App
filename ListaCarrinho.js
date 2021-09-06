@@ -12,7 +12,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const item = route.params?.mer;
     const valor = route.params?.valor;
 
-    const [quantidade, setQuantidade] = useState(1);
+    const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState(valor);
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
 
