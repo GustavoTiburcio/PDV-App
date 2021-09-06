@@ -103,18 +103,122 @@ const Carrinho = ({ route, navigation }) => {
 
     function enviaPedido() {
 
-        //const navigation = useNavigation();
         if (dadosCliente == null) {
             Alert.alert("Faltou selecionar o cliente");
         }else{
         const appuser = {id: dadosCliente.id};
         const itensPedido = itensCarrinho.map((iten) => {
-            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: null}};
+            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: iten.item}};
         });    
         const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
+        console.log('PostPedido: ')
         console.log(ped)
         postPedido(ped).then(resultado => {
+            function currencyFormat(num) {
+                return num.toFixed(2);
+              }
+            var PrintItems = itensPedido.map(function(item){
+                return `<tr>
+                <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
+                    <b>${item.mercador.mer}</b>
+                </td>
+                <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+                    <b>${item.qua}</b>
+                </td>
+                <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+                    <b>${currencyFormat(item.valuni).replace('.',',')}</b>
+                </td>
+                <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+                    <b>${currencyFormat(item.valuni * item.qua).replace('.',',')}</b>
+                </td>
+                </tr>`;
+             });
+            const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Pdf Content</title>
+                <style>
+                    body {
+                        color: #000000;
+                    }
+                    p {
+                      font-family: "Didot", "Times New Roman";
+                      font-size: 38px;
+                      margin: 0;
+                    }
+                    table {
+                      border-collapse: collapse;
+                      width: 100%;
+                    }
+                    th, td {
+                      text-align: left;
+                      padding: 8px;
+                      font-family: "Didot", "Times New Roman";
+                      font-size: 38px;
+                    }
+                    tr:nth-child(even) {
+                      background-color: #f2f2f2;
+                      margin-bottom:0px
+                    }
+                    div.small{
+                      
+                    }
+                </style>
+            </head>
+            <body>
+              <div class="small">
+              </br>
+              </br>
+                <p></p>
+                <p align="center"><b>GOLD CHAVES</b></p>
+                <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+                </br>
+                </br>
+                <div>
+                <p><b>Data: ${date.toLocaleDateString()}</b></p>
+                <p><b>Vendedor: ${nomRep}</b></p>
+                <p><b>Razão Social:</b><b> ${dadosCliente.raz}</b></p>
+                <p><b>CPF/CNPJ: ${dadosCliente.cgc}</b><b> Telefone: ${dadosCliente.fon}</b></p>
+                <p><b>Email: ${dadosCliente.ema}</b></p>
+                <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
+                <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
+                </div>
+                <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Descricao</th>
+                                                <th>Qtd</th>
+                                                <th>Vlr</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        ${PrintItems}
+                                        </tbody>
+                </table>
+                </div>
+                </br>
+                <p style="text-align:right"><b>Total geral: R$ ${valorBruto.toFixed(2).replace('.',',')}</b></p>
+            </body>
+            </html>
+        `;
+    const createAndPrintPDF = async () => {
+              try {
+                const { uri } = await Print.printToFileAsync({ 
+                  html: htmlContent,
+                  width: 1000, height: 1500 });
+                console.log(uri)
+                await Print.printAsync({
+                    uri:uri
+                })
+              } catch (error) {
+                console.error(error);
+              }
+            };
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
                     setItensCarrinho(null);
@@ -128,7 +232,7 @@ const Carrinho = ({ route, navigation }) => {
                           {
                             text: "Sim",
                             onPress: () => {
-                            //   imprimePed()
+                            createAndPrintPDF()
                             },
                           },
                           {
@@ -140,134 +244,6 @@ const Carrinho = ({ route, navigation }) => {
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         })};
     }
-
-    // function imprimePed(){
-    //     let dadosPedido;
-    //     async function getDadosPedido(){
-    //         const response = await api.get(`/pedidos/listarParaImprimir?cod=e25dac20-8d02-4b70-b3db-1ff7ff85b050`)
-    //         dadosPedido=response.data;
-    //         console.log(dadosPedido)
-    //         console.log(dadosPedido.cliente.cgc)
-    //       }
-    //         const htmlContent = `
-    //         <!DOCTYPE html>
-    //         <html lang="en">
-    //         <head>
-    //             <meta charset="UTF-8">
-    //             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    //             <title>Pdf Content</title>
-    //             <style>
-    //                 body {
-    //                     color: #000000;
-    //                 }
-    //                 p {
-    //                   font-family: "Didot", "Times New Roman";
-    //                   font-size: 38px;
-    //                   margin: 0;
-    //                 }
-    //                 table {
-    //                   border-collapse: collapse;
-    //                   width: 100%;
-    //                 }
-    //                 th, td {
-    //                   text-align: left;
-    //                   padding: 8px;
-    //                   font-family: "Didot", "Times New Roman";
-    //                   font-size: 28px;
-    //                 }
-    //                 tr:nth-child(even) {
-    //                   background-color: #f2f2f2;
-    //                   margin-bottom:0px
-    //                 }
-    //                 div.small{
-                      
-    //                 }
-    //             </style>
-    //         </head>
-    //         <body>
-    //           <div class="small">
-    //           </br>
-    //           </br>
-    //             <p></p>
-    //             <p align="center"><b>GOLD CHAVES</b></p>
-    //             <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, 87050-000</b></p>
-    //             </br>
-    //             </br>
-    //             <div>
-    //             <p><b>Vendedor: Gold</b></p>
-    //             <p><b>Data da Venda: 27/08/2021</b></p>
-    //             <p><b>Razão Social</b></p>
-    //             <p><b>ROGERIO APARECIDO PEREIRA DE JESUS 00501171908</b></p>
-    //             <p><b>CPF/CNPJ: 16.875.774/0001-04</b><b> Telefone: (44)3274-3674</b></p>
-    //             <p><b>Email: lu_e_roger@hotmail.com</b></p>
-    //             <p><b> Endereço: Avenida Tamandaré, 79</b></p>
-    //             <p><b>Bairro: Vila Planalto</b><b> Cidade: Campo Grande - MS</b></p>
-    //             </div>
-    //             <table>
-    //                                     <thead>
-    //                                         <tr>
-    //                                             <th>Descricao</th>
-    //                                             <th>Qtd</th>
-    //                                             <th>Valor </th>
-    //                                         </tr>
-    //                                     </thead>
-    //                                     <tbody>
-    //                                             <tr>
-    //                                                 <td>
-    //                                                     teste
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     3
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     12
-    //                                                 </td>
-    //                                             </tr>
-    //                                             <tr>
-    //                                                 <td>
-    //                                                     teste2
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     3
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     12
-    //                                                 </td>
-    //                                             </tr>
-    //                                             <tr>
-    //                                                 <td>
-    //                                                     teste3
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     3
-    //                                                 </td>
-    //                                                 <td>
-    //                                                     12
-    //                                                 </td>
-    //                                             </tr>
-    //                                     </tbody>
-    //                                 </table>
-    //               </div>
-    //             <p><b>Total geral:</b></p>
-    //         </body>
-    //         </html>
-    //     `;
-    //     const createAndPrintPDF = async () => {
-    //       try {
-    //         const { uri } = await Print.printToFileAsync({ 
-    //           html: htmlContent,
-    //           width: 1000, height: 1500 });
-    //         console.log(uri)
-    //         await Print.printAsync(
-    //             {uri:uri,
-    //             width: 595, height: 1500 })
-    //       } catch (error) {
-    //         console.error(error);
-    //       }
-    //     };
-    //     getDadosPedido();
-    //     createAndPrintPDF();
-    // }
 
     function ImprimeDadosCliente(){
         if (dadosCliente != null) {

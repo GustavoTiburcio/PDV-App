@@ -18,7 +18,7 @@ export default function AppListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('834');
+  const [pesquisa, setPesquisa] = useState('084');
 
   useEffect(()=>{
     loadApi();
