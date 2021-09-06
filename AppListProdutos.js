@@ -93,7 +93,7 @@ function ListItem( {data} ){
   return(
     <View style={styles.listItem}>
       <Image
-         style={styles.imagemDosProdutos}
+         style={{width: '100%', height: 170}}
          source={{
          uri: foto(data.linkFot),
         }}
