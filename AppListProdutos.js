@@ -18,7 +18,7 @@ export default function AppListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('084');
+  const [pesquisa, setPesquisa] = useState('08');
 
   useEffect(()=>{
     loadApi();
@@ -92,12 +92,14 @@ function ListItem( {data} ){
   }
   return(
     <View style={styles.listItem}>
+      <View style={{width:'100%',paddingTop:'70%'}}>
       <Image
-         style={{width: '100%', height: 170}}
+         style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
          source={{
          uri: foto(data.linkFot),
         }}
       />
+      </View>
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
