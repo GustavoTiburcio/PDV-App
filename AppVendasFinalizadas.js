@@ -10,6 +10,7 @@ export default function AppVendasFinalizadas() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('Gold');
+  const [itensPedidos, setItensPedidos]= useState();
 
   useEffect(()=>{
     loadApi();
@@ -22,11 +23,26 @@ export default function AppVendasFinalizadas() {
 
     const response = await api.get(`/pedidos/listarPorCliente?page=${page}&nome=${pesquisa}`)
 
-    console.log(response.data.content);
-    setData([...data, ...response.data.content])
+    const resp = response.data.content;
+
+    const itePed = resp.map((ped) => {
+      return { codped: ped.cod, mer: ped.mer, qua: ped.qua, valUni: ped.valUni }
+    });
+    setItensPedidos(itePed);
+    const cabPedAux = resp.map((ped) => {
+        return { cod: ped.cod, datHor: ped.datHor, raz: ped.raz, valTot: ped.valTot, valFre: ped.valFre, exp: ped.exp, visualizarItens: false }
+    });
+
+    const cabPed = cabPedAux
+        .map(e => JSON.stringify(e))
+        .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
+        .map(e => JSON.parse(e));
+
+    setData([...data, ...cabPed])
+    console.log(data);
+    console.log(itensPedidos);
     setPage(page + 1);
     setLoading(false);
-
   }
 
   function novaPesquisa(){
@@ -38,7 +54,7 @@ export default function AppVendasFinalizadas() {
     <View style={styles.container}>
       <StatusBar style="light" />
       <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Histórico de vendas</Text>
-      {/* <FlatList 
+       <FlatList 
         contentContainerStyle={{marginHorizontal: 20}}
         data={data}
         keyExtractor={item => String(item.cod)}
@@ -46,7 +62,7 @@ export default function AppVendasFinalizadas() {
         onEndReached={loadApi}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
-      /> */}
+      />
     </View>
   );
 }
@@ -66,7 +82,10 @@ function ListItem( {data} ){
 
   return(
     <View style={styles.listItem}>
-      <Text style={styles.listText}>{data.mer}</Text>
+      {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
+      <Text style={styles.listText}>Data: {data.datHor.toLocal}</Text>
+      <Text style={styles.listText}>Razão social: {data.raz}</Text>
+      <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
     </View>
   )
 }
