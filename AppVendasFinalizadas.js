@@ -2,9 +2,10 @@ import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar';
+import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
  
-export default function AppVendasFinalizadas() {
+export default function AppVendasFinalizadas({ route, navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,7 @@ export default function AppVendasFinalizadas() {
 
   useEffect(()=>{
     loadApi();
-  },[data])
+  },[data, navigation])
 
   async function loadApi(){
     if(loading) return;
@@ -39,8 +40,13 @@ export default function AppVendasFinalizadas() {
         .map(e => JSON.parse(e));
 
     setData([...data, ...cabPed])
-    console.log(data);
     console.log(itensPedidos);
+    //  var teste = itensPedidos.filter(teste => teste.codped == "d7667915-cffd-4493-8961-c1dbb499b496");
+     
+    //  teste.forEach(teste => {
+    //    console.log(teste);
+    //  })
+    
     setPage(page + 1);
     setLoading(false);
   }
@@ -53,6 +59,14 @@ export default function AppVendasFinalizadas() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+      <SearchBar
+        style={styles.SearchBar}
+        placeholder="Digite o nome do cliente"
+        onChangeText={(text) => setPesquisa(text)}
+        onSearchPress={() => novaPesquisa()}
+        returnKeyType="go"
+        onSubmitEditing={() => novaPesquisa()}
+      />
       <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Histórico de vendas</Text>
        <FlatList 
         contentContainerStyle={{marginHorizontal: 20}}
@@ -83,7 +97,8 @@ function ListItem( {data} ){
   return(
     <View style={styles.listItem}>
       {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
-      <Text style={styles.listText}>Data: {data.datHor.toLocal}</Text>
+      <Text style={styles.listText}>Data: {data.datHor}</Text>
+      <Text style={styles.listText}>Razão social: {data.raz}</Text>
       <Text style={styles.listText}>Razão social: {data.raz}</Text>
       <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
     </View>
@@ -106,6 +121,10 @@ const styles = StyleSheet.create({
   listText:{
     fontSize: 16,
     color:'#000000'
+  },
+  SearchBar: {
+    backgroundColor: '#F3F3F3',
+    marginTop: 20,
   },
   loading: {
     padding: 10
