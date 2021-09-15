@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert } from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
@@ -15,6 +15,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
   useEffect(()=>{
     loadApi();
+    Alert.alert('Atenção', 'Tela em construção!!');
   },[data, navigation])
 
   async function loadApi(){
@@ -40,7 +41,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         .map(e => JSON.parse(e));
 
     setData([...data, ...cabPed])
-    console.log(itensPedidos);
+    console.log(data);
     //  var teste = itensPedidos.filter(teste => teste.codped == "d7667915-cffd-4493-8961-c1dbb499b496");
      
     //  teste.forEach(teste => {
@@ -63,9 +64,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         style={styles.SearchBar}
         placeholder="Digite o nome do cliente"
         onChangeText={(text) => setPesquisa(text)}
-        onSearchPress={() => novaPesquisa()}
+        onSearchPress={() => {}}
         returnKeyType="go"
-        onSubmitEditing={() => novaPesquisa()}
+        onSubmitEditing={() => {}}
       />
       <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Histórico de vendas</Text>
        <FlatList 
@@ -93,12 +94,11 @@ function FooterList( Load ){
 function ListItem( {data} ){  
 
   const navigation = useNavigation();
-
+  let datVen = data.datHor;
   return(
     <View style={styles.listItem}>
       {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
-      <Text style={styles.listText}>Data: {data.datHor}</Text>
-      <Text style={styles.listText}>Razão social: {data.raz}</Text>
+      <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
       <Text style={styles.listText}>Razão social: {data.raz}</Text>
       <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
     </View>
