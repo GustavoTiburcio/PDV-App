@@ -24,14 +24,18 @@ export default function AppLogin({navigation}) {
   }
 
 async function loginAuthenticate(){
+  if (username != '' && password != '') {
     const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
-     if (response.data == []) {
-       Alert.alert('Usuário ou senha incorretos')
+    if (response.data == []) {
+      Alert.alert('Usuário ou senha incorretos', 'Verique as credenciais informadas')
     }else{
-        setLoginData(response.data)
-        navigation.navigate('AppListProdutos')
+      setLoginData(response.data)
+      navigation.navigate('AppListProdutos')
     }
+  }else{
+    Alert.alert('Campos em branco', 'Favor informar Usuário e Senha')
   }
+}
 
   useEffect(() => {
     storeData();

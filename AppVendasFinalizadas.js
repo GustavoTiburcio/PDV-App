@@ -1,9 +1,11 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
+import BotaoVermelho from './components/BotaoVermelho';
+import { Col, Row, Grid } from 'react-native-easy-grid';
  
 export default function AppVendasFinalizadas({ route, navigation }) {
 
@@ -12,11 +14,16 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('Gold');
   const [itensPedidos, setItensPedidos]= useState();
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(()=>{
     loadApi();
     Alert.alert('Atenção', 'Tela em construção!!');
-  },[data, navigation])
+  },[])
+
+  useEffect(()=>{
+    setRefresh(false)
+  },[refresh])
 
   async function loadApi(){
     if(loading) return;
@@ -42,6 +49,8 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
     setData([...data, ...cabPed])
     console.log(data);
+    console.log('itens');
+    console.log(itePed);
     //  var teste = itensPedidos.filter(teste => teste.codped == "d7667915-cffd-4493-8961-c1dbb499b496");
      
     //  teste.forEach(teste => {
@@ -55,6 +64,68 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   function novaPesquisa(){
     setPage(0);
     setData([]);
+  }
+
+  function FooterList( Load ){
+    if(!Load) return null;
+    return(
+      <View style={styles.loading}>
+      <ActivityIndicator size={25} color="#121212" />
+      </View>
+    )
+  }
+
+  function filtrarItePed(codped){
+    const itensfiltrados = itensPedidos.filter(function(items){
+      return items.codped == codped;
+    });
+    console.log('teste');
+    console.log(itensfiltrados);
+    const itens = itensfiltrados.map(item => {
+      return ( <View key={item.mer}>
+        <Grid>
+        <Col size={15}>
+            <Row style={styles.cell}>
+              <Text>{item.qua}x</Text>
+            </Row>
+          </Col>
+          <Col size={50}>
+            <Row style={styles.cell}>
+              <Text>{item.mer}</Text>
+            </Row>
+          </Col>
+          <Col size={25}>
+            <Row style={styles.cell}>
+              <Text>R$ {item.valUni.toFixed(2).replace('.',',')}</Text>
+            </Row>
+          </Col>
+        </Grid>
+        </View> )
+    })
+    return itens;
+  }
+  
+  function ListItem( {data} ){  
+  
+    const navigation = useNavigation();
+    let datVen = data.datHor;
+    return(
+      <View style={styles.listItem}>
+        {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
+        <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
+        <Text style={styles.listText}>Razão social: {data.raz}</Text>
+        {data.visualizarItens ? filtrarItePed(data.cod) : null}
+        <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
+        <View>
+              <TouchableOpacity
+              style={styles.DetalhesButton}
+              activeOpacity={0.5}
+              onPress={() => {data.visualizarItens = true; setRefresh(true)}}>
+                <Text style={styles.TextButton}> Detalhes(+) </Text>
+              </TouchableOpacity>
+        </View>
+      </View>
+    )
   }
 
   return (
@@ -82,28 +153,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   );
 }
 
-function FooterList( Load ){
-  if(!Load) return null;
-  return(
-    <View style={styles.loading}>
-    <ActivityIndicator size={25} color="#121212" />
-    </View>
-  )
-}
 
-function ListItem( {data} ){  
-
-  const navigation = useNavigation();
-  let datVen = data.datHor;
-  return(
-    <View style={styles.listItem}>
-      {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
-      <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
-      <Text style={styles.listText}>Razão social: {data.raz}</Text>
-      <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
-    </View>
-  )
-}
  
 const styles = StyleSheet.create({
   container: {
@@ -122,9 +172,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color:'#000000'
   },
+  TextButton: {
+    fontSize: 14,
+    color:'#FFF'
+  },
+  DetalhesButton: {
+    marginTop: 15,
+    height:50,
+    padding: 15,
+    borderRadius: 25,
+    borderWidth: 0,
+    marginBottom: 15,
+    marginHorizontal: 100,
+    backgroundColor: '#121212',
+  },
   SearchBar: {
     backgroundColor: '#F3F3F3',
     marginTop: 20,
+  },
+  cell: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    flex: 1, 
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   loading: {
     padding: 10
