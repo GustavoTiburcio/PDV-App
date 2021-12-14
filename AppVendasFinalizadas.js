@@ -69,32 +69,34 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     )
   }
 
-  function filtrarItePed(codped){
-    const itensfiltrados = itensPedidos.filter(function(items){
-      return items.codped == codped;
-    });
-    console.log('teste itens filtrados');
-    console.log(itensfiltrados);
-    const itens = itensfiltrados.map(item => {
-      return ( <View key={item.mer}>
-        <Grid>
-        <Col size={15}>
-            <Row style={styles.cell}>
-              <Text>{item.qua}x</Text>
-            </Row>
-          </Col>
-          <Col size={50}>
-            <Row style={styles.cell}>
-              <Text>{item.mer}</Text>
-            </Row>
-          </Col>
-          <Col size={25}>
-            <Row style={styles.cell}>
-              <Text>R$ {item.valUni.toFixed(2).replace('.',',')}</Text>
-            </Row>
-          </Col>
-        </Grid>
-        </View> )
+function filtrarItePed(codped){
+  const itensfiltrados = itensPedidos.filter(function(items){
+    return items.codped == codped;
+  });
+  console.log('teste itens filtrados');
+  console.log(itensfiltrados);
+  const itens = itensfiltrados.map(item => {
+    return ( 
+        <View key={item.mer}>
+          <Grid>
+            <Col size={15}>
+              <Row style={styles.cell}>
+                <Text>{item.qua}x</Text>
+              </Row>
+            </Col>
+            <Col size={50}>
+              <Row style={styles.cell}>
+                <Text>{item.mer}</Text>
+              </Row>
+            </Col>
+            <Col size={25}>
+              <Row style={styles.cell}>
+                <Text>R$ {item.valUni.toFixed(2).replace('.',',')}</Text>
+              </Row>
+            </Col>
+          </Grid>
+        </View> 
+      )
     })
     return itens;
   }
@@ -108,6 +110,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         {/* <Text style={styles.listText}>código: {data.cod}</Text> */}
         <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
         <Text style={styles.listText}>Razão social: {data.raz}</Text>
+        {data.visualizarItens ? <Text style={{textAlign: 'center', fontSize: 18, color:'#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold'}} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
         <Text style={styles.ValVenText}>Total: R$ {data.valTot.toFixed(2).replace('.',',')}</Text>
         <View>
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color:'#000000',
     marginLeft: 180,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   TextButton: {
     fontSize: 14,

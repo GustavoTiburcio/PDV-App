@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Alert, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert, RefreshControl } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //import {Picker} from '@react-native-picker/picker';
 import PrintPDF, {getDadosPedido} from './PrintPDF';
 import * as Print from 'expo-print';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 
 
 const Carrinho = ({ route, navigation }) => {
@@ -327,34 +328,92 @@ const Carrinho = ({ route, navigation }) => {
 
     return (
         <View id={"pai"} >
+            <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Carrinho</Text>
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
                     <View id={"itens"} >
+                        <View style={styles.cabeçalho}>
+                        <TouchableOpacity 
+                            style = {{ 
+                                flex: 1,
+                                 flexDirection: 'column',
+                                 justifyContent: 'flex-start',
+                                 borderColor: 'black',
+                                 borderStyle: 'dotted',
+                                 borderWidth: 2,
+                                 borderRadius: 1,
+                                 position: 'relative',
+                             }}
+                        >
+                        </TouchableOpacity>
+                        <Grid>
+                            <Col size={15}>
+                                <Row style={styles.cellCabeçalho}>
+                                    <Text>Qtde</Text>
+                                </Row>
+                            </Col>
+                            <Col size={35}>
+                                <Row style={styles.cellCabeçalho}>
+                                    <Text>Vlr Uni</Text>
+                                </Row>
+                            </Col>
+                            <Col size={40}>
+                                <Row style={styles.cellCabeçalho}>
+                                    <Text>Vlr Total</Text>
+                                </Row>
+                            </Col>
+                            <Col size={25}>
+                                <Row style={styles.cellCabeçalho}>
+                                    <Text></Text>
+                                </Row>
+                            </Col>
+                        </Grid>
+                        <TouchableOpacity 
+                            style = {{ 
+                                flex: 1,
+                                 flexDirection: 'column',
+                                 justifyContent: 'flex-start',
+                                 borderColor: 'black',
+                                 borderStyle: 'dotted',
+                                 borderWidth: 2,
+                                 borderRadius: 1,
+                                 position: 'relative',
+                             }}
+                        >
+                        </TouchableOpacity>
+                        </View>
                         {itensCarrinho.map((itemCar, key) => {
                             return (
                                 <View key={key} style={styles.container}>
-                                    <View style={styles.itenWiew}>
-
-                                        <Text style={styles.textItem}>{itemCar.item}</Text>
-
-                                        <TouchableOpacity onPress={() => deleteClick(itemCar)} style={styles.deleteButton}>
-                                            <Ionicons
-                                                name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
-                                                size={23}
-                                                color="red"
-                                            />
-                                        </TouchableOpacity>
-                                    </View >
-                                        <View flexDirection="row">
-                                            <Text style={styles.textCabeçalhoCarrinho}>Qtd</Text>
-                                            <Text style={styles.textCabeçalhoCarrinho}>Vlr Uni</Text>
-                                            <Text style={styles.textCabeçalhoCarrinho}>Total</Text>
-                                        </View>
-                                    <View style={styles.itenWiew}>
-                                        <Text style={styles.textQuantidade}>{itemCar.quantidade}</Text>
-                                        <Text style={styles.valorItem}>R$ {Number.parseFloat(itemCar.valor).toFixed(2).replace('.',',')}</Text>
-                                        <Text style={styles.valorTotalItem}>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.',',')}</Text>
-                                    </View>
+                                    <Text style={styles.textItem}>{itemCar.item}</Text>
+                                    <Grid>
+                                        <Col size={15}>
+                                            <Row style={styles.cell}>
+                                                <Text>{itemCar.quantidade}</Text>
+                                            </Row>
+                                        </Col>
+                                        <Col size={35}>
+                                            <Row style={styles.cell}>
+                                                <Text>R$ {Number.parseFloat(itemCar.valor).toFixed(2).replace('.',',')}</Text>
+                                            </Row>
+                                        </Col>
+                                        <Col size={40}>
+                                            <Row style={styles.cell}>
+                                                <Text>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.',',')}</Text>
+                                            </Row>
+                                        </Col>
+                                        <Col size={20}>
+                                            <Row style={styles.cell}>
+                                                <TouchableOpacity onPress={() => deleteClick(itemCar)} style={styles.deleteButton}>
+                                                    <Ionicons
+                                                        name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
+                                                        size={23}
+                                                        color="red"
+                                                    />
+                                                </TouchableOpacity>
+                                            </Row>
+                                        </Col>
+                                    </Grid>
                                 </View>
                             )
                         })}
@@ -362,6 +421,7 @@ const Carrinho = ({ route, navigation }) => {
                             <Text style={styles.textValorPedido}> Valor Total: </Text>
                             <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.',',')}</Text>
                         </View>
+                        <Text style={{fontSize: 16,color:'#000000'}}>Cliente: {ImprimeDadosCliente()}</Text>
                         <View flexDirection="row">
                             <BotaoVermelho 
                                 text={'Selecionar Cliente'}
@@ -371,7 +431,6 @@ const Carrinho = ({ route, navigation }) => {
                             }}
                             />
                         </View>
-                        <Text style={{fontSize: 16,color:'#000000'}}>Cliente: {ImprimeDadosCliente()}</Text>
                         {/* <Text style={{fontSize: 16,color:'#000000', paddingTop: 40}}>Forma de pagamento:</Text>
                         <Picker
                             selectedValue={selectedLanguage}
@@ -390,9 +449,19 @@ const Carrinho = ({ route, navigation }) => {
                             <BotaoVermelho
                                 text={`Finalizar Venda`}
                                 onPress={() => enviaPedido()}></BotaoVermelho>
+                        <Text></Text>
+                        <Text></Text>
+                        <Text></Text>
+                        <Text></Text>
                     </View>
                     : <View>
-                        <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text>
+                        {/* <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text> */}
+                        <View style={{alignItems:'center'}}>
+                            <Image
+                                style={{resizeMode:'contain', paddingTop: 600, height: 250, width: 280}}                           
+                                source={require('./images/carrinhovazio.png')}
+                            />
+                        </View>
                     </View>
                 }
             </ScrollView>
@@ -401,6 +470,10 @@ const Carrinho = ({ route, navigation }) => {
 };
 const styles = StyleSheet.create({
     container: {
+        padding: 4,
+        justifyContent: 'space-between'
+    },
+    cabeçalho: {
         padding: 10,
         justifyContent: 'space-between'
     },
@@ -410,7 +483,7 @@ const styles = StyleSheet.create({
     textItem: {
         width: '85%',
         padding: 1,
-        fontSize: 20,
+        fontSize: 17,
         color: "#000000",
         fontWeight: "bold",
         textAlignVertical: "center",
@@ -427,6 +500,20 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         alignItems: 'flex-start',
     },
+    cell: {
+        borderWidth: 1,
+        borderColor: '#000',
+        flex: 1, 
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+      },
+      cellCabeçalho: {
+        borderWidth: 0,
+        borderColor: '#000',
+        flex: 1, 
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
     valorItem: {
         fontSize: 17,
         color: "#000000",
@@ -505,7 +592,7 @@ const styles = StyleSheet.create({
         marginRight: 1,
         paddingLeft: 20,
         alignSelf: "center",
-        alignItems: 'flex-end',
+        alignItems: 'flex-start',
 
     },
     textCarinhoVazio: {

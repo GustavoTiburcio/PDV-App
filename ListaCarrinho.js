@@ -28,7 +28,11 @@ const ListaCarrinho = ({ route, navigation }) => {
     },[quantidade, valorItem])
 
     const salvaPedido = () => {
-        if (quantidade != undefined) {
+        if (quantidade == undefined) {
+            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+        }else if(codmer == undefined) {
+            Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
+        }else{
             let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {
             console.log('Adicionado ao carrinho: ')
@@ -36,8 +40,6 @@ const ListaCarrinho = ({ route, navigation }) => {
             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
         });
-        }else{
-            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         }
     };
     return (
