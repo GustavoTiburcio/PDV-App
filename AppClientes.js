@@ -71,7 +71,7 @@ function ListItem( {data} ){
     try {
       const jsonValue = JSON.stringify(data)
       await AsyncStorage.setItem('@Cliente_data', jsonValue)
-      console.log('salvou informações do cliente: ' + jsonValue)
+      console.log('salvou localstorage informações do cliente: ' + jsonValue)
     } catch (e) {
       console.log('erro ao salvar informações de Cliente' + e)
     }

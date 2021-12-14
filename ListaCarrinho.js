@@ -49,15 +49,17 @@ const ListaCarrinho = ({ route, navigation }) => {
                 style={styles.textinput}
                 keyboardType="numeric"
                 autoFocus = {true}
+                placeholder="Digite a quantidade"
                 onChangeText={value => setQuantidade(value)}>
                 {quantidade}
             </TextInput>
-            <Text style={styles.text}>Valor:</Text>
+            <Text style={styles.text}>Valor R$:</Text>
             <TextInput
                 style={styles.textinput}
                 keyboardType="numeric"
+                placeholder="Valor do produto"
                 onChangeText={value => setValorItem(value.replace(',','.'))}>
-                {valor}
+                {valor.toFixed(2).replace('.',',')}
             </TextInput>
             <BotaoVermelho
                 text={

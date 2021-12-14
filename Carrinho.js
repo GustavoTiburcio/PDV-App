@@ -104,7 +104,7 @@ const Carrinho = ({ route, navigation }) => {
     function enviaPedido() {
 
         if (dadosCliente == null) {
-            Alert.alert("Faltou selecionar o cliente");
+            Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         }else{
         const appuser = {id: dadosCliente.id};
         const itensPedido = itensCarrinho.map((iten) => {
@@ -352,15 +352,15 @@ const Carrinho = ({ route, navigation }) => {
                                         </View>
                                     <View style={styles.itenWiew}>
                                         <Text style={styles.textQuantidade}>{itemCar.quantidade}</Text>
-                                        <Text style={styles.valorItem}>R$ {Number.parseFloat(itemCar.valor).toFixed(2)}</Text>
-                                        <Text style={styles.valorTotalItem}>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2)}</Text>
+                                        <Text style={styles.valorItem}>R$ {Number.parseFloat(itemCar.valor).toFixed(2).replace('.',',')}</Text>
+                                        <Text style={styles.valorTotalItem}>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.',',')}</Text>
                                     </View>
                                 </View>
                             )
                         })}
                         <View flexDirection="row">
                             <Text style={styles.textValorPedido}> Valor Total: </Text>
-                            <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2)}</Text>
+                            <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.',',')}</Text>
                         </View>
                         <View flexDirection="row">
                             <BotaoVermelho 

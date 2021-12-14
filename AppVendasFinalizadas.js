@@ -13,7 +13,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('Gold');
-  const [itensPedidos, setItensPedidos]= useState();
+  const [itensPedidos, setItensPedidos]= useState([]);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(()=>{
@@ -37,7 +37,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const itePed = resp.map((ped) => {
       return { codped: ped.cod, mer: ped.mer, qua: ped.qua, valUni: ped.valUni }
     });
-    setItensPedidos(itePed);
+    setItensPedidos([...itensPedidos, ...itePed]);
     const cabPedAux = resp.map((ped) => {
         return { cod: ped.cod, datHor: ped.datHor, raz: ped.raz, valTot: ped.valTot, valFre: ped.valFre, exp: ped.exp, visualizarItens: false }
     });
@@ -51,12 +51,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     console.log(data);
     console.log('itens');
     console.log(itePed);
-    //  var teste = itensPedidos.filter(teste => teste.codped == "d7667915-cffd-4493-8961-c1dbb499b496");
-     
-    //  teste.forEach(teste => {
-    //    console.log(teste);
-    //  })
-    
     setPage(page + 1);
     setLoading(false);
   }
@@ -79,7 +73,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const itensfiltrados = itensPedidos.filter(function(items){
       return items.codped == codped;
     });
-    console.log('teste');
+    console.log('teste itens filtrados');
     console.log(itensfiltrados);
     const itens = itensfiltrados.map(item => {
       return ( <View key={item.mer}>
@@ -115,13 +109,21 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
         <Text style={styles.listText}>Razão social: {data.raz}</Text>
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        <Text style={styles.listText}>Total: R${data.valTot.toFixed(2).replace('.',',')}</Text>
+        <Text style={styles.ValVenText}>Total: R$ {data.valTot.toFixed(2).replace('.',',')}</Text>
         <View>
               <TouchableOpacity
               style={styles.DetalhesButton}
               activeOpacity={0.5}
-              onPress={() => {data.visualizarItens = true; setRefresh(true)}}>
-                <Text style={styles.TextButton}> Detalhes(+) </Text>
+              onPress={() => {
+                if (data.visualizarItens == false) {
+                  data.visualizarItens = true;
+                  setRefresh(true);
+                } else {
+                  data.visualizarItens = false;
+                  setRefresh(true);
+                }
+                }}>
+                <Text style={styles.TextButton}> {data.visualizarItens ? '    Fechar' : 'Detalhes(+)'} </Text>
               </TouchableOpacity>
         </View>
       </View>
@@ -172,9 +174,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color:'#000000'
   },
+  ValVenText:{
+    fontSize: 16,
+    color:'#000000',
+    marginLeft: 180,
+    fontWeight: 'bold'
+  },
   TextButton: {
     fontSize: 14,
-    color:'#FFF'
+    color:'#FFF',
   },
   DetalhesButton: {
     marginTop: 15,
