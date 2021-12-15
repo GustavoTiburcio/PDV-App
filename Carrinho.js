@@ -18,7 +18,6 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 const Carrinho = ({ route, navigation }) => {
     var date = new Date();
     var dathor = date.toISOString();
-    let codped = uuidv4();
 
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
@@ -27,6 +26,7 @@ const Carrinho = ({ route, navigation }) => {
     const [codcat, setCodCat] = useState();
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
+    const [codPed, setCodPed] = useState();
     const [selectedLanguage, setSelectedLanguage] = useState();
 
 
@@ -43,17 +43,24 @@ const Carrinho = ({ route, navigation }) => {
            const clientedados = await AsyncStorage.getItem('@Cliente_data')
            setDadosCliente(JSON.parse(clientedados))
            console.log('Pegou dados cliente: ' + clientedados)
-               } catch(e) {
+        } catch(e) {
             console.log('Erro ao ler login')
-           }
-       }
+        }
+    }
 
+    async function getUltimoCodPed(){
+        const response = await api.get(`/pedidos/recuperaUltimoCod`)
+        setCodPed(response.data)
+        console.log(codPed);
+    }
+
+    //Gera GUID
     function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
-      }
+    }
 
     async function deleteClick(mer) {
         if (mer != null) {
@@ -89,11 +96,12 @@ const Carrinho = ({ route, navigation }) => {
         navigation.addListener('focus', () => {
             buscarItens();
             getClienteData();
+            getUltimoCodPed() 
         });
     }, [navigation]);
 
     useEffect(() => {
-        getLoginData();  
+        getLoginData(); 
     },[])
 
     useEffect(() => {
@@ -111,7 +119,7 @@ const Carrinho = ({ route, navigation }) => {
         const itensPedido = itensCarrinho.map((iten) => {
             return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: iten.item}};
         });    
-        const ped = JSON.stringify({cod: codped, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+        const ped = JSON.stringify({cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
         trarednom: '', appuser, itensPedido})
         console.log('PostPedido: ')
         console.log(ped)
@@ -175,7 +183,10 @@ const Carrinho = ({ route, navigation }) => {
               </br>
               </br>
                 <p></p>
+                <p align="right"><b>Venda ${codPed}</b></p>
+                </br>
                 <p align="center"><b>GOLD CHAVES</b></p>
+                </br>
                 <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
                 </br>
                 </br>
@@ -207,8 +218,8 @@ const Carrinho = ({ route, navigation }) => {
             </body>
             </html>
         `;
-    const createAndPrintPDF = async () => {
-              try {
+        const createAndPrintPDF = async () => {
+            try {
                 const { uri } = await Print.printToFileAsync({ 
                   html: htmlContent,
                   width: 1000, height: 1500 });
@@ -216,10 +227,10 @@ const Carrinho = ({ route, navigation }) => {
                 await Print.printAsync({
                     uri:uri
                 })
-              } catch (error) {
+            } catch (error) {
                 console.error(error);
-              }
-            };
+            }
+        };
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
                     setItensCarrinho(null);

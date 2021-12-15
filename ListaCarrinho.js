@@ -17,11 +17,11 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
 
     async function getListarDetalhes(){
-             const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-             var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
-             codmer = prod[0][0]
-             console.log('Pegou codmer ao abrir a tela: ' + codmer)
-        }
+        const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+        var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+        codmer = prod[0][0]
+        console.log('Pegou codmer ao abrir a tela: ' + codmer)        
+    }
 
     useEffect(()=>{
         getListarDetalhes()
