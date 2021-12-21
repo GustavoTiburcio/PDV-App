@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity, Share } from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
@@ -7,6 +7,8 @@ import {useNavigation} from '@react-navigation/native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import * as Print from 'expo-print';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import RNFetchBlob from 'rn-fetch-blob';
  
 export default function AppVendasFinalizadas({ route, navigation }) {
 
@@ -17,13 +19,15 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [itensPedidos, setItensPedidos]= useState([]);
   const [dadosPedido, setDadosPedido]= useState();
   const [refresh, setRefresh] = useState(false);
+  cnost [pdf, setPdf] = useState();
+
 
   useEffect(()=>{
     loadApi();
-  },[])
+  },[data])
 
   useEffect(()=>{
-
+    
   },[dadosPedido])
 
   useEffect(()=>{
@@ -31,11 +35,16 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   },[refresh])
 
   async function loadApi(){
+
     if(loading) return;
 
     setLoading(true)
 
-    const response = await api.get(`/pedidos/listarPorCliente?page=${page}&nome=${pesquisa}`)
+    const jsonValue = await AsyncStorage.getItem('@login_data')
+    const login = JSON.parse(jsonValue)
+    console.log('teste final ' + login.username)
+    
+    const response = await api.get(`/pedidos/listarPorCliente?page=${page}&nome=${login.username}`)
 
     const resp = response.data.content;
 
@@ -63,10 +72,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   function novaPesquisa(){
     setPage(0);
     setData([]);
-  }
-
-  function currencyFormat(num) {
-    return num.toFixed(2);
   }
 
   function FooterList( Load ){
@@ -142,126 +147,263 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               <TouchableOpacity
               style={styles.DetalhesButton}
               activeOpacity={0.5}
-              onPress={() => {createAndPrintPDF(data.cod)}}>
+              onPress={() => {
+                GeraPDF(data.cod);
+                }}>
                 <Text style={styles.TextButton}> Imprimir </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+              style={styles.DetalhesButton}
+              activeOpacity={0.5}
+              onPress={() => {
+                // RNFetchBlob.fs
+                //   .readFile('file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540tibursto%252FGold-App/Print/e37d262d-772f-4470-b118-71d8e57c8d2e.pdf', 'base64')
+                //   .then((data) => {
+                //     setPdf(data);
+                //   })
+                //   .catch((err) => {});
+                Share.open({
+                  url: pdf,
+                  title: 'Download PDF',
+                  message: 'Recibo da venda ' + data.cod
+                })
+                }}>
+                <Text style={styles.TextButton}> Share </Text>
               </TouchableOpacity>
         </View>
       </View>
     )
   }
 
-  const createAndPrintPDF = async (codped) => {
-
+  async function GeraPDF(codped){
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     setDadosPedido(response.data)
+
     console.log('Dados pedido')
-    console.log(dadosPedido.Pedidos[0]);
+    console.log(response.data.Pedidos[0]);
 
-    var PrintItems = dadosPedido.Pedidos[0].itensPedido.map(function(item){
-      return `<tr>
-      <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-          <b>${item.mer}</b>
-      </td>
-      <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
-          <b>${item.qua}</b>
-      </td>
-      <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
-          <b>${item.valUni.toFixed(2).replace('.',',')}</b>
-      </td>
-      <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
-          <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
-      </td>
-      </tr>`;
-  });
+    async function createAndPrintPDF() {
+        var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
+          return `<tr>
+          <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
+              <b>${item.mer}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+              <b>${item.qua}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+              <b>${item.valUni.toFixed(2).replace('.',',')}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+              <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
+          </td>
+          </tr>`;
+        });
+    
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Pdf Content</title>
+              <style>
+                  body {
+                      color: #000000;
+                  }
+                  p {
+                    font-family: "Didot", "Times New Roman";
+                    font-size: 38px;
+                    margin: 0;
+                  }
+                  table {
+                    border-collapse: collapse;
+                    width: 100%;
+                  }
+                  th, td {
+                    text-align: left;
+                    padding: 8px;
+                    font-family: "Didot", "Times New Roman";
+                    font-size: 38px;
+                  }
+                  tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                    margin-bottom:0px
+                  }
+                  div.small{
+                    
+                  }
+              </style>
+          </head>
+          <body>
+            <div class="small">
+            </br>
+            </br>
+              <p></p>
+              <p align="right"><b>Venda ${codped}</b></p>
+              </br>
+              <p align="center"><b>GOLD CHAVES</b></p>
+              </br>
+              <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+              </br>
+              </br>
+              <div>
+                <p><b>Data: ${response.data.Pedidos[0].dat}</b></p>
+                <p><b>Vendedor: </b></p>
+                <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
+                <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
+                <p><b>Email: ${response.data.Pedidos[0].cliente.ema}</b></p>
+                <p><b> Endereço: ${response.data.Pedidos[0].cliente.endereco[0].log + ', ' + response.data.Pedidos[0].cliente.endereco[0].num}</b></p>
+                <p><b>Bairro: ${response.data.Pedidos[0].cliente.endereco[0].bai}</b><b> Cidade: ${response.data.Pedidos[0].cliente.endereco[0].cid + ' - ' + response.data.Pedidos[0].cliente.endereco[0].uf}</b></p>
+              </div>
+              <table>
+                                      <thead>
+                                          <tr>
+                                              <th>Descricao</th>
+                                              <th>Qtd</th>
+                                              <th>Vlr</th>
+                                              <th>Total</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      ${PrintItems}
+                                      </tbody>
+              </table>
+              </div>
+              </br>
+              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+          </body>
+          </html>
+        `;
+    
+        try {
+          const { uri } = await Print.printToFileAsync({ 
+            html: htmlContent,
+            width: 1000, height: 1500 });
+          console.log(uri)
+          await Print.printAsync({
+              uri:uri
+            })
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Pdf Content</title>
-          <style>
-              body {
-                  color: #000000;
-              }
-              p {
-                font-family: "Didot", "Times New Roman";
-                font-size: 38px;
-                margin: 0;
-              }
-              table {
-                border-collapse: collapse;
-                width: 100%;
-              }
-              th, td {
-                text-align: left;
-                padding: 8px;
-                font-family: "Didot", "Times New Roman";
-                font-size: 38px;
-              }
-              tr:nth-child(even) {
-                background-color: #f2f2f2;
-                margin-bottom:0px
-              }
-              div.small{
-                
-              }
-          </style>
-      </head>
-      <body>
-        <div class="small">
-        </br>
-        </br>
-          <p></p>
-          <p align="right"><b>Venda ${codped}</b></p>
-          </br>
-          <p align="center"><b>GOLD CHAVES</b></p>
-          </br>
-          <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
-          </br>
-          </br>
-          <div>
-            <p><b>Data: ${dadosPedido.Pedidos[0].dat}</b></p>
-            <p><b>Vendedor: </b></p>
-            <p><b>Razão Social:</b><b> ${dadosPedido.Pedidos[0].cliente.raz}</b></p>
-            <p><b>CPF/CNPJ: ${dadosPedido.Pedidos[0].cliente.cgc}</b><b> Telefone: ${dadosPedido.Pedidos[0].cliente.tel}</b></p>
-            <p><b>Email: ${dadosPedido.Pedidos[0].cliente.ema}</b></p>
-            <p><b> Endereço: ${dadosPedido.Pedidos[0].cliente.endereco[0].log + ', ' + dadosPedido.Pedidos[0].cliente.endereco[0].num}</b></p>
-            <p><b>Bairro: ${dadosPedido.Pedidos[0].cliente.endereco[0].bai}</b><b> Cidade: ${dadosPedido.Pedidos[0].cliente.endereco[0].cid + ' - ' + dadosPedido.Pedidos[0].cliente.endereco[0].uf}</b></p>
-          </div>
-          <table>
-                                  <thead>
-                                      <tr>
-                                          <th>Descricao</th>
-                                          <th>Qtd</th>
-                                          <th>Vlr</th>
-                                          <th>Total</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                  ${PrintItems}
-                                  </tbody>
-          </table>
-          </div>
-          </br>
-          <p style="text-align:right"><b>Total geral: R$ ${dadosPedido.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
-      </body>
-      </html>
-    `;
-
-    try {
-      const { uri } = await Print.printToFileAsync({ 
-        html: htmlContent,
-        width: 1000, height: 1500 });
-      console.log(uri)
-      await Print.printAsync({
-          uri:uri
-        })
-    } catch (error) {
-      console.error(error);
-    }
+    createAndPrintPDF()
   };
+
+  async function SharePDF(codped){
+    const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
+    async function createPDF() {
+        var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
+          return `<tr>
+          <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
+              <b>${item.mer}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+              <b>${item.qua}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+              <b>${item.valUni.toFixed(2).replace('.',',')}</b>
+          </td>
+          <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+              <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
+          </td>
+          </tr>`;
+        });
+    
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Pdf Content</title>
+              <style>
+                  body {
+                      color: #000000;
+                  }
+                  p {
+                    font-family: "Didot", "Times New Roman";
+                    font-size: 38px;
+                    margin: 0;
+                  }
+                  table {
+                    border-collapse: collapse;
+                    width: 100%;
+                  }
+                  th, td {
+                    text-align: left;
+                    padding: 8px;
+                    font-family: "Didot", "Times New Roman";
+                    font-size: 38px;
+                  }
+                  tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                    margin-bottom:0px
+                  }
+                  div.small{
+                    
+                  }
+              </style>
+          </head>
+          <body>
+            <div class="small">
+            </br>
+            </br>
+              <p></p>
+              <p align="right"><b>Venda ${codped}</b></p>
+              </br>
+              <p align="center"><b>GOLD CHAVES</b></p>
+              </br>
+              <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+              </br>
+              </br>
+              <div>
+                <p><b>Data: ${response.data.Pedidos[0].dat}</b></p>
+                <p><b>Vendedor: </b></p>
+                <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
+                <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
+                <p><b>Email: ${response.data.Pedidos[0].cliente.ema}</b></p>
+                <p><b> Endereço: ${response.data.Pedidos[0].cliente.endereco[0].log + ', ' + response.data.Pedidos[0].cliente.endereco[0].num}</b></p>
+                <p><b>Bairro: ${response.data.Pedidos[0].cliente.endereco[0].bai}</b><b> Cidade: ${response.data.Pedidos[0].cliente.endereco[0].cid + ' - ' + response.data.Pedidos[0].cliente.endereco[0].uf}</b></p>
+              </div>
+              <table>
+                                      <thead>
+                                          <tr>
+                                              <th>Descricao</th>
+                                              <th>Qtd</th>
+                                              <th>Vlr</th>
+                                              <th>Total</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      ${PrintItems}
+                                      </tbody>
+              </table>
+              </div>
+              </br>
+              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+          </body>
+          </html>
+        `;
+    
+        try {
+          const { uri } = await Print.printToFileAsync({ 
+            html: htmlContent,
+            width: 1000, height: 1500 });
+            console.log(uri);
+            return uri
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+    const uri = createPDF();
+    return uri;
+  };
+
+  
   
   return (
     <View style={styles.container}>
@@ -324,7 +466,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 0,
     marginBottom: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 5,
     backgroundColor: '#121212',
   },
   SearchBar: {
