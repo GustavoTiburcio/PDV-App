@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity, Share } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import api from './api';
 import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
@@ -8,7 +8,8 @@ import BotaoVermelho from './components/BotaoVermelho';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import * as Print from 'expo-print';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import RNFetchBlob from 'rn-fetch-blob';
+import * as Sharing from 'expo-sharing';
+import Ionicons from 'react-native-vector-icons/Ionicons';
  
 export default function AppVendasFinalizadas({ route, navigation }) {
 
@@ -19,12 +20,17 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [itensPedidos, setItensPedidos]= useState([]);
   const [dadosPedido, setDadosPedido]= useState();
   const [refresh, setRefresh] = useState(false);
-  cnost [pdf, setPdf] = useState();
 
 
   useEffect(()=>{
     loadApi();
   },[data])
+
+//   useEffect(() => {
+//     navigation.addListener('focus', () => {
+//       loadApi();
+//     });
+// }, [navigation]);
 
   useEffect(()=>{
     
@@ -61,10 +67,14 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
         .map(e => JSON.parse(e));
 
+    console.log('CabPedAux');
+    console.log(cabPedAux);
+    console.log('CabPed');
+    console.log(cabPed);
+
     setData([...data, ...cabPed])
-    console.log(data);
-    console.log('itens');
-    console.log(itePed);
+    // console.log('itens');
+    // console.log(itePed);
     setPage(page + 1);
     setLoading(false);
   }
@@ -142,40 +152,34 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                   setRefresh(true);
                 }
                 }}>
-                <Text style={styles.TextButton}> {data.visualizarItens ? '    Fechar' : 'Detalhes(+)'} </Text>
+                <Text style={styles.TextButton}> {data.visualizarItens ? 'Fechar' : 'Detalhes(+)'} </Text>
               </TouchableOpacity>
               <TouchableOpacity
-              style={styles.DetalhesButton}
-              activeOpacity={0.5}
-              onPress={() => {
-                GeraPDF(data.cod);
-                }}>
-                <Text style={styles.TextButton}> Imprimir </Text>
+                style={styles.Icon}
+                activeOpacity={0.5}
+                onPress={() => {ImprimePDF(data.cod)}}>
+                  <Ionicons
+                    name={Platform.OS === 'android' ? 'md-print' : 'print'}
+                    size={23}
+                    color="black"
+                  />
               </TouchableOpacity>
               <TouchableOpacity
-              style={styles.DetalhesButton}
-              activeOpacity={0.5}
-              onPress={() => {
-                // RNFetchBlob.fs
-                //   .readFile('file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540tibursto%252FGold-App/Print/e37d262d-772f-4470-b118-71d8e57c8d2e.pdf', 'base64')
-                //   .then((data) => {
-                //     setPdf(data);
-                //   })
-                //   .catch((err) => {});
-                Share.open({
-                  url: pdf,
-                  title: 'Download PDF',
-                  message: 'Recibo da venda ' + data.cod
-                })
-                }}>
-                <Text style={styles.TextButton}> Share </Text>
+                style={styles.Icon}
+                activeOpacity={0.5}
+                onPress={() => {SharePDF(data.cod)}}>
+                  <Ionicons
+                    name={Platform.OS === 'android' ? 'md-share-social-sharp' : 'ios-share'}
+                    size={23}
+                    color="black"
+                  />
               </TouchableOpacity>
         </View>
       </View>
     )
   }
 
-  async function GeraPDF(codped){
+  async function ImprimePDF(codped){
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     setDadosPedido(response.data)
 
@@ -393,14 +397,12 @@ export default function AppVendasFinalizadas({ route, navigation }) {
             html: htmlContent,
             width: 1000, height: 1500 });
             console.log(uri);
-            return uri
+            Sharing.shareAsync(uri)
         } catch (error) {
           console.error(error);
         }
       };
-
-    const uri = createPDF();
-    return uri;
+    createPDF();
   };
 
   
@@ -467,7 +469,17 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     marginBottom: 15,
     marginHorizontal: 5,
-    backgroundColor: '#121212',
+    backgroundColor: '#000',
+  },
+  Icon: {
+    marginTop: 15,
+    height:50,
+    padding: 15,
+    marginBottom: 15,
+    marginHorizontal: 20,
+    backgroundColor: '#27d9a6',
+    borderRadius: 25,
+    borderWidth: 0,
   },
   SearchBar: {
     backgroundColor: '#F3F3F3',
