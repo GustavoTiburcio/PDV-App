@@ -8,7 +8,7 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
     let link = 'http://tifire.sytes.net:8089/api';  //Produção Servidor TiFire
     if (link !== null) {
         let url = link;
-        if (url === 'http://192.168.25.167:8089/api') {
+        if (url === 'http://tifire.sytes.net:8089/api') {
             link = url + '/pedidos/salvarPed';
             console.log(dadosPedido);
             return axios.post(link, dadosPedido, {
