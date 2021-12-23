@@ -20,6 +20,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [itensPedidos, setItensPedidos]= useState([]);
   const [dadosPedido, setDadosPedido]= useState();
   const [refresh, setRefresh] = useState(false);
+  const [visualizar, setVisualizar] = useState(false);
 
 
   useEffect(()=>{
@@ -48,18 +49,11 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
     const jsonValue = await AsyncStorage.getItem('@login_data')
     const login = JSON.parse(jsonValue)
-    console.log('teste final ' + login.username)
     
-    const response = await api.get(`/pedidos/listarPorCliente?page=${page}&nome=${login.username}`)
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=Gold`)
 
-    const resp = response.data.content;
-
-    const itePed = resp.map((ped) => {
-      return { codped: ped.cod, mer: ped.mer, qua: ped.qua, valUni: ped.valUni }
-    });
-    setItensPedidos([...itensPedidos, ...itePed]);
-    const cabPedAux = resp.map((ped) => {
-        return { cod: ped.cod, datHor: ped.datHor, raz: ped.raz, valTot: ped.valTot, valFre: ped.valFre, exp: ped.exp, visualizarItens: false }
+    const cabPedAux = response.data.map((ped) => {
+        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
     });
 
     const cabPed = cabPedAux
@@ -67,14 +61,10 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
         .map(e => JSON.parse(e));
 
-    console.log('CabPedAux');
-    console.log(cabPedAux);
-    console.log('CabPed');
-    console.log(cabPed);
+    console.log(cabPed)
 
-    setData([...data, ...cabPed])
-    // console.log('itens');
-    // console.log(itePed);
+    setData([...data, ...cabPed]);
+
     setPage(page + 1);
     setLoading(false);
   }
@@ -94,13 +84,13 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   }
 
   function filtrarItePed(codped){
-    const itensfiltrados = itensPedidos.filter(function(items){
-      return items.codped == codped;
+    const pedidofiltrado = data.filter(function(items){
+      return items.cod == codped;
     });
     console.log('teste itens filtrados');
-    console.log(itensfiltrados);
+    console.log(pedidofiltrado[0].itensPedido);
   
-    const itens = itensfiltrados.map(item => {
+    const itens = pedidofiltrado[0].itensPedido.map(item => {
       return ( 
           <View key={item.mer}>
             <Grid>
@@ -129,16 +119,22 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   function ListItem( {data} ){  
   
     const navigation = useNavigation();
-    let datVen = data.datHor;
+    let datVen = data.dat;
 
     return(
       <View style={styles.listItem}>
-        <Text style={styles.listText}>Cód: {data.cod}</Text>
-        <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
-        <Text style={styles.listText}>Razão social: {data.raz}</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
+          <Text style={styles.listText}>Cód: {data.cod}</Text>
+        </View>
+        <Text style={styles.listText}>Razão social: {data.cliente.raz}</Text>
+        <Text style={styles.listText}>Nome fantasia: {data.cliente.fan}</Text>
+        {data.visualizarItens ? <Text style={styles.listText}>CPF/CNPJ: {data.cliente.cgc}</Text> : null}
+        {data.visualizarItens ? <Text style={styles.listText}>Telefone: {data.cliente.tel}</Text> : null}
+        {data.visualizarItens ? <Text style={styles.listText}>Email: {data.cliente.ema}</Text> : null}
         {data.visualizarItens ? <Text style={{textAlign: 'center', fontSize: 18, color:'#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold'}} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        <Text style={styles.ValVenText}>Total: R$ {data.valTot.toFixed(2).replace('.',',')}</Text>
+        <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.',',')}</Text>
         <View style={{ flexDirection:"row" }}>
               <TouchableOpacity
               style={styles.DetalhesButton}
@@ -252,7 +248,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </br>
               </br>
               <div>
-                <p><b>Data: ${response.data.Pedidos[0].dat}</b></p>
+                <p><b>Data: ${response.data.Pedidos[0].dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</b></p>
                 <p><b>Vendedor: </b></p>
                 <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
                 <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
@@ -364,7 +360,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </br>
               </br>
               <div>
-                <p><b>Data: ${response.data.Pedidos[0].dat}</b></p>
+                <p><b>Data: ${response.data.Pedidos[0].dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</b></p>
                 <p><b>Vendedor: </b></p>
                 <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
                 <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
@@ -448,7 +444,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   listText:{
-    fontSize: 16,
+    fontSize: 15,
     color:'#000000'
   },
   ValVenText:{
@@ -489,8 +485,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     flex: 1, 
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   },
   loading: {
     padding: 10
