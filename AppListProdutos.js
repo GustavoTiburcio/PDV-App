@@ -18,7 +18,7 @@ export default function AppListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('08');
+  const [pesquisa, setPesquisa] = useState('V');
 
   useEffect(()=>{
     loadApi();
@@ -29,7 +29,7 @@ export default function AppListProdutos(){
 
     setLoading(true)
 
-    const response = await api.get(`/mercador/pesquisar?page=${page}&pesquisa=${pesquisa}&CODTABPRE=0&campo=gold`)
+    const response = await api.get(`https://guizzi-api.herokuapp.com/api/mercador/listarProdutosCard?page=${page}`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);
@@ -103,25 +103,25 @@ function ListItem( {data} ){
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
-        <View style={{ flexDirection:"row" }}>
-          <View>
+        
+          {/* <View>
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
             onPress={() => {navigation.navigate('AppEstoque', {codbar: data.codBar})}}>
               <Text style={styles.TextButton}>   Estoque   </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View>
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
             onPress={() => {navigation.navigate('ListaCarrinho', {codbar: data.codBar, mer: data.mer, valor: data.valVenMin})
               }}>
-              <Text style={styles.TextButton}> Carrinho(+) </Text>
+              <Text style={styles.TextButton}> Detalhes </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        
       </View>
   )
 }
@@ -139,7 +139,8 @@ const styles = StyleSheet.create({
   },
   listText:{
     fontSize: 16,
-    color:'#000000'
+    color:'#000000',
+    textAlign: 'center'
   },
   SearchBar: {
     backgroundColor: '#F3F3F3',
@@ -155,11 +156,12 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 0,
     marginBottom: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 50,
     backgroundColor: '#121212',
   },
   TextButton: {
     fontSize: 14,
-    color:'#FFF'
+    color:'#FFF',
+    textAlign: 'center'
   }
 });

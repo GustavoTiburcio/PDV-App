@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Alert, View, TextInput } from 'react-native';
+import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './controle/CarrinhoStorage';
 import { useIsFocused } from '@react-navigation/native';
@@ -15,17 +15,34 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState(valor);
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
+    const [data, setData] = useState();
+    
+    useEffect(()=>{
+        getListarDetalhes()
+      },[codbar])
+
+    useEffect(()=>{
+        
+    },[quantidade, valorItem])
 
     async function getListarDetalhes(){
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
         codmer = prod[0][0]
-        console.log('Pegou codmer ao abrir a tela: ' + codmer)        
+        console.log('Pegou codmer ao abrir a tela: ' + codmer)
+        console.log(response.data.fotos[0].linkfot)
+        setData(response.data)
+        console.log(data)      
     }
+    
 
-    useEffect(()=>{
-        getListarDetalhes()
-    },[quantidade, valorItem])
+    function foto( linkfoto ){
+        if (linkfoto == null) {
+          return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
+        }else{
+          return 'https://' + linkfoto;
+        }
+      }
 
     const salvaPedido = () => {
         if (quantidade == undefined) {
@@ -45,6 +62,14 @@ const ListaCarrinho = ({ route, navigation }) => {
     return (
         <View id={codmer} style={styles.container}>
             <ScrollView>
+            <View style={{width:'100%', paddingTop:'70%', marginTop: 20}}>
+            {/* <Image
+                style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
+                source={{
+                uri: foto(data.fotos[0].linkfot)
+                }}
+            /> */}
+            </View>
             <Text style={styles.item}> {item} </Text>
             <Text style={styles.text}>Quantidade:</Text>
             <TextInput
