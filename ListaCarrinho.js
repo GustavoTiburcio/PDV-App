@@ -5,52 +5,62 @@ import BotaoVermelho from './components/BotaoVermelho';
 import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './controle/CarrinhoStorage';
 import { useIsFocused } from '@react-navigation/native';
 import api from './api';
+import CorTamanho from './components/CorTamanho';
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
     const codbar = route.params?.codbar;
     const item = route.params?.mer;
+
+    //Valor vindo do card(AppListProdutos), ficará errado se tiver variação de preço por cor/tamanho
     const valor = route.params?.valor;
 
     const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState(valor);
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
     const [data, setData] = useState();
+    const [cor, setCor] = useState();
+    const [tamanho, setTamanho] = useState();
     
     useEffect(()=>{
         getListarDetalhes()
       },[codbar])
 
     useEffect(()=>{
+      },[data])
+
+    useEffect(()=>{
         
-    },[quantidade, valorItem])
+      },[quantidade, valorItem])
 
     async function getListarDetalhes(){
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
-        codmer = prod[0][0]
-        console.log('Pegou codmer ao abrir a tela: ' + codmer)
-        console.log(response.data.fotos[0].linkfot)
+        console.log(response.data)
         setData(response.data)
-        console.log(data)      
     }
-    
 
-    function foto( linkfoto ){
-        if (linkfoto == null) {
-          return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
-        }else{
-          return 'https://' + linkfoto;
+    function setaCodProduto() {
+        const codmerc = data.detalhes.filter(item => { 
+            console.log('cor: ' + cor)
+            console.log('tamanho: ' + tamanho)
+            return item.cor === cor && item.tamanho === tamanho
+        })
+        console.log(codmerc)
+        if (codmerc != '') {
+            codmer = codmerc[0].codigo
+            console.log(codmer)
         }
-      }
+    }
 
     const salvaPedido = () => {
+        setaCodProduto()
         if (quantidade == undefined) {
             Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         }else if(codmer == undefined) {
-            Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
+            Alert.alert('Erro ao adicionar item', 'Não existe cadastro desse produto com cor ' + cor + ' e tamanho ' + tamanho + ', favor entrar em contato com a fabrica.');
         }else{
-            let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
+            let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem, cor: cor, tamanho: tamanho };
         gravarItensCarrinhoNoBanco(itens).then(resultado => {
             console.log('Adicionado ao carrinho: ')
             console.log(itens)
@@ -61,16 +71,26 @@ const ListaCarrinho = ({ route, navigation }) => {
     };
     return (
         <View id={codmer} style={styles.container}>
-            <ScrollView>
+            {data == undefined ?
             <View style={{width:'100%', paddingTop:'70%', marginTop: 20}}>
-            {/* <Image
-                style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
-                source={{
-                uri: foto(data.fotos[0].linkfot)
-                }}
-            /> */}
-            </View>
+                <Image
+                    style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
+                    source={{
+                    uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
+                    }}
+                />
+            </View> 
+             : 
+             <View style={{width:'100%', paddingTop:'70%', marginTop: 20}}>
+                    <Image
+                        style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
+                        source={{
+                        uri: 'https://' + data.fotos[0].linkfot
+                        }}
+                    />
+            </View>}
             <Text style={styles.item}> {item} </Text>
+            <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/>
             <Text style={styles.text}>Quantidade:</Text>
             <TextInput
                 style={styles.textinput}
@@ -99,7 +119,6 @@ const ListaCarrinho = ({ route, navigation }) => {
                 onPress={() => salvaPedido()}
 
             />
-            </ScrollView>
         </View>
     );
 };
@@ -139,7 +158,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         color: 'red',
-    }
+    },
+    picker: {
+        width: '50%'
+    },
 });
 
 export default ListaCarrinho;
