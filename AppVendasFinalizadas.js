@@ -119,12 +119,11 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   function ListItem( {data} ){  
   
     const navigation = useNavigation();
-    let datVen = data.dat;
 
     return(
       <View style={styles.listItem}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text style={styles.listText}>Data: {datVen.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
+          <Text style={styles.listText}>Data: {data.dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
           <Text style={styles.listText}>Cód: {data.cod}</Text>
         </View>
         <Text style={styles.listText}>Razão social: {data.cliente.raz}</Text>
@@ -242,9 +241,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>GOLD CHAVES</b></p>
+              <p align="center"><b>OPERA Z</b></p>
               </br>
-              <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+              <p align="center"><b></b></p>
               </br>
               </br>
               <div>
@@ -354,9 +353,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>GOLD CHAVES</b></p>
+              <p align="center"><b>OPERA Z</b></p>
               </br>
-              <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+              <p align="center"><b></b></p>
               </br>
               </br>
               <div>

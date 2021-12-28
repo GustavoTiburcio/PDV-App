@@ -187,9 +187,9 @@ const Carrinho = ({ route, navigation }) => {
                 <p></p>
                 <p align="right"><b>Venda ${codPed}</b></p>
                 </br>
-                <p align="center"><b>GOLD CHAVES</b></p>
+                <p align="center"><b>OPERA Z</b></p>
                 </br>
-                <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+                <p align="center"><b></b></p>
                 </br>
                 </br>
                 <div>
