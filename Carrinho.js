@@ -79,6 +79,8 @@ const Carrinho = ({ route, navigation }) => {
                 setValorBruto(setValorBrutoInicial);
             }
             setItensCarrinho(resultado);
+            console.log('teste itenscarrinho');
+            console.log(resultado);
         });
     }
 
@@ -127,19 +129,19 @@ const Carrinho = ({ route, navigation }) => {
             function currencyFormat(num) {
                 return num.toFixed(2);
               }
-            var PrintItems = itensPedido.map(function(item){
+            var PrintItems = itensCarrinho.map(function(item){
                 return `<tr>
                 <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-                    <b>${item.mercador.mer}</b>
+                    <b>${item.item} ${item.cor} ${item.tamanho}</b>
                 </td>
                 <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
-                    <b>${item.qua}</b>
+                    <b>${item.quantidade}</b>
                 </td>
                 <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
-                    <b>${currencyFormat(item.valuni).replace('.',',')}</b>
+                    <b>${currencyFormat(item.valor).replace('.',',')}</b>
                 </td>
                 <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
-                    <b>${currencyFormat(item.valuni * item.qua).replace('.',',')}</b>
+                    <b>${currencyFormat(item.valor * item.quantidade).replace('.',',')}</b>
                 </td>
                 </tr>`;
              });
@@ -233,10 +235,6 @@ const Carrinho = ({ route, navigation }) => {
         };
             if (resultado != "erro ao salvar pedido") {
                 limparItensCarrinhoNoBanco().then(resultado => {
-                    setItensCarrinho(null);
-                    setValorBruto(0);
-                    removeClienteValue('@Cliente_data');
-                    navigation.navigate('AppListProdutos');
                     Alert.alert(
                         "Venda finalizada",
                         "Deseja imprimir?",
@@ -252,6 +250,10 @@ const Carrinho = ({ route, navigation }) => {
                           },
                         ]
                       );
+                    setItensCarrinho(null);
+                    setValorBruto(0);
+                    removeClienteValue('@Cliente_data');
+                    navigation.navigate('AppListProdutos');
                 });
             } else { Alert.alert("falhou ao salvar, tente novamente"); }
         })};
@@ -396,7 +398,7 @@ const Carrinho = ({ route, navigation }) => {
                         {itensCarrinho.map((itemCar, key) => {
                             return (
                                 <View key={key} style={styles.container}>
-                                    <Text style={styles.textItem}>{itemCar.item}</Text>
+                                    <Text style={styles.textItem}>{itemCar.item} {itemCar.cor} {itemCar.tamanho}</Text>
                                     <Grid>
                                         <Col size={15}>
                                             <Row style={styles.cell}>

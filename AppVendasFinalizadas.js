@@ -16,7 +16,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('Gold');
+  const [pesquisa, setPesquisa] = useState('');
   const [itensPedidos, setItensPedidos]= useState([]);
   const [dadosPedido, setDadosPedido]= useState();
   const [refresh, setRefresh] = useState(false);
@@ -49,8 +49,8 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
     const jsonValue = await AsyncStorage.getItem('@login_data')
     const login = JSON.parse(jsonValue)
-    
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=Gold`)
+
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
 
     const cabPedAux = response.data.map((ped) => {
         return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
@@ -92,7 +92,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   
     const itens = pedidofiltrado[0].itensPedido.map(item => {
       return ( 
-          <View key={item.mer}>
+          <View key={item.codmer}>
             <Grid>
               <Col size={15}>
                 <Row style={styles.cell}>
@@ -101,7 +101,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </Col>
               <Col size={50}>
                 <Row style={styles.cell}>
-                  <Text>{item.mer}</Text>
+                  <Text>{item.mer} {item.codpad} {item.codtam}</Text>
                 </Row>
               </Col>
               <Col size={25}>
@@ -185,16 +185,16 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     async function createAndPrintPDF() {
         var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
           return `<tr>
-          <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-              <b>${item.mer}</b>
+          <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
+              <b>${item.mer}  ${item.codpad} ${item.codtam}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+          <td style={{ fontSize: "36px" , maxWidth:"20px"}} >
               <b>${item.qua}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+          <td style={{ fontSize: "36px" , maxWidth:"60px" }}>
               <b>${item.valUni.toFixed(2).replace('.',',')}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+          <td style={{ fontSize: "36px" , maxWidth:"80px" }}>
               <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
           </td>
           </tr>`;
@@ -213,7 +213,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                   }
                   p {
                     font-family: "Didot", "Times New Roman";
-                    font-size: 38px;
+                    font-size: 36px;
                     margin: 0;
                   }
                   table {
@@ -224,7 +224,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                     text-align: left;
                     padding: 8px;
                     font-family: "Didot", "Times New Roman";
-                    font-size: 38px;
+                    font-size: 36px;
                   }
                   tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -297,16 +297,16 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     async function createPDF() {
         var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
           return `<tr>
-          <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-              <b>${item.mer}</b>
+          <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
+              <b>${item.mer} ${item.codpad} ${item.codtam}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+          <td style={{ fontSize: "36px" , maxWidth:"20px"}} >
               <b>${item.qua}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+          <td style={{ fontSize: "36px" , maxWidth:"60px" }}>
               <b>${item.valUni.toFixed(2).replace('.',',')}</b>
           </td>
-          <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+          <td style={{ fontSize: "36px" , maxWidth:"80px" }}>
               <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
           </td>
           </tr>`;
@@ -325,7 +325,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                   }
                   p {
                     font-family: "Didot", "Times New Roman";
-                    font-size: 38px;
+                    font-size: 36px;
                     margin: 0;
                   }
                   table {
@@ -336,7 +336,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                     text-align: left;
                     padding: 8px;
                     font-family: "Didot", "Times New Roman";
-                    font-size: 38px;
+                    font-size: 36px;
                   }
                   tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -482,11 +482,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   cell: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ddd',
     flex: 1, 
     justifyContent: 'flex-start',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   loading: {
     padding: 10

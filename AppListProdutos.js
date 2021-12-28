@@ -18,7 +18,7 @@ export default function AppListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('V');
+  const [pesquisa, setPesquisa] = useState('');
 
   useEffect(()=>{
     loadApi();
@@ -29,7 +29,7 @@ export default function AppListProdutos(){
 
     setLoading(true)
 
-    const response = await api.get(`https://guizzi-api.herokuapp.com/api/mercador/listarProdutosCard?page=${page}`)
+    const response = await api.get(`https://guizzi-api.herokuapp.com/api/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);

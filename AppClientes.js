@@ -11,7 +11,7 @@ export default function Home({ navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('chave');
+  const [pesquisa, setPesquisa] = useState('');
 
     async function getClientes(){
         if(loading) return;
