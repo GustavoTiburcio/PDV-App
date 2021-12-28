@@ -29,7 +29,7 @@ export default function AppListProdutos(){
 
     setLoading(true)
 
-    const response = await api.get(`https://guizzi-api.herokuapp.com/api/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
+    const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);
