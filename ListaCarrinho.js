@@ -91,6 +91,7 @@ const ListaCarrinho = ({ route, navigation }) => {
             </View>}
             <Text style={styles.item}> {item} </Text>
             <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/>
+            <ScrollView>
             <Text style={styles.text}>Quantidade:</Text>
             <TextInput
                 style={styles.textinput}
@@ -119,6 +120,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                 onPress={() => salvaPedido()}
 
             />
+            </ScrollView>
         </View>
     );
 };

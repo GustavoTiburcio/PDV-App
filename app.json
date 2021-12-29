@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Gold-App",
-    "slug": "Gold-App",
-    "version": "1.0.2",
+    "name": "OperaZ",
+    "slug": "OperaZ",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon3.png",
     "splash": {
