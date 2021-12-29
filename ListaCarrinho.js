@@ -6,6 +6,7 @@ import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './contro
 import { useIsFocused } from '@react-navigation/native';
 import api from './api';
 import CorTamanho from './components/CorTamanho';
+import GradeAtacado from './components/GradeAtacado';
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
@@ -90,7 +91,8 @@ const ListaCarrinho = ({ route, navigation }) => {
                     />
             </View>}
             <Text style={styles.item}> {item} </Text>
-            <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/>
+            {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
+            <GradeAtacado codbar={codbar}/>
             <ScrollView>
             <Text style={styles.text}>Quantidade:</Text>
             <TextInput
