@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Modal, ScrollView, Text, Alert, Image, Pressable,View, TextInput } from 'react-native';
+import { StyleSheet, Modal, ScrollView, Text, Alert, Image, Pressable, View} from 'react-native';
 import api from '../api';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { DataTable, TextInput } from 'react-native-paper';
 
-export default function GradeAtacado({ codbar, setCor, setTamanho }) {
+export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [valueCor, setValueCor] = useState(null);
-    const [valueTamanho, setValueTamanho] = useState(null);
-    const [tamanhos, setTamanhos] = useState([
-        { label: '', value: '' }
-    ]);
-    const [cores, setCores] = useState([
-        { label: '', value: '' }
-    ]);
+    const [cores, setCores] = useState();
+    const [tamanhos, setTamanhos] = useState();
+    const [number, onChangeNumber] = useState();
+    const [data, setData] = useState();
+
+    let itensCarrinho = [];
+
+    // const [cor, setCor] = useState();
+    // const [tamanho, setTamanho] = useState();
 
     // const alteraDados = () => {
     //     setCor(valueCor)
@@ -22,7 +25,7 @@ export default function GradeAtacado({ codbar, setCor, setTamanho }) {
 
     useEffect(() => {
         getListarDetalhes()
-    }, [])
+    }, [codbar])
 
     // useEffect(() => {
     //     alteraDados();
@@ -30,10 +33,96 @@ export default function GradeAtacado({ codbar, setCor, setTamanho }) {
 
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        const cores = response.data.cores.map(item => { return { label: item.padmer, value: item.padmer } })
-        const tamanhos = response.data.tamanhos.map(item => { return { label: item, value: item } })
-        setCores(cores);
-        setTamanhos(tamanhos)
+        console.log(response.data);
+        console.log(response.data.cores);
+        console.log(response.data.tamanhos);
+        setData(response.data);
+        setCores(response.data.cores);
+        setTamanhos(response.data.tamanhos);
+    }
+
+    function setaCodProduto(cor, tamanho, quantidade) {
+        let codmer;
+        console.log('cor: ' + cor)
+        console.log('tamanho: ' + tamanho)
+        const codmerc = data.detalhes.filter(item => { 
+            return item.cor === cor && item.tamanho === tamanho
+        })
+        console.log(codmerc)
+        if (quantidade != '' && quantidade != '0' && quantidade != '00') {
+            if (codmerc != '') {
+                codmer = codmerc[0].codigo
+                let itemcarrinho = {codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho}
+                console.log('Para adicionar no array: ');
+                console.log(itemcarrinho);
+                let pos = itensCarrinho.findIndex(itensCarrinho => {
+                    return itensCarrinho.codmer === codmer;
+                });
+                if (pos == '-1') {
+                    itensCarrinho.push(itemcarrinho);
+                    console.log(itensCarrinho);
+                } else {
+                    var itemRemovido = itensCarrinho.splice(pos,1)
+                    console.log('Item removido: ')
+                    console.log(itemRemovido)
+                    itensCarrinho.push(itemcarrinho);
+                    console.log(itensCarrinho);
+                } 
+                
+            } else {
+                console.log('Não encontrado produto ' + cor + ' ' + tamanho);
+            }
+        } else {
+            if (codmerc != '') {
+                codmer = codmerc[0].codigo
+                let pos = itensCarrinho.findIndex(itensCarrinho => {
+                    return itensCarrinho.codmer === codmer;
+                });
+                console.log('indice do array ' + pos);
+                var itemRemovido = itensCarrinho.splice(pos,1)
+                console.log('Item removido: ')
+                console.log(itemRemovido)
+            } else {
+                console.log('Não encontrado produto ' + cor + ' ' + tamanho);
+            }
+        }
+    }
+
+    function grade() {
+        const grade = <View style={{height: "80%"}}>
+        <ScrollView horizontal style={{height: 300}}>
+        <DataTable style={styles.modalView2}>
+            <DataTable.Header style={{marginHorizontal: -28}}>
+                <DataTable.Title />
+                <DataTable.Title />
+                <DataTable.Title />
+                {tamanhos.map(tamanho => {
+                    return <DataTable.Title  key={tamanho}>{tamanho}</DataTable.Title>
+                })}
+            </DataTable.Header>
+            
+            {cores.map(cor => {
+                            return <DataTable.Row style={styles.modalView2} key={cor.cod}>
+                                <DataTable.Cell style={{width: 80}}>{cor.padmer}</DataTable.Cell>
+                                {tamanhos.map(tamanho => {
+                                    return <DataTable.Cell style={{marginLeft: 5}} key={tamanho}>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={number}
+                                            keyboardType='numeric'
+                                            onChangeText={(text) => {}}
+                                            onEndEditing={(e) => {
+                                                setaCodProduto(cor.padmer, tamanho, e.nativeEvent.text)
+                                            }}
+                                        />
+                                    </DataTable.Cell>
+                                })}
+                            </DataTable.Row>
+                        })}
+        </DataTable>
+        </ScrollView>
+        </View>
+        return grade;
     }
 
     return (
@@ -47,40 +136,23 @@ export default function GradeAtacado({ codbar, setCor, setTamanho }) {
                     setModalVisible(!modalVisible);
                 }}
             >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>GRADE</Text>
-                        <Grid>
-                            <Col size={15}>
-                                <Row style={styles.cell}>
-                                    <Text></Text>
-                                </Row>
-                                <Row style={styles.cell}>
-                                    <Text style={styles.textCor}>Rosa</Text>
-                                </Row>
-                            </Col>
-                            <Col size={15}>
-                                <Row style={styles.cell}>
-                                    <Text>P</Text>
-                                </Row>
-                                <Row style={styles.cell}>
-                                    <TextInput
-                                        style={styles.input}
-                                        onChangeText={() => {}}
-                                        
-                                        keyboardType="numeric"
-                                    />
-                                </Row>
-                            </Col>
-                        </Grid>
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}
-                        >
-                            <Text style={styles.textStyle}>Hide Modal</Text>
-                        </Pressable>
-                    </View>
-                </View>
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.modalText}>GRADE</Text>
+                                {tamanhos ? grade() : null}
+                                <Pressable
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => {
+                                        if (modalVisible) {
+                                            setItensCarrinho(itensCarrinho)
+                                        }
+                                        setModalVisible(!modalVisible)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Confirmar</Text>
+                                </Pressable>
+                            </View>
+                        </View>
             </Modal>
             <Pressable
                 style={[styles.button, styles.buttonOpen]}
@@ -88,6 +160,7 @@ export default function GradeAtacado({ codbar, setCor, setTamanho }) {
             >
                 <Text style={styles.textStyle}>SELECIONAR COR E TAMANHO</Text>
             </Pressable>
+            
         </View>
     );
 }
@@ -112,6 +185,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
+    },
+    modalView2: {
+        marginTop: 10,
+        backgroundColor: "white",
+        alignItems: "center",
+        shadowColor: "#000",
+        minWidth: 500,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 10
     },
     button: {
         borderRadius: 10,
@@ -143,11 +230,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start'
     },
     input: {
-        height: 20,
-        margin: 12,
+        backgroundColor: '#F3F3F3',
+        height: 40,
+        margin: 15,
         borderWidth: 1,
-        padding: 10,
-      },
+        padding: 5
+    },
     textCor: {
         height: 20,
         margin: 12,

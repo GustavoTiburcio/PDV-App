@@ -22,6 +22,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [data, setData] = useState();
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
+    const [itensCarrinho, setItensCarrinho] = useState();
     
     useEffect(()=>{
         getListarDetalhes()
@@ -41,34 +42,35 @@ const ListaCarrinho = ({ route, navigation }) => {
         setData(response.data)
     }
 
-    function setaCodProduto() {
-        const codmerc = data.detalhes.filter(item => { 
-            console.log('cor: ' + cor)
-            console.log('tamanho: ' + tamanho)
-            return item.cor === cor && item.tamanho === tamanho
-        })
-        console.log(codmerc)
-        if (codmerc != '') {
-            codmer = codmerc[0].codigo
-            console.log(codmer)
-        }
-    }
+    // function setaCodProduto() {
+    //     console.log('cor: ' + cor)
+    //     console.log('tamanho: ' + tamanho)
+    //     const codmerc = data.detalhes.filter(item => {    
+    //         return item.cor === cor && item.tamanho === tamanho
+    //     })
+    //     console.log(codmerc)
+    //     if (codmerc != '') {
+    //         codmer = codmerc[0].codigo
+    //         console.log(codmer)
+    //     }
+    // }
 
     const salvaPedido = () => {
-        setaCodProduto()
-        if (quantidade == undefined) {
-            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
-        }else if(codmer == undefined) {
-            Alert.alert('Erro ao adicionar item', 'Não existe cadastro desse produto com cor ' + cor + ' e tamanho ' + tamanho + ', favor entrar em contato com a fabrica.');
-        }else{
-            let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem, cor: cor, tamanho: tamanho };
-        gravarItensCarrinhoNoBanco(itens).then(resultado => {
-            console.log('Adicionado ao carrinho: ')
-            console.log(itens)
-            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-            navigation.pop();
-        });
-        }
+        // setaCodProduto()
+        console.log(itensCarrinho);
+        // if (quantidade == undefined) {
+        //     Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+        // }else if(codmer == undefined) {
+        //     Alert.alert('Erro ao adicionar item', 'Não existe cadastro desse produto com cor ' + cor + ' e tamanho ' + tamanho + ', favor entrar em contato com a fabrica.');
+        // }else{
+        //     let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem, cor: cor, tamanho: tamanho };
+        // gravarItensCarrinhoNoBanco(itens).then(resultado => {
+        //     console.log('Adicionado ao carrinho: ')
+        //     console.log(itens)
+        //     Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+        //     navigation.pop();
+        // });
+        // }
     };
     return (
         <View id={codmer} style={styles.container}>
@@ -92,17 +94,8 @@ const ListaCarrinho = ({ route, navigation }) => {
             </View>}
             <Text style={styles.item}> {item} </Text>
             {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
-            <GradeAtacado codbar={codbar}/>
+            <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho}/>
             <ScrollView>
-            <Text style={styles.text}>Quantidade:</Text>
-            <TextInput
-                style={styles.textinput}
-                keyboardType="numeric"
-                autoFocus = {true}
-                placeholder="Digite a quantidade"
-                onChangeText={value => setQuantidade(value)}>
-                {quantidade}
-            </TextInput>
             <Text style={styles.text}>Valor R$:</Text>
             <TextInput
                 style={styles.textinput}
