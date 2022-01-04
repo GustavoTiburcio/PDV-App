@@ -4,17 +4,17 @@ import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'rea
 import api from '../api';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export default function CorTamanho({codbar, setCor, setTamanho}) {
+export default function CorTamanho({ codbar, setCor, setTamanho }) {
 
     const [openCorPicker, setOpenCorPicker] = useState(false);
     const [openTamanhoPicker, setOpenTamanhoPicker] = useState(false);
     const [valueCor, setValueCor] = useState(null);
     const [valueTamanho, setValueTamanho] = useState(null);
     const [tamanhos, setTamanhos] = useState([
-        {label: '', value: ''}
+        { label: '', value: '' }
     ]);
     const [cores, setCores] = useState([
-        {label: '', value: ''}
+        { label: '', value: '' }
     ]);
 
     const alteraDados = () => {
@@ -22,27 +22,27 @@ export default function CorTamanho({codbar, setCor, setTamanho}) {
         setTamanho(valueTamanho)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getListarDetalhes()
-    },[])
+    }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         alteraDados();
-    },[valueTamanho, valueCor])
+    }, [valueTamanho, valueCor])
 
-    async function getListarDetalhes(){
+    async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        const cores = response.data.cores.map( item => {return { label: item.padmer, value: item.padmer }})
-        const tamanhos = response.data.tamanhos.map( item => {return {label: item, value: item}})
+        const cores = response.data.cores.map(item => { return { label: item.padmer, value: item.padmer } })
+        const tamanhos = response.data.tamanhos.map(item => { return { label: item, value: item } })
         setCores(cores);
         setTamanhos(tamanhos)
     }
 
 
-  return (
-    <View>
-      <Text style={styles.text}>Cor:</Text>
-             <DropDownPicker
+    return (
+        <View>
+            <Text style={styles.text}>Cor:</Text>
+            <DropDownPicker
                 style={styles.picker}
                 dropDownDirection="TOP"
                 placeholder="Selecionar"
@@ -53,7 +53,7 @@ export default function CorTamanho({codbar, setCor, setTamanho}) {
                 setValue={setValueCor}
                 setItems={setCores}
             />
-        <Text style={styles.text}>Tamanho:</Text>
+            <Text style={styles.text}>Tamanho:</Text>
             <DropDownPicker
                 style={styles.picker}
                 placeholder="Selecionar"
@@ -64,8 +64,8 @@ export default function CorTamanho({codbar, setCor, setTamanho}) {
                 setValue={setValueTamanho}
                 setItems={setTamanhos}
             />
-    </View>
-  );
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({

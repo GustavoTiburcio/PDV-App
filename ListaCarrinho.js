@@ -23,21 +23,21 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
     const [itensCarrinho, setItensCarrinho] = useState();
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         getListarDetalhes()
-      },[codbar])
+    }, [codbar])
 
-    useEffect(()=>{
-      },[data])
+    useEffect(() => {
+    }, [data])
 
-    useEffect(()=>{
-        
-      },[quantidade, valorItem])
+    useEffect(() => {
 
-    async function getListarDetalhes(){
+    }, [quantidade, valorItem])
+
+    async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+        var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         console.log(response.data)
         setData(response.data)
     }
@@ -58,6 +58,12 @@ const ListaCarrinho = ({ route, navigation }) => {
     const salvaPedido = () => {
         // setaCodProduto()
         console.log(itensCarrinho);
+        gravarItensCarrinhoNoBanco(itensCarrinho).then(resultado => {
+            console.log('Adicionado ao carrinho: ')
+            console.log(itensCarrinho)
+            Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            navigation.pop();
+        });
         // if (quantidade == undefined) {
         //     Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         // }else if(codmer == undefined) {
@@ -75,46 +81,46 @@ const ListaCarrinho = ({ route, navigation }) => {
     return (
         <View id={codmer} style={styles.container}>
             {data == undefined ?
-            <View style={{width:'100%', paddingTop:'70%', marginTop: 20}}>
-                <Image
-                    style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
-                    source={{
-                    uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
-                    }}
-                />
-            </View> 
-             : 
-             <View style={{width:'100%', paddingTop:'70%', marginTop: 20}}>
+                <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
                     <Image
-                        style={{position:'absolute',left:0,bottom:0,right:0,top:0,resizeMode:'contain'}}
+                        style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
                         source={{
-                        uri: 'https://' + data.fotos[0].linkfot
+                            uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
                         }}
                     />
-            </View>}
+                </View>
+                :
+                <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
+                    <Image
+                        style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
+                        source={{
+                            uri: 'https://' + data.fotos[0].linkfot
+                        }}
+                    />
+                </View>}
             <Text style={styles.item}> {item} </Text>
             {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
-            <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho}/>
+            <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
             <ScrollView>
-            <Text style={styles.text}>Valor R$:</Text>
-            <TextInput
-                style={styles.textinput}
-                keyboardType="numeric"
-                placeholder="Valor do produto"
-                onChangeText={value => setValorItem(value.replace(',','.'))}>
-                {valor.toFixed(2).replace('.',',')}
-            </TextInput>
-            <BotaoVermelho
-                text={
-                    'Adicionar R$ ' +
-                    (
-                        Number.parseFloat(valorItem).toPrecision(7) *
-                        Number.parseInt(quantidade ? quantidade : 1)
-                    ).toFixed(2)
-                }
-                onPress={() => salvaPedido()}
+                <Text style={styles.text}>Valor R$:</Text>
+                <TextInput
+                    style={styles.textinput}
+                    keyboardType="numeric"
+                    placeholder="Valor do produto"
+                    onChangeText={value => setValorItem(value.replace(',', '.'))}>
+                    {valor.toFixed(2).replace('.', ',')}
+                </TextInput>
+                <BotaoVermelho
+                    text={
+                        'Adicionar R$ ' +
+                        (
+                            Number.parseFloat(valorItem).toPrecision(7) *
+                            Number.parseInt(quantidade ? quantidade : 1)
+                        ).toFixed(2)
+                    }
+                    onPress={() => salvaPedido()}
 
-            />
+                />
             </ScrollView>
         </View>
     );

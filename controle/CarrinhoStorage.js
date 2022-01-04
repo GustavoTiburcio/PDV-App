@@ -10,16 +10,30 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
             const getJsonValue = await AsyncStorage.getItem('itensCarrinho');
             if (getJsonValue != null) {
                 itens = JSON.parse(getJsonValue);
+                console.log('TESTE CARRINHO NO BANCO')
+                console.log(itens)
+                console.log('TESTE ITENS CARRINHO')
+                console.log(itensCarrinho)
+                
                 itens.map((item) => {
-                    if ((item.codmer === itensCarrinho.codmer) && (item.valor === itensCarrinho.valor)) {
-                        tem = true;
-                        let som = parseInt(item.quantidade) + parseInt(itensCarrinho.quantidade);
-                        item.quantidade = som.toString();
-                    }
+                    itensCarrinho.map((ite) => {
+                        if (item.codmer === ite.codmer) {
+                            tem = true;
+                            let som = parseInt(item.quantidade) + parseInt(ite.quantidade);
+                            item.quantidade = som.toString();
+                        }
+                        // if ((item.codmer === ite.codmer) && (item.valor === ite.valor)) {
+                        //     tem = true;
+                        //     let som = parseInt(item.quantidade) + parseInt(itensCarrinho.quantidade);
+                        //     item.quantidade = som.toString();
+                        // }
+                    }) 
                 })
+                console.log('TEST DO MAP');
+                console.log(itens);
             }
         }
-        if (!tem) {
+        if (tem == false) {
             itens.push(itensCarrinho);
         }
         await AsyncStorage.setItem('i', '1');

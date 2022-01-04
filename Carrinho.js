@@ -79,7 +79,7 @@ const Carrinho = ({ route, navigation }) => {
                 setValorBruto(setValorBrutoInicial);
             }
             setItensCarrinho(resultado);
-            console.log('teste itenscarrinho');
+            console.log('buscarItens carrinho');
             console.log(resultado);
         });
     }

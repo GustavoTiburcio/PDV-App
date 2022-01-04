@@ -1,49 +1,49 @@
 import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import api from './api';
-import {StatusBar} from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import * as Print from 'expo-print';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Sharing from 'expo-sharing';
 import Ionicons from 'react-native-vector-icons/Ionicons';
- 
+
 export default function AppVendasFinalizadas({ route, navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('');
-  const [itensPedidos, setItensPedidos]= useState([]);
-  const [dadosPedido, setDadosPedido]= useState();
+  const [itensPedidos, setItensPedidos] = useState([]);
+  const [dadosPedido, setDadosPedido] = useState();
   const [refresh, setRefresh] = useState(false);
   const [visualizar, setVisualizar] = useState(false);
 
 
-  useEffect(()=>{
+  useEffect(() => {
     loadApi();
-  },[data])
+  }, [data])
 
-//   useEffect(() => {
-//     navigation.addListener('focus', () => {
-//       loadApi();
-//     });
-// }, [navigation]);
+  //   useEffect(() => {
+  //     navigation.addListener('focus', () => {
+  //       loadApi();
+  //     });
+  // }, [navigation]);
 
-  useEffect(()=>{
-    
-  },[dadosPedido])
+  useEffect(() => {
 
-  useEffect(()=>{
+  }, [dadosPedido])
+
+  useEffect(() => {
     setRefresh(false)
-  },[refresh])
+  }, [refresh])
 
-  async function loadApi(){
+  async function loadApi() {
 
-    if(loading) return;
+    if (loading) return;
 
     setLoading(true)
 
@@ -53,13 +53,13 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
 
     const cabPedAux = response.data.map((ped) => {
-        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
+      return { cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido }
     });
 
     const cabPed = cabPedAux
-        .map(e => JSON.stringify(e))
-        .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
-        .map(e => JSON.parse(e));
+      .map(e => JSON.stringify(e))
+      .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
+      .map(e => JSON.parse(e));
 
     console.log(cabPed)
 
@@ -69,60 +69,60 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     setLoading(false);
   }
 
-  function novaPesquisa(){
+  function novaPesquisa() {
     setPage(0);
     setData([]);
   }
 
-  function FooterList( Load ){
-    if(!Load) return null;
-    return(
+  function FooterList(Load) {
+    if (!Load) return null;
+    return (
       <View style={styles.loading}>
-      <ActivityIndicator size={25} color="#121212" />
+        <ActivityIndicator size={25} color="#121212" />
       </View>
     )
   }
 
-  function filtrarItePed(codped){
-    const pedidofiltrado = data.filter(function(items){
+  function filtrarItePed(codped) {
+    const pedidofiltrado = data.filter(function (items) {
       return items.cod == codped;
     });
     console.log('teste itens filtrados');
     console.log(pedidofiltrado[0].itensPedido);
-  
+
     const itens = pedidofiltrado[0].itensPedido.map(item => {
-      return ( 
-          <View key={item.codmer}>
-            <Grid>
-              <Col size={15}>
-                <Row style={styles.cell}>
-                  <Text>{item.qua}x</Text>
-                </Row>
-              </Col>
-              <Col size={50}>
-                <Row style={styles.cell}>
-                  <Text>{item.mer} {item.padmer} {item.codtam}</Text>
-                </Row>
-              </Col>
-              <Col size={25}>
-                <Row style={styles.cell}>
-                  <Text>R$ {item.valUni.toFixed(2).replace('.',',')}</Text>
-                </Row>
-              </Col>
-            </Grid>
-          </View> 
-        )
-      });
+      return (
+        <View key={item.codmer}>
+          <Grid>
+            <Col size={15}>
+              <Row style={styles.cell}>
+                <Text>{item.qua}x</Text>
+              </Row>
+            </Col>
+            <Col size={50}>
+              <Row style={styles.cell}>
+                <Text>{item.mer} {item.padmer} {item.codtam}</Text>
+              </Row>
+            </Col>
+            <Col size={25}>
+              <Row style={styles.cell}>
+                <Text>R$ {item.valUni.toFixed(2).replace('.', ',')}</Text>
+              </Row>
+            </Col>
+          </Grid>
+        </View>
+      )
+    });
     return itens;
   }
-  
-  function ListItem( {data} ){  
-  
+
+  function ListItem({ data }) {
+
     const navigation = useNavigation();
 
-    return(
+    return (
       <View style={styles.listItem}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={styles.listText}>Data: {data.dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</Text>
           <Text style={styles.listText}>Cód: {data.cod}</Text>
         </View>
@@ -131,50 +131,50 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         {data.visualizarItens ? <Text style={styles.listText}>CPF/CNPJ: {data.cliente.cgc}</Text> : null}
         {data.visualizarItens ? <Text style={styles.listText}>Telefone: {data.cliente.tel}</Text> : null}
         {data.visualizarItens ? <Text style={styles.listText}>Email: {data.cliente.ema}</Text> : null}
-        {data.visualizarItens ? <Text style={{textAlign: 'center', fontSize: 18, color:'#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold'}} >Produtos</Text> : <Text></Text>}
+        {data.visualizarItens ? <Text style={{ textAlign: 'center', fontSize: 18, color: '#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold' }} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.',',')}</Text>
-        <View style={{ flexDirection:"row" }}>
-              <TouchableOpacity
-              style={styles.DetalhesButton}
-              activeOpacity={0.5}
-              onPress={() => {
-                if (data.visualizarItens == false) {
-                  data.visualizarItens = true;
-                  setRefresh(true);
-                } else {
-                  data.visualizarItens = false;
-                  setRefresh(true);
-                }
-                }}>
-                <Text style={styles.TextButton}> {data.visualizarItens ? 'Fechar' : 'Detalhes(+)'} </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.Icon}
-                activeOpacity={0.5}
-                onPress={() => {ImprimePDF(data.cod)}}>
-                  <Ionicons
-                    name={Platform.OS === 'android' ? 'md-print' : 'print'}
-                    size={23}
-                    color="black"
-                  />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.Icon}
-                activeOpacity={0.5}
-                onPress={() => {SharePDF(data.cod)}}>
-                  <Ionicons
-                    name={Platform.OS === 'android' ? 'md-share-social-sharp' : 'ios-share'}
-                    size={23}
-                    color="black"
-                  />
-              </TouchableOpacity>
+        <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.', ',')}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.DetalhesButton}
+            activeOpacity={0.5}
+            onPress={() => {
+              if (data.visualizarItens == false) {
+                data.visualizarItens = true;
+                setRefresh(true);
+              } else {
+                data.visualizarItens = false;
+                setRefresh(true);
+              }
+            }}>
+            <Text style={styles.TextButton}> {data.visualizarItens ? 'Fechar' : 'Detalhes(+)'} </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.Icon}
+            activeOpacity={0.5}
+            onPress={() => { ImprimePDF(data.cod) }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'md-print' : 'print'}
+              size={23}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.Icon}
+            activeOpacity={0.5}
+            onPress={() => { SharePDF(data.cod) }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'md-share-social-sharp' : 'ios-share'}
+              size={23}
+              color="black"
+            />
+          </TouchableOpacity>
         </View>
       </View>
     )
   }
 
-  async function ImprimePDF(codped){
+  async function ImprimePDF(codped) {
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     setDadosPedido(response.data)
 
@@ -182,8 +182,8 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     console.log(response.data.Pedidos[0]);
 
     async function createAndPrintPDF() {
-        var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
-          return `<tr>
+      var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
+        return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
               <b>${item.mer}  ${item.padmer} ${item.codtam}</b>
           </td>
@@ -191,15 +191,15 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               <b>${item.qua}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"60px" }}>
-              <b>${item.valUni.toFixed(2).replace('.',',')}</b>
+              <b>${item.valUni.toFixed(2).replace('.', ',')}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"80px" }}>
-              <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
+              <b>${(item.qua * item.valUni).toFixed(2).replace('.', ',')}</b>
           </td>
           </tr>`;
-        });
-    
-        const htmlContent = `
+      });
+
+      const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -270,32 +270,33 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
-              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.', ',')}</b></p>
           </body>
           </html>
         `;
-    
-        try {
-          const { uri } = await Print.printToFileAsync({ 
-            html: htmlContent,
-            width: 1000, height: 1500 });
-          console.log(uri)
-          await Print.printAsync({
-              uri:uri
-            })
-        } catch (error) {
-          console.error(error);
-        }
-      };
+
+      try {
+        const { uri } = await Print.printToFileAsync({
+          html: htmlContent,
+          width: 1000, height: 1500
+        });
+        console.log(uri)
+        await Print.printAsync({
+          uri: uri
+        })
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     createAndPrintPDF()
   };
 
-  async function SharePDF(codped){
+  async function SharePDF(codped) {
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     async function createPDF() {
-        var PrintItems = response.data.Pedidos[0].itensPedido.map(function(item){
-          return `<tr>
+      var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
+        return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
               <b>${item.mer} ${item.padmer} ${item.codtam}</b>
           </td>
@@ -303,15 +304,15 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               <b>${item.qua}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"60px" }}>
-              <b>${item.valUni.toFixed(2).replace('.',',')}</b>
+              <b>${item.valUni.toFixed(2).replace('.', ',')}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"80px" }}>
-              <b>${(item.qua * item.valUni).toFixed(2).replace('.',',')}</b>
+              <b>${(item.qua * item.valUni).toFixed(2).replace('.', ',')}</b>
           </td>
           </tr>`;
-        });
-    
-        const htmlContent = `
+      });
+
+      const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -382,26 +383,27 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
-              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.', ',')}</b></p>
           </body>
           </html>
         `;
-    
-        try {
-          const { uri } = await Print.printToFileAsync({ 
-            html: htmlContent,
-            width: 1000, height: 1500 });
-            console.log(uri);
-            Sharing.shareAsync(uri)
-        } catch (error) {
-          console.error(error);
-        }
-      };
+
+      try {
+        const { uri } = await Print.printToFileAsync({
+          html: htmlContent,
+          width: 1000, height: 1500
+        });
+        console.log(uri);
+        Sharing.shareAsync(uri)
+      } catch (error) {
+        console.error(error);
+      }
+    };
     createPDF();
   };
 
-  
-  
+
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -409,16 +411,16 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         style={styles.SearchBar}
         placeholder="Digite o nome do cliente"
         onChangeText={(text) => setPesquisa(text)}
-        onSearchPress={() => {}}
+        onSearchPress={() => { }}
         returnKeyType="go"
-        onSubmitEditing={() => {}}
+        onSubmitEditing={() => { }}
       />
-      <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Histórico de vendas</Text>
-       <FlatList 
-        contentContainerStyle={{marginHorizontal: 20}}
+      <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Histórico de vendas</Text>
+      <FlatList
+        contentContainerStyle={{ marginHorizontal: 20 }}
         data={data}
         keyExtractor={item => String(item.cod)}
-        renderItem={({ item }) => <ListItem data={item}/>}
+        renderItem={({ item }) => <ListItem data={item} />}
         onEndReached={loadApi}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
@@ -428,7 +430,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 }
 
 
- 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -442,23 +444,23 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 10,
   },
-  listText:{
+  listText: {
     fontSize: 15,
-    color:'#000000'
+    color: '#000000'
   },
-  ValVenText:{
+  ValVenText: {
     fontSize: 16,
-    color:'#000000',
+    color: '#000000',
     marginLeft: 180,
     fontWeight: 'bold',
   },
   TextButton: {
     fontSize: 14,
-    color:'#FFF',
+    color: '#FFF',
   },
   DetalhesButton: {
     marginTop: 15,
-    height:50,
+    height: 50,
     padding: 15,
     borderRadius: 25,
     borderWidth: 0,
@@ -468,7 +470,7 @@ const styles = StyleSheet.create({
   },
   Icon: {
     marginTop: 15,
-    height:50,
+    height: 50,
     padding: 15,
     marginBottom: 15,
     marginHorizontal: 20,
@@ -483,7 +485,7 @@ const styles = StyleSheet.create({
   cell: {
     borderWidth: 2,
     borderColor: '#000',
-    flex: 1, 
+    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
