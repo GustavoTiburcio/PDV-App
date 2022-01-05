@@ -53,8 +53,8 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
             if (codmerc != '') {
                 codmer = codmerc[0].codigo
                 let itemcarrinho = { codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho }
-                console.log('Para adicionar no array: ');
-                console.log(itemcarrinho);
+                // console.log('Para adicionar no array: ');
+                // console.log(itemcarrinho);
                 let pos = itensCarrinho.findIndex(itensCarrinho => {
                     return itensCarrinho.codmer === codmer;
                 });

@@ -103,20 +103,22 @@ const ListaCarrinho = ({ route, navigation }) => {
             <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
             <ScrollView>
                 <Text style={styles.text}>Valor R$:</Text>
-                <TextInput
+                {/* <TextInput
                     style={styles.textinput}
                     keyboardType="numeric"
                     placeholder="Valor do produto"
                     onChangeText={value => setValorItem(value.replace(',', '.'))}>
                     {valor.toFixed(2).replace('.', ',')}
-                </TextInput>
+                </TextInput> */}
+                <Text style={styles.textinput}>{valor}</Text>
                 <BotaoVermelho
                     text={
-                        'Adicionar R$ ' +
-                        (
-                            Number.parseFloat(valorItem).toPrecision(7) *
-                            Number.parseInt(quantidade ? quantidade : 1)
-                        ).toFixed(2)
+                        'Adicionar ' 
+                        // +
+                        // (
+                        //     Number.parseFloat(valorItem).toPrecision(7) *
+                        //     Number.parseInt(quantidade ? quantidade : 1)
+                        // ).toFixed(2)
                     }
                     onPress={() => salvaPedido()}
 

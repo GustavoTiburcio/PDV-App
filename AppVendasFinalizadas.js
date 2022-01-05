@@ -101,7 +101,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
             </Col>
             <Col size={50}>
               <Row style={styles.cell}>
-                <Text>{item.mer} {item.padmer} {item.codtam}</Text>
+                <Text>{item.mer} {item.pad} {item.codtam}</Text>
               </Row>
             </Col>
             <Col size={25}>
@@ -185,7 +185,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
         return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
-              <b>${item.mer}  ${item.padmer} ${item.codtam}</b>
+              <b>${item.mer}  ${item.pad} ${item.codtam}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"20px"}} >
               <b>${item.qua}</b>
@@ -298,7 +298,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
         return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
-              <b>${item.mer} ${item.padmer} ${item.codtam}</b>
+              <b>${item.mer} ${item.pad} ${item.codtam}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"20px"}} >
               <b>${item.qua}</b>

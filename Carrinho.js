@@ -42,7 +42,7 @@ const Carrinho = ({ route, navigation }) => {
         try {
            const clientedados = await AsyncStorage.getItem('@Cliente_data')
            setDadosCliente(JSON.parse(clientedados))
-           console.log('Pegou dados cliente: ' + clientedados)
+        //    console.log('Pegou dados cliente: ' + clientedados)
         } catch(e) {
             console.log('Erro ao ler login')
         }
@@ -79,8 +79,6 @@ const Carrinho = ({ route, navigation }) => {
                 setValorBruto(setValorBrutoInicial);
             }
             setItensCarrinho(resultado);
-            console.log('buscarItens carrinho');
-            console.log(resultado);
         });
     }
 
