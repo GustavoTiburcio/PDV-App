@@ -50,10 +50,10 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const jsonValue = await AsyncStorage.getItem('@login_data')
     const login = JSON.parse(jsonValue)
     
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=Gold`)
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
 
     const cabPedAux = response.data.map((ped) => {
-        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
+        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, obs: ped.obs, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
     });
 
     const cabPed = cabPedAux
@@ -132,6 +132,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         {data.visualizarItens ? <Text style={styles.listText}>CPF/CNPJ: {data.cliente.cgc}</Text> : null}
         {data.visualizarItens ? <Text style={styles.listText}>Telefone: {data.cliente.tel}</Text> : null}
         {data.visualizarItens ? <Text style={styles.listText}>Email: {data.cliente.ema}</Text> : null}
+        {data.visualizarItens ? <Text style={styles.listText}>Obs: {data.obs}</Text> : null}
         {data.visualizarItens ? <Text style={{textAlign: 'center', fontSize: 18, color:'#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold'}} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
         <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.',',')}</Text>
