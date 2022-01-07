@@ -50,7 +50,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const jsonValue = await AsyncStorage.getItem('@login_data')
     const login = JSON.parse(jsonValue)
     
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=Gold`)
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
 
     const cabPedAux = response.data.map((ped) => {
         return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, valDes: ped.valDes,obs: ped.obs, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
