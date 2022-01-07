@@ -50,10 +50,10 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const jsonValue = await AsyncStorage.getItem('@login_data')
     const login = JSON.parse(jsonValue)
     
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=Gold`)
 
     const cabPedAux = response.data.map((ped) => {
-        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, obs: ped.obs, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
+        return {cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, valDes: ped.valDes,obs: ped.obs, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido}
     });
 
     const cabPed = cabPedAux
@@ -135,7 +135,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         {data.visualizarItens ? <Text style={styles.listText}>Obs: {data.obs}</Text> : null}
         {data.visualizarItens ? <Text style={{textAlign: 'center', fontSize: 18, color:'#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold'}} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.',',')}</Text>
+        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Bruto: R$ {data.valPro.toFixed(2).replace('.',',')}</Text> : <Text></Text>}
+        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Desconto: R$ {data.valDes.toFixed(2).replace('.',',')}</Text> : <Text></Text>}
+        <Text style={styles.ValVenText}>Total: R$ {(data.valPro - data.valDes).toFixed(2).replace('.',',')}</Text>
         <View style={{ flexDirection:"row" }}>
               <TouchableOpacity
               style={styles.DetalhesButton}
@@ -272,7 +274,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
-              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total Bruto: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total Desconto: R$ ${response.data.Pedidos[0].valDes.toFixed(2).replace('.', ',')}</b></p>
+              <p style="text-align:right"><b>Total Líquido: R$ ${(response.data.Pedidos[0].valPro - response.data.Pedidos[0].valDes).toFixed(2).replace('.', ',')}</b></p>
           </body>
           </html>
         `;
@@ -384,7 +388,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
-              <p style="text-align:right"><b>Total geral: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total Bruto: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.',',')}</b></p>
+              <p style="text-align:right"><b>Total Desconto: R$ ${response.data.Pedidos[0].valDes.toFixed(2).replace('.', ',')}</b></p>
+              <p style="text-align:right"><b>Total Líquido: R$ ${(response.data.Pedidos[0].valPro - response.data.Pedidos[0].valDes).toFixed(2).replace('.', ',')}</b></p>
           </body>
           </html>
         `;

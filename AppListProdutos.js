@@ -29,7 +29,7 @@ export default function AppListProdutos(){
 
     setLoading(true)
 
-    const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}&CODTABPRE=1&CAMPO=gold`)
+    const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}&CODTABPRE=1&campo=gold`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);

@@ -27,6 +27,8 @@ const Carrinho = ({ route, navigation }) => {
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
     const [codPed, setCodPed] = useState();
+    const [valDes, setValDes] = useState('0');
+    const [porDes, setPorDes] = useState('0');
     const [obs, setObs] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState();
 
@@ -116,13 +118,14 @@ const Carrinho = ({ route, navigation }) => {
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         } else {
+            let valorDesconto = parseFloat(valorBruto/100 * porDes) + parseFloat(valDes);
             const appuser = { id: dadosCliente.id };
             const itensPedido = itensCarrinho.map((iten) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
                 cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-                trarednom: '', appuser, itensPedido
+                trarednom: '', valdes: valorDesconto, appuser, itensPedido
             })
             console.log('PostPedido: ')
             console.log(ped)
@@ -217,7 +220,9 @@ const Carrinho = ({ route, navigation }) => {
                 </table>
                 </div>
                 </br>
-                <p style="text-align:right"><b>Total geral: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
+                <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
+                <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto/100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
+                <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto/100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
             </body>
             </html>
         `;
@@ -240,6 +245,8 @@ const Carrinho = ({ route, navigation }) => {
                         setItensCarrinho(null);
                         setValorBruto(0);
                         setObs('');
+                        setValDes('0');
+                        setPorDes('0');
                         removeClienteValue('@Cliente_data');
                         navigation.navigate('AppListProdutos');
                         Alert.alert(
@@ -266,6 +273,12 @@ const Carrinho = ({ route, navigation }) => {
     function ImprimeDadosCliente() {
         if (dadosCliente != null) {
             return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
+        }
+    }
+
+    function CalculaValorLiquido() {
+        if (porDes != '0' && porDes != undefined) {
+            valorBruto - valorBruto/100 * porDes
         }
     }
 
@@ -453,6 +466,11 @@ const Carrinho = ({ route, navigation }) => {
                                 <TextInput
                                     style={styles.input}
                                     keyboardType="numeric"
+                                    onChangeText={text => {
+                                        setPorDes(text.replace(',', '.'))
+                                        console.log(text)
+                                    }}
+                                    value={porDes.replace('.', ',')} 
                                 />
                             </View>
                             <View flexDirection="row">
@@ -460,6 +478,11 @@ const Carrinho = ({ route, navigation }) => {
                                 <TextInput
                                     style={styles.input}
                                     keyboardType="numeric"
+                                    onChangeText={text => {
+                                        setValDes(text.replace(',', '.'))
+                                        console.log(text)
+                                    }}
+                                    value={valDes.replace('.', ',')}
                                 />
                             </View>
                         </View>
@@ -478,7 +501,7 @@ const Carrinho = ({ route, navigation }) => {
                         </View>
                         <View flexDirection="row">
                             <Text style={styles.textValorPedido}> Valor Líquido: </Text>
-                            <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.', ',')}</Text>
+                            <Text style={styles.valorTotalPedido}>R$ {((valorBruto - valorBruto/100 * porDes) - valDes).toFixed(2).replace('.', ',')}</Text>
                         </View>
                         <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {ImprimeDadosCliente()}</Text>
                         <View flexDirection="row">
@@ -688,7 +711,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 10,
-        textAlignVertical: "top"
+        textAlignVertical: "top",
+        backgroundColor: '#F3F3F3'
     },
 });
 export default Carrinho;
