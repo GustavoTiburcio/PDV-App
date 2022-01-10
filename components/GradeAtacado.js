@@ -93,36 +93,37 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     function grade() {
         const grade = <View style={{ height: "80%" }}>
-            <ScrollView horizontal style={{ height: 300 }}>
-                <DataTable style={styles.modalView2}>
-                    <DataTable.Header style={{ marginHorizontal: -28 }}>
-                        <DataTable.Title />
-                        <DataTable.Title />
-                        <DataTable.Title />
-                        {tamanhos.map(tamanho => {
-                            return <DataTable.Title key={tamanho}>{tamanho}</DataTable.Title>
-                        })}
-                    </DataTable.Header>
 
-                    {cores.map(cor => {
-                        return <DataTable.Row style={styles.modalView2} key={cor.cod}>
-                            <DataTable.Cell style={{ width: 80 }}>{cor.padmer}</DataTable.Cell>
+            <ScrollView horizontal style={{ height: 500 }}>
+                    <DataTable style={styles.modalView2}>
+                        <DataTable.Header style={{ marginHorizontal: -28 }}>
+                            <DataTable.Title />
+                            <DataTable.Title />
+                            <DataTable.Title />
                             {tamanhos.map(tamanho => {
-                                return <DataTable.Cell style={{ marginLeft: 5 }} key={tamanho}>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={number}
-                                        keyboardType='numeric'
-                                        onChangeText={(text) => { adicionaProdutoPelaGrade(cor.padmer, tamanho, text) }}
+                                return <DataTable.Title key={tamanho}>{tamanho}</DataTable.Title>
+                            })}
+                        </DataTable.Header>
+
+                        {cores.map(cor => {
+                            return <DataTable.Row style={styles.modalView2} key={cor.cod}>
+                                <DataTable.Cell style={{ width: 100 }}>{cor.padmer}</DataTable.Cell>
+                                {tamanhos.map(tamanho => {
+                                    return <DataTable.Cell style={{ marginLeft: 5 }} key={tamanho}>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={number}
+                                            keyboardType='numeric'
+                                            onChangeText={(text) => { adicionaProdutoPelaGrade(cor.padmer, tamanho, text) }}
                                         // onEndEditing={(e) => {
                                         //     adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text)
                                         // }}
-                                    />
-                                </DataTable.Cell>
-                            })}
-                        </DataTable.Row>
-                    })}
-                </DataTable>
+                                        />
+                                    </DataTable.Cell>
+                                })}
+                            </DataTable.Row>
+                        })}
+                    </DataTable>
             </ScrollView>
         </View>
         return grade;
@@ -135,7 +136,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
+                    console.log('O modal foi fechado')
                     setModalVisible(!modalVisible);
                 }}
             >

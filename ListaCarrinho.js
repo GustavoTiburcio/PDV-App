@@ -23,13 +23,20 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
     const [itensCarrinho, setItensCarrinho] = useState();
+    const [foto, setFoto] = useState();
+
+    // useEffect(() => {
+    //     getListarDetalhes()
+    // }, [codbar])
 
     useEffect(() => {
-        getListarDetalhes()
-    }, [codbar])
+    }, [data, foto])
 
     useEffect(() => {
-    }, [data])
+        navigation.addListener('focus', () => {
+            getListarDetalhes()
+        });
+    }, [navigation]);
 
     useEffect(() => {
 
@@ -40,23 +47,18 @@ const ListaCarrinho = ({ route, navigation }) => {
         var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         console.log(response.data)
         setData(response.data)
+        try {
+            setFoto(response.data.fotos[0].linkfot);
+        } catch (error) {
+            console.log('Produto sem foto')
+            console.log(error)
+        }
+        
+        console.log(foto)
     }
 
-    // function setaCodProduto() {
-    //     console.log('cor: ' + cor)
-    //     console.log('tamanho: ' + tamanho)
-    //     const codmerc = data.detalhes.filter(item => {    
-    //         return item.cor === cor && item.tamanho === tamanho
-    //     })
-    //     console.log(codmerc)
-    //     if (codmerc != '') {
-    //         codmer = codmerc[0].codigo
-    //         console.log(codmer)
-    //     }
-    // }
-
     const salvaPedido = () => {
-        // setaCodProduto()
+
         console.log(itensCarrinho);
         gravarItensCarrinhoNoBanco(itensCarrinho).then(resultado => {
             console.log('Adicionado ao carrinho: ')
@@ -78,27 +80,39 @@ const ListaCarrinho = ({ route, navigation }) => {
         // });
         // }
     };
+
+    function fotoProduto(link) {
+        console.log('teste link')
+        console.log(link)
+        if (link != undefined) {
+            console.log('Aqui 1')
+            return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
+                <Image
+                    style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
+                    source={{
+                        uri: 'https://' + link
+                    }}
+                />
+            </View>
+        } else {
+            console.log('Aqui 2')
+            return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
+                <Image
+                    style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
+                    source={{
+                        uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
+                    }}
+                />
+            </View>
+        }
+    }
+
     return (
         <View id={codmer} style={styles.container}>
-            {data == undefined ?
-                <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
-                    <Image
-                        style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
-                        source={{
-                            uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
-                        }}
-                    />
-                </View>
-                :
-                <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
-                    <Image
-                        style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
-                        source={{
-                            uri: 'https://' + data.fotos[0].linkfot
-                        }}
-                    />
-                </View>}
+            {fotoProduto(foto)}
             <Text style={styles.item}> {item} </Text>
+
+            {/* Cor e tamanho para varejo */}
             {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
             <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
             <ScrollView>
@@ -113,7 +127,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                 <Text style={styles.textinput}>{valor}</Text>
                 <BotaoVermelho
                     text={
-                        'Adicionar ' 
+                        'Adicionar '
                         // +
                         // (
                         //     Number.parseFloat(valorItem).toPrecision(7) *
