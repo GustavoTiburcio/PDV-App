@@ -60,7 +60,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                 style={styles.textinput}
                 keyboardType="numeric"
                 placeholder="Valor do produto"
-                onChangeText={value => setValorItem(value.replace(',','.'))}>
+                onChangeText={value => setValorItem(parseFloat(value.replace(',','.')))}>
                 {valor.toFixed(2).replace('.',',')}
             </TextInput>
             <BotaoVermelho
