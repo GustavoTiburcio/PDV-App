@@ -1,5 +1,5 @@
 import React, {useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, LogBox} from 'react-native';
+import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox} from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
@@ -42,7 +42,7 @@ export default function Home({ navigation }) {
         onSubmitEditing={() => novaPesquisa()}
     />
     <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Clientes</Text>
-    <FlatList 
+    {data != '' ? <FlatList 
         contentContainerStyle={{marginHorizontal: 20}}
         data={data}
         keyExtractor={item => String(item.id)}
@@ -50,7 +50,12 @@ export default function Home({ navigation }) {
         onEndReached={getClientes}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
+      /> : <View><View style={{ alignItems: 'center' }}>
+      <Image
+        style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
+        source={require('./images/nenhum_prod.png')}
       />
+    </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum produto foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
     </View>
   );
 }
@@ -108,8 +113,6 @@ function ListItem( {data} ){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 10,
     backgroundColor: '#FFFFFF'
   },
   button: {

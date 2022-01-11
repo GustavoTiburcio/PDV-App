@@ -32,9 +32,9 @@ async function loginAuthenticate(){
       Alert.alert('Usuário ou senha incorretos', 'Verique as credenciais informadas')
       setLoading(false);
     }else{
+      setLoading(false);
       setLoginData(response.data)
       navigation.navigate('AppListProdutos')
-      setLoading(false);
     }
   }else{
     Alert.alert('Campos em branco', 'Favor informar Usuário e Senha')
