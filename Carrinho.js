@@ -538,7 +538,6 @@ const Carrinho = ({ route, navigation }) => {
                         <Text></Text>
                     </View>
                     : <View>
-                        {/* <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text> */}
                         <View style={{ alignItems: 'center' }}>
                             <Image
                                 style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}

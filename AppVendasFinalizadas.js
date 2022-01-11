@@ -78,7 +78,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     if(!Load) return null;
     return(
       <View style={styles.loading}>
-      <ActivityIndicator size={25} color="#121212" />
+      <ActivityIndicator size='large' color="#121212" />
       </View>
     )
   }
@@ -408,8 +408,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     createPDF();
   };
 
-  
-  
   return (
     <View style={styles.container}>
       <StatusBar style="light" />

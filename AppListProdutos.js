@@ -54,7 +54,7 @@ export default function AppListProdutos(){
         onSubmitEditing={() => novaPesquisa()}
       />
       <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Produtos</Text>
-      <FlatList 
+      {data != '' ? <FlatList 
         contentContainerStyle={{marginHorizontal: 20}}
         data={data}
         keyExtractor={item => String(item.codBar)}
@@ -62,16 +62,21 @@ export default function AppListProdutos(){
         onEndReached={loadApi}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
-      />
+      /> : <View><View style={{ alignItems: 'center' }}>
+        <Image
+          style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
+          source={require('./images/nenhum_prod.png')}
+        />
+      </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum produto foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
     </View>
   )
 }
 
 function FooterList( Load ){
-  if(!Load) return null;
+  if(!Load.load) return null;
   return(
     <View style={styles.loading}>
-    <ActivityIndicator size={25} color="#121212" />
+    <ActivityIndicator size='large' color="#121212" />
     </View>
   )
 }
