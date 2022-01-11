@@ -68,10 +68,10 @@ export default function AppListProdutos(){
 }
 
 function FooterList( Load ){
-  if(!Load) return null;
+  if(!Load.load) return null;
   return(
     <View style={styles.loading}>
-    <ActivityIndicator size={25} color="#121212" />
+    <ActivityIndicator size='large' color="#121212" />
     </View>
   )
 }

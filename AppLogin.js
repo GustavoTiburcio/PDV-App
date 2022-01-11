@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, KeyboardAvoidingView, Image, TextInput, TouchableOpacity, Animated, Keyboard, Alert } from 'react-native';
+import { StyleSheet, Text, View, KeyboardAvoidingView, ActivityIndicator, Image, TextInput, TouchableOpacity, Animated, Keyboard, Alert } from 'react-native';
 import {StatusBar} from 'expo-status-bar'
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,7 @@ export default function AppLogin({navigation}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginData, setLoginData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   async function storeData(){
     try {
@@ -24,16 +25,20 @@ export default function AppLogin({navigation}) {
   }
 
 async function loginAuthenticate(){
+  setLoading(true);
   if (username != '' && password != '') {
     const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
     if (response.data == []) {
       Alert.alert('Usuário ou senha incorretos', 'Verique as credenciais informadas')
+      setLoading(false);
     }else{
       setLoginData(response.data)
       navigation.navigate('AppListProdutos')
+      setLoading(false);
     }
   }else{
     Alert.alert('Campos em branco', 'Favor informar Usuário e Senha')
+    setLoading(false);
   }
 }
 
@@ -58,6 +63,18 @@ async function loginAuthenticate(){
     ]).start();
 
   },[]);
+
+  function FooterList( Load ){
+    if (Load.load == false) {
+      return null
+    } else {
+      return(
+        <View style={styles.loading}>
+        <ActivityIndicator size='large' color="#121212" />
+        </View>
+      )
+    } 
+  }
 
   return (
     <KeyboardAvoidingView style={styles.background}>
@@ -108,10 +125,10 @@ async function loginAuthenticate(){
         <TouchableOpacity style={styles.btnSubmit} onPress= {() => loginAuthenticate()}>
           <Text style={styles.submitText}>Acessar</Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.btnRegister}>
           <Text style={styles.registerText}>Criar conta gratuita</Text>
         </TouchableOpacity>
+        <FooterList load={loading} />
       </Animated.View>
     </KeyboardAvoidingView>
   );
@@ -162,5 +179,8 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: '#FFF'
-  }
+  },
+  loading: {
+    padding: 10
+  },
 });
