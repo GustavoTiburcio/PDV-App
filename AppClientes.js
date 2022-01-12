@@ -1,8 +1,8 @@
-import React, {useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox } from 'react-native';
 import api from './api';
 import SearchBar from "react-native-dynamic-search-bar";
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -13,67 +13,78 @@ export default function Home({ navigation }) {
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('');
 
-    async function getClientes(){
-        if(loading) return;
-        setLoading(true)
-        const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`)
-        setData([...data, ...response.data.content])
-        setPage(page + 1);
-        setLoading(false);
-    }
+  async function getClientes() {
+    if (loading) return;
+    setLoading(true)
+    const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`)
+    setData([...data, ...response.data.content])
+    setPage(page + 1);
+    setLoading(false);
+  }
 
-    useEffect(()=>{
-        getClientes();
-    },[data])
+  useEffect(() => {
+    getClientes();
+  }, [data])
 
-    function novaPesquisa(){
-      setPage(0);
-      setData([]);
-    }
+  function novaPesquisa() {
+    setPage(0);
+    setData([]);
+  }
 
   return (
     <View style={styles.container}>
-    <SearchBar
+      <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do Cliente"
         onChangeText={(text) => setPesquisa(text)}
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
-    />
-    <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Lista de Clientes</Text>
-    {data != '' ? <FlatList 
-        contentContainerStyle={{marginHorizontal: 20}}
+      />
+      <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Clientes</Text>
+      {data != '' ? <FlatList
+        contentContainerStyle={{ marginHorizontal: 20 }}
         data={data}
         keyExtractor={item => String(item.id)}
-        renderItem={({ item }) => <ListItem data={item}/>}
+        renderItem={({ item }) => <ListItem data={item} />}
         onEndReached={getClientes}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View><View style={{ alignItems: 'center' }}>
-      <Image
-        style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
-        source={require('./images/nenhum_prod.png')}
-      />
-    </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum produto foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
+        <Image
+          style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
+          source={require('./images/nenhum_prod.png')}
+        />
+      </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum cliente foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
     </View>
   );
 }
 
-function FooterList( Load ){
-  if(!Load.load) return null;
-  return(
+function FooterList(Load) {
+  if (!Load.load) return null;
+  return (
     <View style={styles.loading}>
-    <ActivityIndicator size='large' color="#121212" />
+      <ActivityIndicator size='large' color="#121212" />
     </View>
   )
 }
 
-function ListItem( {data} ){  
+async function removeClienteValue(key) {
+  try {
+      await AsyncStorage.removeItem(key);
+      return true;
+  }
+  catch (exception) {
+      return false;
+  }
+}
+
+function ListItem({ data }) {
   const navigation = useNavigation();
 
-  async function storeClienteData(){
+  async function storeClienteData() {
     try {
+      removeClienteValue('@Cliente_data');
       const jsonValue = JSON.stringify(data)
       await AsyncStorage.setItem('@Cliente_data', jsonValue)
       console.log('salvou localstorage informações do cliente: ' + jsonValue)
@@ -83,10 +94,10 @@ function ListItem( {data} ){
   }
 
   LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
-]);
+    'Non-serializable values were found in the navigation state',
+  ]);
 
-  return(
+  return (
     <View style={styles.listItem}>
       <Text style={styles.listText}>Código: {data.id}</Text>
       <Text style={styles.listText}>Razão social: {data.raz}</Text>
@@ -95,18 +106,18 @@ function ListItem( {data} ){
       <Text style={styles.listText}>Fone: {data.fon}</Text>
       <Text style={styles.listText}>CEP: {data.cep}</Text>
       <Text style={styles.listText}>Endereço: {data.log}, {data.num} {data.cid}-{data.uf}</Text>
-        <View>
-              <TouchableOpacity
-              style={styles.CarrinhoButton}
-              activeOpacity={0.5}
-              onPress={() => {
-                storeClienteData()
-                navigation.goBack()
-               }}>
-                <Text style={styles.TextButton}> Selecionar </Text>
-              </TouchableOpacity>
-        </View>
+      <View>
+        <TouchableOpacity
+          style={styles.CarrinhoButton}
+          activeOpacity={0.5}
+          onPress={() => {
+            storeClienteData()
+            navigation.pop()
+          }}>
+          <Text style={styles.TextButton}> Selecionar </Text>
+        </TouchableOpacity>
       </View>
+    </View>
   )
 }
 
@@ -133,13 +144,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 10
   },
-  listText:{
+  listText: {
     fontSize: 14,
-    color:'#000000'
+    color: '#000000'
   },
   CarrinhoButton: {
     marginTop: 25,
-    height:50,
+    height: 50,
     padding: 15,
     borderRadius: 25,
     borderWidth: 0,
@@ -149,7 +160,7 @@ const styles = StyleSheet.create({
   },
   TextButton: {
     fontSize: 14,
-    color:'#FFF',
+    color: '#FFF',
     textAlign: 'center'
   }
 });

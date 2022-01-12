@@ -2,6 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AppListProdutos from './AppListProdutos';
 import Carrinho from './Carrinho';
@@ -10,6 +11,7 @@ import AppVendasFinalizadas from './AppVendasFinalizadas';
 import AppLogin from './AppLogin';
 import AppClientes from './AppClientes';
 import AppEstoque from './AppEstoque';
+import AppCadastroCliente from './AppCadastroCliente';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,16 +49,20 @@ function Tabs({route}){
 
 export default function App() {
 
-  //   const getData = async () => {
-  //   try {
-  //         const jsonValue = await AsyncStorage.getItem('@login_data')
-  //         return jsonValue != null ? JSON.parse(jsonValue) : null;
-  //   } catch(e) {
-  //         console.log('Erro ao ler login')
-  //       }
-  //   }
+    // const getData = async () => {
+    //   let login;
+    // try {
+    //       const jsonValue = await AsyncStorage.getItem('@login_data')
+    //       console.log('LOGIN DATA')
+    //       console.log(jsonValue)
+    //       jsonValue != null ? login = JSON.parse(jsonValue) : null;
+    //       return 'Bem vindo' + login.username
+    // } catch(e) {
+    //       console.log('Erro ao ler login')
+    //       console.log(e)
+    //     }
+    // }
 
-  //  let login;
 
   return (
     <NavigationContainer>
@@ -65,7 +71,7 @@ export default function App() {
         name="AppListProdutos" 
         component={Tabs}
         options={{
-          title: 'Bem-vindo',
+          title: 'Bem-Vindo',
           headerStyle: {
             backgroundColor: '#121212',
             padding: 40,
@@ -111,6 +117,18 @@ export default function App() {
         component={AppClientes}
         options={{
           title: 'Selecionar Cliente',
+          headerStyle: {
+            backgroundColor: '#121212',
+            padding: 40,
+          },
+          headerTintColor: '#FFF'
+        }}
+        />
+        <Stack.Screen 
+        name="AppCadastroCliente" 
+        component={AppCadastroCliente}
+        options={{
+          title: 'Cadastro Novo Cliente',
           headerStyle: {
             backgroundColor: '#121212',
             padding: 40,

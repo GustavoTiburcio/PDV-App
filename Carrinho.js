@@ -9,8 +9,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import {Picker} from '@react-native-picker/picker';
-import PrintPDF, {getDadosPedido} from './PrintPDF';
+import PrintPDF, { getDadosPedido } from './PrintPDF';
 import * as Print from 'expo-print';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -30,25 +29,25 @@ const Carrinho = ({ route, navigation }) => {
     const [selectedLanguage, setSelectedLanguage] = useState();
 
 
-    async function getLoginData(){
-     try {
-        const jsonValue = await AsyncStorage.getItem('@login_data')
-        setDadosLogin(JSON.parse(jsonValue));
-            } catch(e) {
-         console.log('Erro ao ler login')
+    async function getLoginData() {
+        try {
+            const jsonValue = await AsyncStorage.getItem('@login_data')
+            setDadosLogin(JSON.parse(jsonValue));
+        } catch (e) {
+            console.log('Erro ao ler login')
         }
     }
-    async function getClienteData(){
+    async function getClienteData() {
         try {
-           const clientedados = await AsyncStorage.getItem('@Cliente_data')
-           setDadosCliente(JSON.parse(clientedados))
-        //    console.log('Pegou dados cliente: ' + clientedados)
-        } catch(e) {
+            const clientedados = await AsyncStorage.getItem('@Cliente_data')
+            setDadosCliente(JSON.parse(clientedados))
+            //    console.log('Pegou dados cliente: ' + clientedados)
+        } catch (e) {
             console.log('Erro ao ler login')
         }
     }
 
-    async function getUltimoCodPed(){
+    async function getUltimoCodPed() {
         const response = await api.get(`/pedidos/recuperaUltimoCod`)
         setCodPed(response.data)
         console.log(codPed);
@@ -56,9 +55,9 @@ const Carrinho = ({ route, navigation }) => {
 
     //Gera GUID
     function uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-          return v.toString(16);
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
         });
     }
 
@@ -87,7 +86,7 @@ const Carrinho = ({ route, navigation }) => {
             await AsyncStorage.removeItem(key);
             return true;
         }
-        catch(exception) {
+        catch (exception) {
             return false;
         }
     }
@@ -96,39 +95,41 @@ const Carrinho = ({ route, navigation }) => {
         navigation.addListener('focus', () => {
             buscarItens();
             getClienteData();
-            getUltimoCodPed() 
+            getUltimoCodPed()
         });
     }, [navigation]);
 
     useEffect(() => {
-        getLoginData(); 
-    },[])
+        getLoginData();
+    }, [])
 
     useEffect(() => {
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
         console.log('Usuario logado: ' + nomRep + ', categoria: ' + codcat);
-      },[getLoginData])
+    }, [getLoginData])
 
     function enviaPedido() {
 
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
-        }else{
-        const appuser = {id: dadosCliente.id};
-        const itensPedido = itensCarrinho.map((iten) => {
-            return {qua: iten.quantidade, valuni: iten.valor, mercador: {cod: iten.codmer, mer: iten.item}};
-        });    
-        const ped = JSON.stringify({cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-        trarednom: '', appuser, itensPedido})
-        console.log('PostPedido: ')
-        console.log(ped)
-        postPedido(ped).then(resultado => {
-            function currencyFormat(num) {
-                return num.toFixed(2);
-              }
-            var PrintItems = itensCarrinho.map(function(item){
-                return `<tr>
+        } else {
+            const appuser = { id: dadosCliente.id };
+            const itensPedido = itensCarrinho.map((iten) => {
+                return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
+            });
+            const ped = JSON.stringify({
+                cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                trarednom: '', appuser, itensPedido
+            })
+            console.log('PostPedido: ')
+            console.log(ped)
+            postPedido(ped).then(resultado => {
+                function currencyFormat(num) {
+                    return num.toFixed(2);
+                }
+                var PrintItems = itensCarrinho.map(function (item) {
+                    return `<tr>
                 <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
                     <b>${item.item} ${item.cor} ${item.tamanho}</b>
                 </td>
@@ -136,14 +137,14 @@ const Carrinho = ({ route, navigation }) => {
                     <b>${item.quantidade}</b>
                 </td>
                 <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
-                    <b>${currencyFormat(item.valor).replace('.',',')}</b>
+                    <b>${currencyFormat(item.valor).replace('.', ',')}</b>
                 </td>
                 <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
-                    <b>${currencyFormat(item.valor * item.quantidade).replace('.',',')}</b>
+                    <b>${currencyFormat(item.valor * item.quantidade).replace('.', ',')}</b>
                 </td>
                 </tr>`;
-             });
-            const htmlContent = `
+                });
+                const htmlContent = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -214,55 +215,57 @@ const Carrinho = ({ route, navigation }) => {
                 </table>
                 </div>
                 </br>
-                <p style="text-align:right"><b>Total geral: R$ ${valorBruto.toFixed(2).replace('.',',')}</b></p>
+                <p style="text-align:right"><b>Total geral: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
             </body>
             </html>
         `;
-        const createAndPrintPDF = async () => {
-            try {
-                const { uri } = await Print.printToFileAsync({ 
-                  html: htmlContent,
-                  width: 1000, height: 1500 });
-                console.log(uri)
-                await Print.printAsync({
-                    uri:uri
-                })
-            } catch (error) {
-                console.error(error);
-            }
+                const createAndPrintPDF = async () => {
+                    try {
+                        const { uri } = await Print.printToFileAsync({
+                            html: htmlContent,
+                            width: 1000, height: 1500
+                        });
+                        console.log(uri)
+                        await Print.printAsync({
+                            uri: uri
+                        })
+                    } catch (error) {
+                        console.error(error);
+                    }
+                };
+                if (resultado != "erro ao salvar pedido") {
+                    limparItensCarrinhoNoBanco().then(resultado => {
+                        Alert.alert(
+                            "Venda finalizada",
+                            "Deseja imprimir?",
+                            [
+                                {
+                                    text: "Sim",
+                                    onPress: () => {
+                                        createAndPrintPDF()
+                                    },
+                                },
+                                {
+                                    text: "Não",
+                                },
+                            ]
+                        );
+                        setItensCarrinho(null);
+                        setValorBruto(0);
+                        removeClienteValue('@Cliente_data');
+                        navigation.navigate('AppListProdutos');
+                    });
+                } else { Alert.alert("falhou ao salvar, tente novamente"); }
+            })
         };
-            if (resultado != "erro ao salvar pedido") {
-                limparItensCarrinhoNoBanco().then(resultado => {
-                    Alert.alert(
-                        "Venda finalizada",
-                        "Deseja imprimir?",
-                        [
-                          {
-                            text: "Sim",
-                            onPress: () => {
-                            createAndPrintPDF()
-                            },
-                          },
-                          {
-                            text: "Não",
-                          },
-                        ]
-                      );
-                    setItensCarrinho(null);
-                    setValorBruto(0);
-                    removeClienteValue('@Cliente_data');
-                    navigation.navigate('AppListProdutos');
-                });
-            } else { Alert.alert("falhou ao salvar, tente novamente"); }
-        })};
     }
 
-    function ImprimeDadosCliente(){
+    function ImprimeDadosCliente() {
         if (dadosCliente != null) {
             return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
         }
     }
-   
+
     function salvarApi() {
         const pedido = {
             cod: 1,
@@ -339,59 +342,59 @@ const Carrinho = ({ route, navigation }) => {
 
     return (
         <View id={"pai"} >
-            <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Carrinho</Text>
+            <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Carrinho</Text>
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
                     <View id={"itens"} >
                         <View style={styles.cabeçalho}>
-                        <TouchableOpacity 
-                            style = {{ 
-                                flex: 1,
-                                 flexDirection: 'column',
-                                 justifyContent: 'flex-start',
-                                 borderColor: 'black',
-                                 borderStyle: 'dotted',
-                                 borderWidth: 2,
-                                 borderRadius: 1,
-                                 position: 'relative',
-                             }}
-                        >
-                        </TouchableOpacity>
-                        <Grid>
-                            <Col size={15}>
-                                <Row style={styles.cellCabeçalho}>
-                                    <Text>Qtde</Text>
-                                </Row>
-                            </Col>
-                            <Col size={35}>
-                                <Row style={styles.cellCabeçalho}>
-                                    <Text>Vlr Uni</Text>
-                                </Row>
-                            </Col>
-                            <Col size={40}>
-                                <Row style={styles.cellCabeçalho}>
-                                    <Text>Vlr Total</Text>
-                                </Row>
-                            </Col>
-                            <Col size={25}>
-                                <Row style={styles.cellCabeçalho}>
-                                    <Text></Text>
-                                </Row>
-                            </Col>
-                        </Grid>
-                        <TouchableOpacity 
-                            style = {{ 
-                                flex: 1,
-                                 flexDirection: 'column',
-                                 justifyContent: 'flex-start',
-                                 borderColor: 'black',
-                                 borderStyle: 'dotted',
-                                 borderWidth: 2,
-                                 borderRadius: 1,
-                                 position: 'relative',
-                             }}
-                        >
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{
+                                    flex: 1,
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start',
+                                    borderColor: 'black',
+                                    borderStyle: 'dotted',
+                                    borderWidth: 2,
+                                    borderRadius: 1,
+                                    position: 'relative',
+                                }}
+                            >
+                            </TouchableOpacity>
+                            <Grid>
+                                <Col size={15}>
+                                    <Row style={styles.cellCabeçalho}>
+                                        <Text>Qtde</Text>
+                                    </Row>
+                                </Col>
+                                <Col size={35}>
+                                    <Row style={styles.cellCabeçalho}>
+                                        <Text>Vlr Uni</Text>
+                                    </Row>
+                                </Col>
+                                <Col size={40}>
+                                    <Row style={styles.cellCabeçalho}>
+                                        <Text>Vlr Total</Text>
+                                    </Row>
+                                </Col>
+                                <Col size={25}>
+                                    <Row style={styles.cellCabeçalho}>
+                                        <Text></Text>
+                                    </Row>
+                                </Col>
+                            </Grid>
+                            <TouchableOpacity
+                                style={{
+                                    flex: 1,
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start',
+                                    borderColor: 'black',
+                                    borderStyle: 'dotted',
+                                    borderWidth: 2,
+                                    borderRadius: 1,
+                                    position: 'relative',
+                                }}
+                            >
+                            </TouchableOpacity>
                         </View>
                         {itensCarrinho.map((itemCar, key) => {
                             return (
@@ -405,12 +408,12 @@ const Carrinho = ({ route, navigation }) => {
                                         </Col>
                                         <Col size={35}>
                                             <Row style={styles.cell}>
-                                                <Text>R$ {Number.parseFloat(itemCar.valor).toFixed(2).replace('.',',')}</Text>
+                                                <Text>R$ {Number.parseFloat(itemCar.valor).toFixed(2).replace('.', ',')}</Text>
                                             </Row>
                                         </Col>
                                         <Col size={40}>
                                             <Row style={styles.cell}>
-                                                <Text>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.',',')}</Text>
+                                                <Text>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.', ',')}</Text>
                                             </Row>
                                         </Col>
                                         <Col size={20}>
@@ -430,36 +433,37 @@ const Carrinho = ({ route, navigation }) => {
                         })}
                         <View flexDirection="row">
                             <Text style={styles.textValorPedido}> Valor Total: </Text>
-                            <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.',',')}</Text>
+                            <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.', ',')}</Text>
                         </View>
-                        <Text style={{fontSize: 16,color:'#000000'}}>Cliente: {ImprimeDadosCliente()}</Text>
+                        <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {ImprimeDadosCliente()}</Text>
                         <View flexDirection="row">
-                            <BotaoVermelho 
-                                text={'Selecionar Cliente'}
-                                onPress={() => {navigation.navigate('AppClientes', {
-                                    onGoBack: () => Refresh()
-                                });
-                            }}
-                            />
+                            <View>
+                                <TouchableOpacity
+                                    style={styles.Clientes}
+                                    activeOpacity={0.5}
+                                    onPress={() => {
+                                        navigation.navigate('AppClientes', {
+                                            onGoBack: () => Refresh()
+                                        });
+                                    }}>
+                                    <Text style={styles.TextButton}>Selecionar Cliente</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View>
+                                <TouchableOpacity
+                                    style={styles.NovoCliente}
+                                    activeOpacity={0.5}
+                                    onPress={() => { navigation.navigate('AppCadastroCliente', {
+                                            onGoBack: () => Refresh()
+                                        });
+                                    }}>
+                                    <Text style={styles.TextButton}>Novo cliente</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        {/* <Text style={{fontSize: 16,color:'#000000', paddingTop: 40}}>Forma de pagamento:</Text>
-                        <Picker
-                            selectedValue={selectedLanguage}
-                            style={{paddingTop: 50, marginHorizontal: 100, backgroundColor: 'grey'}}
-                            onValueChange={(itemValue, itemIndex) =>{
-                            setSelectedLanguage(itemValue)
-                            console.log(selectedLanguage)
-                            }
-                        }>
-                            <Picker.Item label="À Vista" value="À Vista" />
-                            <Picker.Item label="Boleto" value="Boleto" />
-                            <Picker.Item label="Cartão" value="Cartão" />
-                            <Picker.Item label="Cheque Pré" value="Cheque Pré" />
-                            <Picker.Item label="Promissória" value="Promissória" />
-                        </Picker> */}
-                            <BotaoVermelho
-                                text={`Finalizar Venda`}
-                                onPress={() => enviaPedido()}></BotaoVermelho>
+                        <BotaoVermelho
+                            text={`Finalizar Venda`}
+                            onPress={() => enviaPedido()}></BotaoVermelho>
                         <Text></Text>
                         <Text></Text>
                         <Text></Text>
@@ -467,9 +471,9 @@ const Carrinho = ({ route, navigation }) => {
                     </View>
                     : <View>
                         {/* <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text> */}
-                        <View style={{alignItems:'center'}}>
+                        <View style={{ alignItems: 'center' }}>
                             <Image
-                                style={{resizeMode:'contain', paddingTop: 600, height: 250, width: 280}}                           
+                                style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}
                                 source={require('./images/carrinhovazio.png')}
                             />
                         </View>
@@ -514,17 +518,17 @@ const styles = StyleSheet.create({
     cell: {
         borderWidth: 1,
         borderColor: '#000',
-        flex: 1, 
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'flex-start'
-      },
-      cellCabeçalho: {
+    },
+    cellCabeçalho: {
         borderWidth: 0,
         borderColor: '#000',
-        flex: 1, 
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
-      },
+    },
     valorItem: {
         fontSize: 17,
         color: "#000000",
@@ -626,5 +630,31 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         alignItems: 'flex-start',
     },
+    Clientes: {
+        marginTop: 25,
+        height: 50,
+        width: 160,
+        padding: 15,
+        borderRadius: 25,
+        borderWidth: 0,
+        marginBottom: 15,
+        marginHorizontal: 30,
+        backgroundColor: '#121212',
+    },
+    NovoCliente: {
+        marginTop: 25,
+        width: 160,
+        height: 50,
+        padding: 15,
+        borderRadius: 25,
+        borderWidth: 0,
+        marginBottom: 15,
+        backgroundColor: '#36c75c',
+    },
+    TextButton: {
+        fontSize: 16,
+        color: '#FFF',
+        textAlign: 'center'
+    }
 });
 export default Carrinho;

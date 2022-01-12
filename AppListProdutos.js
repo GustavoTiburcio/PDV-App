@@ -125,8 +125,7 @@ function ListItem( {data} ){
               }}>
               <Text style={styles.TextButton}> Detalhes </Text>
             </TouchableOpacity>
-          </View>
-        
+          </View>    
       </View>
   )
 }
