@@ -5,7 +5,7 @@ import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -41,7 +41,7 @@ const Carrinho = ({ route, navigation }) => {
         try {
             const clientedados = await AsyncStorage.getItem('@Cliente_data')
             setDadosCliente(JSON.parse(clientedados))
-            //    console.log('Pegou dados cliente: ' + clientedados)
+            console.log('Pegou dados cliente: ' + clientedados)
         } catch (e) {
             console.log('Erro ao ler login')
         }
@@ -50,7 +50,8 @@ const Carrinho = ({ route, navigation }) => {
     async function getUltimoCodPed() {
         const response = await api.get(`/pedidos/recuperaUltimoCod`)
         setCodPed(response.data)
-        console.log(codPed);
+        console.log('Código do ultimo pedido');
+        console.log(response.data);
     }
 
     //Gera GUID
@@ -91,24 +92,25 @@ const Carrinho = ({ route, navigation }) => {
         }
     }
 
-    useEffect(() => {
-        navigation.addListener('focus', () => {
-            buscarItens();
+    useFocusEffect(
+        React.useCallback(() => {
             getClienteData();
-            getUltimoCodPed()
-        });
-    }, [navigation]);
-
-    useEffect(() => {
-        getLoginData();
-        getClienteData();
-    }, [])
+            buscarItens();
+            getUltimoCodPed();
+            getLoginData();
+          //alert('Screen was focused');
+          return () => {
+            //alert('Screen was unfocused');
+            // Do something when the screen is unfocused
+            // Useful for cleanup functions
+          };
+        }, [])
+    );
 
     useEffect(() => {
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
-        console.log('Usuario logado: ' + nomRep + ', categoria: ' + codcat);
-    }, [getLoginData])
+    }, [dadosLogin])
 
     function enviaPedido() {
 

@@ -48,7 +48,9 @@ export default function Home({ navigation }) {
             })
             console.log('Salvou endusu')
             console.log(response)
+            Alert.alert('Cliente cadastrado com sucesso', `${codusu} - ${fan}`)
             storeClienteData(dadosClienteStorage);
+            navigation.pop();
         } catch (error) {
             Alert.alert('Erro ao salvar');
             console.log(error)
@@ -69,7 +71,7 @@ export default function Home({ navigation }) {
     async function SalvarCadastro() {
         const dadosCliente = JSON.stringify({
             cgc: cgc, ema: email, name: fan, username: cgc,
-            password: 'operaz', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan
+            password: 'operaz', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan, tipusu: 'comum'
         })
         console.log(dadosCliente)
         try {
@@ -222,7 +224,6 @@ export default function Home({ navigation }) {
                         activeOpacity={0.5}
                         onPress={() => {
                             SalvarCadastro()
-                            navigation.pop();
                         }}>
                         <Text style={styles.TextButton}> Confirmar </Text>
                     </TouchableOpacity>
