@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Text, Alert, View, TextInput } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './controle/CarrinhoStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import api from './api';
 
@@ -15,65 +16,87 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState(valor);
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
+    const [dataEstoque, setDataEstoque] = useState();
+    const [dadosLogin, setDadosLogin] = useState();
 
-    async function getListarDetalhes(){
+    async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        var prod =  response.data.detalhes.map(item => [item.codigo,item.codbar,item.valor])
+        var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         codmer = prod[0][0]
-        console.log('Pegou codmer ao abrir a tela: ' + codmer)        
+        console.log('Pegou codmer ao abrir a tela: ' + codmer)
     }
 
-    useEffect(()=>{
+    async function getListarEstoque() {
+        const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+        setDataEstoque(response.data)
+        console.log(response.data)
+    }
+
+    async function getLoginData() {
+        try {
+            const jsonValue = await AsyncStorage.getItem('@login_data')
+            setDadosLogin(JSON.parse(jsonValue));
+            console.log(jsonValue)
+        } catch (e) {
+            console.log('Erro ao ler login')
+        }
+    }
+
+    useEffect(() => {
         getListarDetalhes()
-    },[quantidade, valorItem])
+        getListarEstoque()
+        getLoginData()
+    }, [quantidade, valorItem])
 
     const salvaPedido = () => {
         if (quantidade == undefined) {
             Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
-        }else if(codmer == undefined) {
+        } else if (codmer == undefined) {
             Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
-        }else{
+        } else if (dataEstoque.estest4 <= 0){
+            Alert.alert(`Sem estoque disponível`, `O estoque atual é ${dataEstoque.estest4}`);
+        }else {
             let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
-        gravarItensCarrinhoNoBanco(itens).then(resultado => {
-            console.log('Adicionado ao carrinho: ')
-            console.log(itens)
-            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-            navigation.pop();
-        });
+            gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                console.log('Adicionado ao carrinho: ')
+                console.log(itens)
+                Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                navigation.pop();
+            });
         }
     };
     return (
         <View id={codmer} style={styles.container}>
             <ScrollView>
-            <Text style={styles.item}> {item} </Text>
-            <Text style={styles.text}>Quantidade:</Text>
-            <TextInput
-                style={styles.textinput}
-                keyboardType="numeric"
-                autoFocus = {true}
-                placeholder="Digite a quantidade"
-                onChangeText={value => setQuantidade(value)}>
-                {quantidade}
-            </TextInput>
-            <Text style={styles.text}>Valor R$:</Text>
-            <TextInput
-                style={styles.textinput}
-                keyboardType="numeric"
-                placeholder="Valor do produto"
-                onChangeText={value => setValorItem(parseFloat(value.replace(',','.')))}>
-                {valor.toFixed(2).replace('.',',')}
-            </TextInput>
-            <BotaoVermelho
-                text={
-                    'Adicionar R$ ' +
-                    (
-                        Number.parseFloat(valorItem).toPrecision(7) *
-                        Number.parseInt(quantidade ? quantidade : 1)
-                    ).toFixed(2)
-                }
-                onPress={() => salvaPedido()}
+                <Text style={styles.item}> {item} </Text>
+                <Text style={styles.text}>Quantidade:</Text>
+                <TextInput
+                    style={styles.textinput}
+                    keyboardType="numeric"
+                    autoFocus={true}
+                    placeholder="Digite a quantidade"
+                    onChangeText={value => setQuantidade(value)}>
+                    {quantidade}
+                </TextInput>
+                <Text style={styles.text}>Valor R$:</Text>
+                <TextInput
+                    style={styles.textinput}
+                    keyboardType="numeric"
+                    placeholder="Valor do produto"
+                    onChangeText={value => setValorItem(parseFloat(value.replace(',', '.')))}>
+                    {valor.toFixed(2).replace('.', ',')}
+                </TextInput>
+                <BotaoVermelho
+                    text={
+                        'Adicionar R$ ' +
+                        (
+                            Number.parseFloat(valorItem).toPrecision(7) *
+                            Number.parseInt(quantidade ? quantidade : 1)
+                        ).toFixed(2)
+                    }
+                    onPress={() => salvaPedido()}
 
-            />
+                />
             </ScrollView>
         </View>
     );

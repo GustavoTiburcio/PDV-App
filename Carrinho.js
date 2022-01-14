@@ -118,7 +118,7 @@ const Carrinho = ({ route, navigation }) => {
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         } else {
-            let valorDesconto = parseFloat(valorBruto/100 * porDes) + parseFloat(valDes);
+            let valorDesconto = parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes);
             const appuser = { id: dadosCliente.id };
             const itensPedido = itensCarrinho.map((iten) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
@@ -191,9 +191,10 @@ const Carrinho = ({ route, navigation }) => {
                 <p></p>
                 <p align="right"><b>Venda ${codPed}</b></p>
                 </br>
-                <p align="center"><b>GOLD CHAVES</b></p>
+                <p align="center"><b>GOLD CHAVES ACESSORIOS LTDA</b></p>
                 </br>
-                <p align="center"><b>Av. Brasil, 2796 - Zona 03, Maringá - PR, (44)3227-5493</b></p>
+                <p align="center"><b>Av. Brasil, 2796 - LOJA 03 - CENTRO, Maringá - PR, 87013-000</b></p>
+                <p align="center"><b>(44) 3227-5493</b></p>
                 </br>
                 </br>
                 <div>
@@ -204,6 +205,7 @@ const Carrinho = ({ route, navigation }) => {
                 <p><b>Email: ${dadosCliente.ema}</b></p>
                 <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
                 <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
+                <p><b>Obs: ${obs}</b></p>
                 </div>
                 <table>
                                         <thead>
@@ -221,8 +223,16 @@ const Carrinho = ({ route, navigation }) => {
                 </div>
                 </br>
                 <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
-                <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto/100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
-                <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto/100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
+                <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
+                <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p style="text-align:center"><b>_______________________________________________</b></p>
+                <p style="text-align:center"><b>${dadosCliente.raz}</b></p>
             </body>
             </html>
         `;
@@ -278,7 +288,7 @@ const Carrinho = ({ route, navigation }) => {
 
     function CalculaValorLiquido() {
         if (porDes != '0' && porDes != undefined) {
-            valorBruto - valorBruto/100 * porDes
+            valorBruto - valorBruto / 100 * porDes
         }
     }
 
@@ -470,7 +480,7 @@ const Carrinho = ({ route, navigation }) => {
                                         setPorDes(text.replace(',', '.'))
                                         console.log(text)
                                     }}
-                                    value={porDes.replace('.', ',')} 
+                                    value={porDes.replace('.', ',')}
                                 />
                             </View>
                             <View flexDirection="row">
@@ -501,7 +511,7 @@ const Carrinho = ({ route, navigation }) => {
                         </View>
                         <View flexDirection="row">
                             <Text style={styles.textValorPedido}> Valor Líquido: </Text>
-                            <Text style={styles.valorTotalPedido}>R$ {((valorBruto - valorBruto/100 * porDes) - valDes).toFixed(2).replace('.', ',')}</Text>
+                            <Text style={styles.valorTotalPedido}>R$ {((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</Text>
                         </View>
                         <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {ImprimeDadosCliente()}</Text>
                         <View flexDirection="row">
