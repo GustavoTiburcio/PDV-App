@@ -101,6 +101,7 @@ const Carrinho = ({ route, navigation }) => {
 
     useEffect(() => {
         getLoginData();
+        getClienteData();
     }, [])
 
     useEffect(() => {

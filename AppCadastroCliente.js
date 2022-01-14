@@ -21,15 +21,11 @@ export default function Home({ navigation }) {
     const [uf, setUf] = useState('');
     const [comLog, setComLog] = useState('');
 
-    async function storeClienteData() {
+    async function storeClienteData(DadosCliente) {
         try {
             removeClienteValue('@Cliente_data');
-            const jsonValue = JSON.stringify({
-                cgc: cgc, ema: email, name: fan, username: cgc,
-                password: cgc, fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan
-            })
-            await AsyncStorage.setItem('@Cliente_data', jsonValue)
-            console.log('salvou localstorage informações do cliente: ' + jsonValue)
+            await AsyncStorage.setItem('@Cliente_data', DadosCliente)
+            console.log('salvou localstorage informações do cliente: ' + DadosCliente)
         } catch (e) {
             console.log('erro ao salvar informações de Cliente' + e)
         }
@@ -38,6 +34,10 @@ export default function Home({ navigation }) {
     async function SalvarEndUsu(codusu) {
         const endUsu = JSON.stringify({
             cep: cep, log: log, num: num, bai: bai, cid: cid, uf: uf, comlog: comLog, appuser: { id: codusu }
+        })
+        const dadosClienteStorage = JSON.stringify({
+            username: cgc, log: log, num: num, ema: email, cgc: cgc, datnas: null, fon: fon, raz: raz,
+            password: 'operaz', insest: insest, fan: fan, bai: bai, cep: cep, cid: cid, uf: uf, comlog: comLog, id: codusu
         })
         console.log(endUsu)
         try {
@@ -48,6 +48,7 @@ export default function Home({ navigation }) {
             })
             console.log('Salvou endusu')
             console.log(response)
+            storeClienteData(dadosClienteStorage);
         } catch (error) {
             Alert.alert('Erro ao salvar');
             console.log(error)
@@ -68,7 +69,7 @@ export default function Home({ navigation }) {
     async function SalvarCadastro() {
         const dadosCliente = JSON.stringify({
             cgc: cgc, ema: email, name: fan, username: cgc,
-            password: cgc, fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan
+            password: 'operaz', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan
         })
         console.log(dadosCliente)
         try {
