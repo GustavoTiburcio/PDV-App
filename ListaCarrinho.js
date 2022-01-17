@@ -8,7 +8,6 @@ import { useIsFocused } from '@react-navigation/native';
 import api from './api';
 
 const ListaCarrinho = ({ route, navigation }) => {
-    let codmer;
     const codbar = route.params?.codbar;
     const item = route.params?.mer;
     const valor = route.params?.valor;
@@ -18,25 +17,26 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [buscaDetalhes, setBuscaDetalhes] = useState([]);
     const [dataEstoque, setDataEstoque] = useState();
     const [dadosLogin, setDadosLogin] = useState();
+    const [codigoProd, setCodigoProd] = useState();
 
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
-        codmer = prod[0][0]
-        console.log('Pegou codmer ao abrir a tela: ' + codmer)
+        setCodigoProd(prod[0][0])
+        //console.log('Pegou codmer ao abrir a tela: ' + codigoProd)
     }
 
     async function getListarEstoque() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         setDataEstoque(response.data)
-        console.log(response.data)
+        // console.log(response.data)
     }
 
     async function getLoginData() {
         try {
             const jsonValue = await AsyncStorage.getItem('@login_data')
             setDadosLogin(JSON.parse(jsonValue));
-            console.log(jsonValue)
+            // console.log(jsonValue)
         } catch (e) {
             console.log('Erro ao ler login')
         }
@@ -46,27 +46,87 @@ const ListaCarrinho = ({ route, navigation }) => {
         getListarDetalhes()
         getListarEstoque()
         getLoginData()
-    }, [quantidade, valorItem])
+    }, [quantidade, valorItem, codigoProd])
 
     const salvaPedido = () => {
         if (quantidade == undefined) {
             Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
-        } else if (codmer == undefined) {
+        } else if (codigoProd == undefined) {
             Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
-        } else if (dataEstoque.estest4 <= 0){
-            Alert.alert(`Sem estoque disponível`, `O estoque atual é ${dataEstoque.estest4}`);
-        }else {
-            let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem };
-            gravarItensCarrinhoNoBanco(itens).then(resultado => {
-                console.log('Adicionado ao carrinho: ')
-                console.log(itens)
-                Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                navigation.pop();
-            });
+        } else {
+            switch (dadosLogin.codcat) {
+                case 1:
+                    if (dataEstoque.estest1 <= 0) {
+                        Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest1)
+                    } else {
+                        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                        gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                            console.log('Adicionado ao carrinho: ')
+                            console.log(itens)
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        });
+                    }
+                    break;
+                case 2:
+                    if (dataEstoque.estest2 <= 0) {
+                        Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest2)
+                    } else {
+                        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                        gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                            console.log('Adicionado ao carrinho: ')
+                            console.log(itens)
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        });
+                    }
+                    break;
+                case 3:
+                    if (dataEstoque.estest3 <= 0) {
+                        Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest3)
+                    } else {
+                        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                        gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                            console.log('Adicionado ao carrinho: ')
+                            console.log(itens)
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        });
+                    }
+                    break;
+                case 4:
+                    if (dataEstoque.estest4 <= 0) {
+                        Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest4)
+                    } else {
+                        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                        gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                            console.log('Adicionado ao carrinho: ')
+                            console.log(itens)
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        });
+                    }
+                    break;
+                case 5:
+                    if (dataEstoque.estest5 <= 0) {
+                        Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest5)
+                    } else {
+                        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                        gravarItensCarrinhoNoBanco(itens).then(resultado => {
+                            console.log('Adicionado ao carrinho: ')
+                            console.log(itens)
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     };
     return (
-        <View id={codmer} style={styles.container}>
+        <View id={codigoProd} style={styles.container}>
             <ScrollView>
                 <Text style={styles.item}> {item} </Text>
                 <Text style={styles.text}>Quantidade:</Text>
