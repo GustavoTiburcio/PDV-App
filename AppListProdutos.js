@@ -105,6 +105,7 @@ function ListItem( {data} ){
         }}
       />
       </View>
+      <Text style={styles.listText}>{data.codBar}</Text>
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>

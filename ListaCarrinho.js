@@ -110,6 +110,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     return (
         <View id={codmer} style={styles.container}>
             {fotoProduto(foto)}
+            <Text style={styles.item}> {codbar} </Text>
             <Text style={styles.item}> {item} </Text>
 
             {/* Cor e tamanho para varejo */}
