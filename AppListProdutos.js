@@ -85,9 +85,12 @@ function ListItem( {data} ){
 
   const navigation = useNavigation();
 
-  function currencyFormat(num) {
-    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  function converteValVen(num) {
+    if (num != null && num != undefined) {
+      return num.toFixed(2).replace('.',',')
+    }
   }
+
   function foto( linkfoto ){
     if (linkfoto == null) {
       return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
@@ -107,7 +110,7 @@ function ListItem( {data} ){
       </View>
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
-      <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.',',')}</Text>
+      <Text style={styles.listText}>R$ {converteValVen(data.valVenMin)}</Text>
         <View style={{ flexDirection:"row" }}>
           <View>
             <TouchableOpacity

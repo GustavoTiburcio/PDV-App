@@ -48,6 +48,18 @@ const ListaCarrinho = ({ route, navigation }) => {
         getLoginData()
     }, [quantidade, valorItem, codigoProd])
 
+    useEffect(() => {
+        if (valor == null && valor == undefined) {
+            Alert.alert('Valor de venda zerado', item + ' está sem valor de venda, avise a loja para corrigir o valor no sistema.')
+        }
+    }, [navigation]);
+
+    function converteValVen(num) {
+        if (num != null && num != undefined) {
+          return num.toFixed(2).replace('.',',')
+        }
+      }
+
     const salvaPedido = () => {
         if (quantidade == undefined) {
             Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
@@ -147,7 +159,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     keyboardType="numeric"
                     placeholder="Valor do produto"
                     onChangeText={value => setValorItem(parseFloat(value.replace(',', '.')))}>
-                    {valor.toFixed(2).replace('.', ',')}
+                    {converteValVen(valor)}
                 </TextInput>
                 <BotaoVermelho
                     text={
