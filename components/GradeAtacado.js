@@ -92,7 +92,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
     }
 
     function CalculaHeight() {
-        return cores.length * 70;
+        return cores.length * 100;
     }
 
     function grade() {
