@@ -135,16 +135,16 @@ const Carrinho = ({ route, navigation }) => {
                 }
                 var PrintItems = itensPedido.map(function (item) {
                     return `<tr>
-                <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
+                <td style={{ fontSize: "42px" , maxWidth:"145px"}}>
                     <b>${item.mercador.mer}</b>
                 </td>
-                <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
+                <td style={{ fontSize: "42px" , maxWidth:"20px"}} >
                     <b>${item.qua}</b>
                 </td>
-                <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
+                <td style={{ fontSize: "42px" , maxWidth:"60px" }}>
                     <b>${currencyFormat(item.valuni).replace('.', ',')}</b>
                 </td>
-                <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
+                <td style={{ fontSize: "42px" , maxWidth:"80px" }}>
                     <b>${currencyFormat(item.valuni * item.qua).replace('.', ',')}</b>
                 </td>
                 </tr>`;
@@ -162,7 +162,7 @@ const Carrinho = ({ route, navigation }) => {
                     }
                     p {
                       font-family: "Didot", "Times New Roman";
-                      font-size: 38px;
+                      font-size: 42px;
                       margin: 0;
                     }
                     table {
@@ -173,7 +173,7 @@ const Carrinho = ({ route, navigation }) => {
                       text-align: left;
                       padding: 8px;
                       font-family: "Didot", "Times New Roman";
-                      font-size: 38px;
+                      font-size: 42px;
                     }
                     tr:nth-child(even) {
                       background-color: #f2f2f2;

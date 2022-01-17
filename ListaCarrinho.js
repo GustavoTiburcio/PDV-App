@@ -55,6 +55,9 @@ const ListaCarrinho = ({ route, navigation }) => {
             Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
         } else {
             switch (dadosLogin.codcat) {
+                case null:
+                    Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user')                  
+                    break;
                 case 1:
                     if (dataEstoque.estest1 <= 0) {
                         Alert.alert('Estoque zerado', 'O estoque atual deste produto é ' + dataEstoque.estest1)
