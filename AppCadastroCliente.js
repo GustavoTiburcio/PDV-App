@@ -89,6 +89,16 @@ export default function Home({ navigation }) {
         }
     }
 
+    async function BuscaEnd(cep) {
+        console.log(cep)
+        const response = await api.get(`http://cep.republicavirtual.com.br/web_cep.php?cep=${cep}&formato=json`)
+        console.log(response.data)
+        setBai(response.data.bairro)
+        setCid(response.data.cidade)
+        setLog(response.data.tipo_logradouro + ' ' + response.data.logradouro)
+        setUf(response.data.uf)
+    }
+
     LogBox.ignoreLogs([
         'Non-serializable values were found in the navigation state',
     ]);
@@ -158,7 +168,8 @@ export default function Home({ navigation }) {
                             <TextInput
                                 style={styles.input}
                                 keyboardType='numeric'
-                                onChangeText={text => { setCep(text) }}
+                                onChangeText={text => {setCep(text)}}
+                                onEndEditing={e => {BuscaEnd(e.nativeEvent.text)}}
                                 value={cep}
                             />
                         </View>
@@ -172,7 +183,7 @@ export default function Home({ navigation }) {
                         />
                     </View>
                     <View flexDirection="row">
-                        <View style={{ width: '47.5%' }}>
+                        <View style={{ width: '30%' }}>
                             <Text style={{ fontSize: 16, color: '#000000' }}>Numero: </Text>
                             <TextInput
                                 style={styles.input}
@@ -181,7 +192,7 @@ export default function Home({ navigation }) {
                                 value={num}
                             />
                         </View>
-                        <View style={{ width: '47.5%' }}>
+                        <View style={{ width: '66.5%' }}>
                             <Text style={{ fontSize: 16, color: '#000000' }}>Bairro: </Text>
                             <TextInput
                                 style={styles.input}
