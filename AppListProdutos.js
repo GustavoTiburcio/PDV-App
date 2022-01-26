@@ -108,6 +108,7 @@ function ListItem( {data} ){
         }}
       />
       </View>
+      <Text style={{textAlign: 'center'}}>{data.codBar}</Text>
       <Text></Text>
       <Text style={styles.listText}>{data.mer}</Text>
       <Text style={styles.listText}>R$ {converteValVen(data.valVenMin)}</Text>
