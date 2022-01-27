@@ -115,17 +115,24 @@ const Carrinho = ({ route, navigation }) => {
 
     function enviaPedido() {
 
+        function CalculaValorDesconto() {
+            let valorDesconto = parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes);
+            if (isNaN(valorDesconto)) {
+                return 0;
+            }
+            return valorDesconto;
+        }
+
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         } else {
-            let valorDesconto = parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes);
             const appuser = { id: dadosCliente.id };
             const itensPedido = itensCarrinho.map((iten) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
                 cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-                trarednom: '', valdes: valorDesconto, appuser, itensPedido
+                trarednom: '', valdes: CalculaValorDesconto(), appuser, itensPedido
             })
             console.log('PostPedido: ')
             console.log(ped)
@@ -480,6 +487,11 @@ const Carrinho = ({ route, navigation }) => {
                                         setPorDes(text.replace(',', '.'))
                                         console.log(text)
                                     }}
+                                    onEndEditing={e => {
+                                        if (e.nativeEvent.text == '') {
+                                            setPorDes('0')
+                                        }
+                                    }}
                                     value={porDes.replace('.', ',')}
                                 />
                             </View>
@@ -491,6 +503,11 @@ const Carrinho = ({ route, navigation }) => {
                                     onChangeText={text => {
                                         setValDes(text.replace(',', '.'))
                                         console.log(text)
+                                    }}
+                                    onEndEditing={e => {
+                                        if (e.nativeEvent.text == '') {
+                                            setValDes('0')
+                                        }
                                     }}
                                     value={valDes.replace('.', ',')}
                                 />

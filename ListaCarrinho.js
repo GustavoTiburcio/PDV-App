@@ -72,7 +72,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     break;
                 case 1:
                     if (quantidade > dataEstoque.estest1) {
-                        Alert.alert('Quantidade inválida', 'O estoque atual: ' + dataEstoque.estest1 + ' Unidades')
+                        Alert.alert('Quantidade inválida', 'Estoque atual: ' + dataEstoque.estest1 + ' Unidades')
                     } else {
                         let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
                         gravarItensCarrinhoNoBanco(itens).then(resultado => {
@@ -85,7 +85,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     break;
                 case 2:
                     if (quantidade > dataEstoque.estest2) {
-                        Alert.alert('Quantidade inválida', 'O estoque atual: ' + dataEstoque.estest2 + ' Unidades')
+                        Alert.alert('Quantidade inválida', 'Estoque atual: ' + dataEstoque.estest2 + ' Unidades')
                     } else {
                         let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
                         gravarItensCarrinhoNoBanco(itens).then(resultado => {
@@ -98,7 +98,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     break;
                 case 3:
                     if (quantidade > dataEstoque.estest3) {
-                        Alert.alert('Quantidade inválida', 'O estoque atual: ' + dataEstoque.estest3 + ' Unidades')
+                        Alert.alert('Quantidade inválida', 'Estoque atual: ' + dataEstoque.estest3 + ' Unidades')
                     } else {
                         let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
                         gravarItensCarrinhoNoBanco(itens).then(resultado => {
@@ -111,7 +111,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     break;
                 case 4:
                     if (quantidade > dataEstoque.estest4) {
-                        Alert.alert('Quantidade inválida', 'O estoque atual: ' + dataEstoque.estest4 + ' Unidades')
+                        Alert.alert('Quantidade inválida', 'Estoque atual: ' + dataEstoque.estest4 + ' Unidades')
                     } else {
                         let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
                         gravarItensCarrinhoNoBanco(itens).then(resultado => {
@@ -124,7 +124,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     break;
                 case 5:
                     if (quantidade > dataEstoque.estest5) {
-                        Alert.alert('Quantidade inválida', 'O estoque atual: ' + dataEstoque.estest5 + ' Unidades')
+                        Alert.alert('Quantidade inválida', 'Estoque atual: ' + dataEstoque.estest5 + ' Unidades')
                     } else {
                         let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
                         gravarItensCarrinhoNoBanco(itens).then(resultado => {
