@@ -137,161 +137,158 @@ const Carrinho = ({ route, navigation }) => {
             })
             console.log('PostPedido: ')
             console.log(ped)
-            // setLoading(true)
-            postPedido(ped).then( result => {
-                console.log('Entrou')
-                console.log(result)
-                // setLoading(false)
-                // function currencyFormat(num) {
-                //     return num.toFixed(2);
-                // }
-                // var PrintItems = itensPedido.map(function (item) {
-                //     return `<tr>
-                // <td style={{ fontSize: "44px" , maxWidth:"145px"}}>
-                //     <b>${item.mercador.mer}</b>
-                // </td>
-                // <td style={{ fontSize: "44px" , maxWidth:"20px"}} >
-                //     <b>${item.qua}</b>
-                // </td>
-                // <td style={{ fontSize: "44px" , maxWidth:"60px" }}>
-                //     <b>${currencyFormat(item.valuni).replace('.', ',')}</b>
-                // </td>
-                // <td style={{ fontSize: "44px" , maxWidth:"80px" }}>
-                //     <b>${currencyFormat(item.valuni * item.qua).replace('.', ',')}</b>
-                // </td>
-                // </tr>`;
-                // });
-                // const htmlContent = `
-                //     <!DOCTYPE html>
-                //     <html lang="en">
-                //     <head>
-                //         <meta charset="UTF-8">
-                //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                //         <title>Pdf Content</title>
-                //         <style>
-                //             body {
-                //                 color: #000000;
-                //             }
-                //             p {
-                //             font-family: "Didot", "Times New Roman";
-                //             font-size: 44px;
-                //             margin: 0;
-                //             }
-                //             table {
-                //             border-collapse: collapse;
-                //             width: 100%;
-                //             }
-                //             th, td {
-                //             text-align: left;
-                //             padding: 8px;
-                //             font-family: "Didot", "Times New Roman";
-                //             font-size: 44px;
-                //             }
-                //             tr:nth-child(even) {
-                //             background-color: #f2f2f2;
-                //             margin-bottom:0px
-                //             }
-                //             div.small{
+            setLoading(true)
+            postPedido(ped).then(resultado => {
+                function currencyFormat(num) {
+                    return num.toFixed(2);
+                }
+                var PrintItems = itensPedido.map(function (item) {
+                    return `<tr>
+                <td style={{ fontSize: "44px" , maxWidth:"145px"}}>
+                    <b>${item.mercador.mer}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"20px"}} >
+                    <b>${item.qua}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"60px" }}>
+                    <b>${currencyFormat(item.valuni).replace('.', ',')}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"80px" }}>
+                    <b>${currencyFormat(item.valuni * item.qua).replace('.', ',')}</b>
+                </td>
+                </tr>`;
+                });
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Pdf Content</title>
+                        <style>
+                            body {
+                                color: #000000;
+                            }
+                            p {
+                            font-family: "Didot", "Times New Roman";
+                            font-size: 44px;
+                            margin: 0;
+                            }
+                            table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            }
+                            th, td {
+                            text-align: left;
+                            padding: 8px;
+                            font-family: "Didot", "Times New Roman";
+                            font-size: 44px;
+                            }
+                            tr:nth-child(even) {
+                            background-color: #f2f2f2;
+                            margin-bottom:0px
+                            }
+                            div.small{
                             
-                //             }
-                //         </style>
-                //     </head>
-                //     <body>
-                //     <div class="small">
-                //     </br>
-                //     </br>
-                //         <p></p>
-                //         <p align="right"><b>Venda ${codPed}</b></p>
-                //         </br>
-                //         <p align="center"><b>GOLD CHAVES ACESSORIOS LTDA</b></p>
-                //         </br>
-                //         <p align="center"><b>Av. Brasil, 2796 - LOJA 03 - CENTRO, Maringá - PR, 87013-000</b></p>
-                //         <p align="center"><b>(44) 3227-5493</b></p>
-                //         </br>
-                //         </br>
-                //         <div>
-                //         <p><b>Data: ${date.toLocaleDateString()}</b></p>
-                //         <p><b>Vendedor: ${nomRep}</b></p>
-                //         <p><b>Razão Social:</b><b> ${dadosCliente.raz}</b></p>
-                //         <p><b>CPF/CNPJ: ${dadosCliente.cgc}</b><b> Telefone: ${dadosCliente.fon}</b></p>
-                //         <p><b>Email: ${dadosCliente.ema}</b></p>
-                //         <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
-                //         <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
-                //         <p><b>Obs: ${obs}</b></p>
-                //         </div>
-                //         <table>
-                //                                 <thead>
-                //                                     <tr>
-                //                                         <th>Descricao</th>
-                //                                         <th>Qtd</th>
-                //                                         <th>Vlr</th>
-                //                                         <th>Total</th>
-                //                                     </tr>
-                //                                 </thead>
-                //                                 <tbody>
-                //                                 ${PrintItems}
-                //                                 </tbody>
-                //         </table>
-                //         </div>
-                //         </br>
-                //         <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
-                //         <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
-                //         <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
-                //         </br>
-                //         </br>
-                //         </br>
-                //         </br>
-                //         </br>
-                //         </br>
-                //         <p style="text-align:center"><b>_______________________________________________</b></p>
-                //         <p style="text-align:center"><b>${dadosCliente.raz}</b></p>
-                //     </body>
-                //     </html>
-                // `;
-                // const createAndPrintPDF = async () => {
-                //     try {
-                //         const { uri } = await Print.printToFileAsync({
-                //             html: htmlContent,
-                //             width: 1000, height: 1500
-                //         });
-                //         console.log(uri)
-                //         await Print.printAsync({
-                //             uri: uri
-                //         })
-                //     } catch (error) {
-                //         console.error(error);
-                //     }
-                // };
-                // if (resultado != "erro ao salvar pedido") {
-                //     setLoading(false)
-                //     limparItensCarrinhoNoBanco().then(resultado => {
-                //         setItensCarrinho(null);
-                //         setValorBruto(0);
-                //         setObs('');
-                //         setValDes('0');
-                //         setPorDes('0');
-                //         removeClienteValue('@Cliente_data');
-                //         navigation.navigate('AppListProdutos');
-                //         Alert.alert(
-                //             "Venda finalizada",
-                //             "Deseja imprimir?",
-                //             [
-                //                 {
-                //                     text: "Sim",
-                //                     onPress: () => {
-                //                         createAndPrintPDF()
-                //                     },
-                //                 },
-                //                 {
-                //                     text: "Não",
-                //                 },
-                //             ]
-                //         );
-                //     });
-                // }
-                // if (reject == 'erro ao salvar pedido') {
-                //     setLoading(false)
-                // }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                    <div class="small">
+                    </br>
+                    </br>
+                        <p></p>
+                        <p align="right"><b>Venda ${codPed}</b></p>
+                        </br>
+                        <p align="center"><b>GOLD CHAVES ACESSORIOS LTDA</b></p>
+                        </br>
+                        <p align="center"><b>Av. Brasil, 2796 - LOJA 03 - CENTRO, Maringá - PR, 87013-000</b></p>
+                        <p align="center"><b>(44) 3227-5493</b></p>
+                        </br>
+                        </br>
+                        <div>
+                        <p><b>Data: ${date.toLocaleDateString()}</b></p>
+                        <p><b>Vendedor: ${nomRep}</b></p>
+                        <p><b>Razão Social:</b><b> ${dadosCliente.raz}</b></p>
+                        <p><b>CPF/CNPJ: ${dadosCliente.cgc}</b><b> Telefone: ${dadosCliente.fon}</b></p>
+                        <p><b>Email: ${dadosCliente.ema}</b></p>
+                        <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
+                        <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
+                        <p><b>Obs: ${obs}</b></p>
+                        </div>
+                        <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Descricao</th>
+                                                        <th>Qtd</th>
+                                                        <th>Vlr</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                ${PrintItems}
+                                                </tbody>
+                        </table>
+                        </div>
+                        </br>
+                        <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
+                        <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
+                        <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        <p style="text-align:center"><b>_______________________________________________</b></p>
+                        <p style="text-align:center"><b>${dadosCliente.raz}</b></p>
+                    </body>
+                    </html>
+                `;
+                const createAndPrintPDF = async () => {
+                    try {
+                        const { uri } = await Print.printToFileAsync({
+                            html: htmlContent,
+                            width: 1000, height: 1500
+                        });
+                        console.log(uri)
+                        await Print.printAsync({
+                            uri: uri
+                        })
+                    } catch (error) {
+                        console.error(error);
+                    }
+                };
+                if (resultado != "erro ao salvar pedido") {
+                    setLoading(false)
+                    limparItensCarrinhoNoBanco().then(resultado => {
+                        setItensCarrinho(null);
+                        setValorBruto(0);
+                        setObs('');
+                        setValDes('0');
+                        setPorDes('0');
+                        removeClienteValue('@Cliente_data');
+                        navigation.navigate('AppListProdutos');
+                        Alert.alert(
+                            "Venda finalizada",
+                            "Deseja imprimir?",
+                            [
+                                {
+                                    text: "Sim",
+                                    onPress: () => {
+                                        createAndPrintPDF()
+                                    },
+                                },
+                                {
+                                    text: "Não",
+                                },
+                            ]
+                        );
+                    });
+                }
+            }, reject => {
+                setLoading(false)
+                console.log(reject)
             })
         };
     }
@@ -572,7 +569,7 @@ const Carrinho = ({ route, navigation }) => {
 
                         {loading &&
                             <View style={styles.loading}>
-                                <ActivityIndicator size='large' color="#121212"/>
+                                <ActivityIndicator size='large' color="#121212" />
                             </View>
                         }
                         <Text></Text>
