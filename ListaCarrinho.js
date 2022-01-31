@@ -61,7 +61,7 @@ const ListaCarrinho = ({ route, navigation }) => {
       }
 
     const salvaPedido = () => {
-        if (quantidade == undefined) {
+        if (quantidade == undefined || quantidade == 0) {
             Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         } else if (codigoProd == undefined) {
             Alert.alert('Erro ao adicionar item', 'código do produto está vazio, tente novamente');
