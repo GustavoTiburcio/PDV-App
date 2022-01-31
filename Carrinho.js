@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PrintPDF, { getDadosPedido } from './PrintPDF';
 import * as Print from 'expo-print';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import LottieView from 'lottie-react-native';
 
 
 const Carrinho = ({ route, navigation }) => {
@@ -578,12 +579,22 @@ const Carrinho = ({ route, navigation }) => {
                         <Text></Text>
                     </View>
                     : <View>
-                        <View style={{ alignItems: 'center' }}>
-                            <Image
+                        <View style={{ alignItems: 'center', marginTop: '35%' }}>
+                            {/* <Image
                                 style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}
                                 source={require('./images/carrinhovazio.png')}
+                            /> */}
+                            <LottieView
+                                source={require('./assets/tumbleweed-rolling.json')}
+                                autoPlay={true}
+                                loop={true}
+                                style={{
+                                    width: 300,
+                                    height: 300,
+                                }}
                             />
-                        </View>
+                            <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Carrinho vazio...</Text>
+                        </View>             
                     </View>
                 }
             </ScrollView>

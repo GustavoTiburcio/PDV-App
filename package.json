@@ -38,7 +38,8 @@
     "react-native-web": "~0.13.12",
     "react-number-format": "^4.6.4",
     "react-table": "^7.7.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "lottie-react-native": "4.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
