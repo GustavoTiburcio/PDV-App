@@ -143,6 +143,7 @@ const Carrinho = ({ route, navigation }) => {
                 function currencyFormat(num) {
                     return num.toFixed(2);
                 }
+
                 var PrintItems = itensPedido.map(function (item) {
                     return `<tr>
                 <td style={{ fontSize: "44px" , maxWidth:"145px"}}>
@@ -159,6 +160,19 @@ const Carrinho = ({ route, navigation }) => {
                 </td>
                 </tr>`;
                 });
+
+                function quantidadeTotal() {
+                    try {
+                        var soma = 0;
+                        for (let i = 0; i < itensPedido.length; i++) {
+                            soma += parseInt(itensPedido[i].qua);
+                        }
+                        return soma.toFixed(2).replace('.', ',');
+                    } catch (error) {
+                        console.log(error.message)
+                    }
+                }
+
                 const htmlContent = `
                     <!DOCTYPE html>
                     <html lang="en">
@@ -232,6 +246,7 @@ const Carrinho = ({ route, navigation }) => {
                         </table>
                         </div>
                         </br>
+                        <p style="text-align:right"><b>Qtd Total: ${quantidadeTotal()} Uni</b></p>
                         <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
                         <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
                         <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
@@ -594,7 +609,7 @@ const Carrinho = ({ route, navigation }) => {
                                 }}
                             />
                             <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Carrinho vazio...</Text>
-                        </View>             
+                        </View>
                     </View>
                 }
             </ScrollView>

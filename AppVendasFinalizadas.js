@@ -205,6 +205,14 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           </tr>`;
       });
 
+      function quantidadeTotal() {
+        var soma = 0;
+        for (let i = 0; i < response.data.Pedidos[0].itensPedido.length; i++) {
+          soma += response.data.Pedidos[0].itensPedido[i].qua;
+        }
+        return soma.toFixed(2).replace('.', ',');
+      }
+
       const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
@@ -278,6 +286,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
+              <p style="text-align:right"><b>Qtd Total: ${quantidadeTotal()} Uni</b></p>
               <p style="text-align:right"><b>Total Bruto: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.', ',')}</b></p>
               <p style="text-align:right"><b>Total Desconto: R$ ${response.data.Pedidos[0].valDes.toFixed(2).replace('.', ',')}</b></p>
               <p style="text-align:right"><b>Total Líquido: R$ ${(response.data.Pedidos[0].valPro - response.data.Pedidos[0].valDes).toFixed(2).replace('.', ',')}</b></p>
@@ -330,6 +339,14 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           </tr>`;
       });
 
+      function quantidadeTotal() {
+        var soma = 0;
+        for (let i = 0; i < response.data.Pedidos[0].itensPedido.length; i++) {
+          soma += response.data.Pedidos[0].itensPedido[i].qua;
+        }
+        return soma.toFixed(2).replace('.', ',');
+      }
+
       const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
@@ -403,6 +420,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               </table>
               </div>
               </br>
+              <p style="text-align:right"><b>Qtd Total: ${quantidadeTotal()} Uni</b></p>
               <p style="text-align:right"><b>Total Bruto: R$ ${response.data.Pedidos[0].valPro.toFixed(2).replace('.', ',')}</b></p>
               <p style="text-align:right"><b>Total Desconto: R$ ${response.data.Pedidos[0].valDes.toFixed(2).replace('.', ',')}</b></p>
               <p style="text-align:right"><b>Total Líquido: R$ ${(response.data.Pedidos[0].valPro - response.data.Pedidos[0].valDes).toFixed(2).replace('.', ',')}</b></p>
