@@ -49,7 +49,7 @@ function Tabs({ route }) {
           tabBarIcon: ({ tintColor }) => (
             <View>
               <LinearGradient style={styles.iconTabRound} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} colors={['#D500F9', '#4A148C']}>
-                <Icon name="list" size={24} color='#FFF' />
+                <Icon name="list" size={22} color='#FFF' />
               </LinearGradient>
             </View>
           ),
@@ -62,7 +62,7 @@ function Tabs({ route }) {
           tabBarIcon: ({ tintColor }) => (
             <View>
               <LinearGradient style={styles.iconTabRound} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} colors={['#D500F9', '#4A148C']}>
-                <Icon name="shopping-cart" size={24} color='#FFF' />
+                <Icon name="shopping-cart" size={22} color='#FFF' />
               </LinearGradient>
             </View>
           ),
@@ -75,7 +75,7 @@ function Tabs({ route }) {
           tabBarIcon: ({ tintColor }) => (
             <View>
               <LinearGradient style={styles.iconTabRound} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} colors={['#D500F9', '#4A148C']}>
-                <Icon name="history" size={24} color='#FFF' />
+                <Icon name="history" size={22} color='#FFF' />
               </LinearGradient>
             </View>
           ),
@@ -182,10 +182,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   iconTabRound: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
     borderRadius: 30,
-    marginBottom: 60,
+    marginBottom: 58,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
