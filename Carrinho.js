@@ -53,12 +53,6 @@ const Carrinho = ({ route, navigation }) => {
         }
     }
 
-    async function getUltimoCodPed() {
-        const response = await api.get(`/pedidos/recuperaUltimoCod`)
-        setCodPed(response.data)
-        console.log(codPed);
-    }
-
     //Gera GUID
     function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -101,7 +95,6 @@ const Carrinho = ({ route, navigation }) => {
         navigation.addListener('focus', () => {
             buscarItens();
             getClienteData();
-            getUltimoCodPed()
         });
     }, [navigation]);
 
@@ -125,6 +118,7 @@ const Carrinho = ({ route, navigation }) => {
             return valorDesconto;
         }
 
+
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         } else {
@@ -133,13 +127,14 @@ const Carrinho = ({ route, navigation }) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
-                cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
                 trarednom: '', valdes: CalculaValorDesconto(), appuser, itensPedido
             })
             console.log('PostPedido: ')
             console.log(ped)
             setLoading(true)
             postPedido(ped).then(resultado => {
+                console.log(resultado)
                 function currencyFormat(num) {
                     return num.toFixed(2);
                 }
