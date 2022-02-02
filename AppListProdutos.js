@@ -15,7 +15,7 @@ import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
-export default function AppListProdutos() {
+export default function AppListProdutos({ navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
