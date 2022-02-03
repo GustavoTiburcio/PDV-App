@@ -3,14 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
-import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { postPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import {Picker} from '@react-native-picker/picker';
-import PrintPDF, { getDadosPedido } from './PrintPDF';
 import * as Print from 'expo-print';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import LottieView from 'lottie-react-native';
@@ -134,6 +131,7 @@ const Carrinho = ({ route, navigation }) => {
             console.log(ped)
             setLoading(true)
             postPedido(ped).then(resultado => {
+                console.log('resultado')
                 console.log(resultado)
                 function currencyFormat(num) {
                     return num.toFixed(2);
@@ -208,7 +206,7 @@ const Carrinho = ({ route, navigation }) => {
                     </br>
                     </br>
                         <p></p>
-                        <p align="right"><b>Venda ${codPed}</b></p>
+                        <p align="right"><b>Venda ${resultado.cod}</b></p>
                         </br>
                         <p align="center"><b>GOLD CHAVES ACESSORIOS LTDA</b></p>
                         </br>
@@ -308,86 +306,6 @@ const Carrinho = ({ route, navigation }) => {
         if (dadosCliente != null) {
             return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
         }
-    }
-
-    function CalculaValorLiquido() {
-        if (porDes != '0' && porDes != undefined) {
-            valorBruto - valorBruto / 100 * porDes
-        }
-    }
-
-    function salvarApi() {
-        const pedido = {
-            cod: 1,
-            dathor: new Date(),
-            appuser: {
-                id: 1
-            },
-            itensPedido: itensCarrinho
-        }
-    }
-    function salvarSqlLite() {
-
-        let codped = 0;
-        var db = openDatabase({ name: 'VendaDatabase.db' });
-        db.transaction(function (txn) {
-            txn.executeSql(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='table_pedido'",
-                [],
-                function (tx, res) {
-                    if (res.rows.length > 0) {
-                        txn.executeSql('DROP TABLE IF EXISTS table_pedido', []);
-                        txn.executeSql(
-                            'CREATE TABLE IF NOT EXISTS table_pedido(pedido_id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_codcli INTEGER)',
-                            []
-                        );
-                        txn.executeSql('DROP TABLE IF EXISTS table_itenPedido', []);
-                        txn.executeSql(
-                            'CREATE TABLE IF NOT EXISTS table_itenPedido(itenPedido_id INTEGER PRIMARY KEY AUTOINCREMENT, itenPedido_codped INTEGER, itenPedido_codmer INTEGER, itenPedido_qua INTEGER, itenPedido_valuni VARCHAR(20),itenPedido_mer VARCHAR(20))',
-                            []
-                        );
-                    }
-                }
-            );
-            db.transaction(function (tx) {
-                tx.executeSql(
-                    'INSERT INTO table_pedido (pedido_codcli) VALUES (?)',
-                    ['1'],
-                    (tx, results) => {
-                        if (results.rowsAffected > 0) {
-                            console.log('Success You are Registered Successfully');
-                        } else console.log('Registration Failed');
-                    },
-                );
-            });
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'SELECT max(pedido_id) pedido_id FROM table_pedido  ', [],
-                    (tx, results) => {
-                        var len = results.rows.length;
-                        if (len > 0) {
-                            let res = results.rows.item(0);
-                            codped = res.pedido_id;
-                        } else {
-                            console.log('No user found');
-                        }
-                    },
-                );
-            });
-            itensCarrinho.map((itemCar) => {
-                db.transaction(function (tx) {
-                    tx.executeSql(
-                        'INSERT INTO table_itenPedido (itenPedido_codped, itenPedido_codmer, itenPedido_qua, itenPedido_valuni, itenPedido_mer) VALUES (?,?,?,?,?)',
-                        [codped, itemCar.codmer, itemCar.quantidade, itemCar.valor, itemCar.item],
-                        (tx, results) => {
-                            if (results.rowsAffected > 0) {
-                                console.log('Success You are Registered Successfully');
-                            } else console.log('Registration Failed');
-                        },
-                    );
-                });
-            });
-        });
     }
 
     return (
@@ -558,21 +476,6 @@ const Carrinho = ({ route, navigation }) => {
                                 }}
                             />
                         </View>
-                        {/* <Text style={{fontSize: 16,color:'#000000', paddingTop: 40}}>Forma de pagamento:</Text>
-                        <Picker
-                            selectedValue={selectedLanguage}
-                            style={{paddingTop: 50, marginHorizontal: 100, backgroundColor: 'grey'}}
-                            onValueChange={(itemValue, itemIndex) =>{
-                            setSelectedLanguage(itemValue)
-                            console.log(selectedLanguage)
-                            }
-                        }>
-                            <Picker.Item label="À Vista" value="À Vista" />
-                            <Picker.Item label="Boleto" value="Boleto" />
-                            <Picker.Item label="Cartão" value="Cartão" />
-                            <Picker.Item label="Cheque Pré" value="Cheque Pré" />
-                            <Picker.Item label="Promissória" value="Promissória" />
-                        </Picker> */}
                         <BotaoVermelho
                             text={`Finalizar Venda`}
                             onPress={() => enviaPedido()}>
@@ -669,7 +572,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
 
     },
-
     valorTotalItem: {
         fontSize: 17,
         color: "#000000",
