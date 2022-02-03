@@ -14,6 +14,7 @@ import LottieView from 'lottie-react-native';
 
 
 const Carrinho = ({ route, navigation }) => {
+    const codven = route.params?.codven;
     var date = new Date();
     var dathor = date.toISOString();
 
@@ -114,7 +115,6 @@ const Carrinho = ({ route, navigation }) => {
             }
             return valorDesconto;
         }
-
 
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");

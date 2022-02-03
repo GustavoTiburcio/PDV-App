@@ -85,6 +85,15 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     )
   }
 
+  async function deletarPed(codped) {
+    try {
+      const response = await api.delete(`http://192.168.25.167:8089/api/pedidos/deletarPedido?cod=${codped}`)
+      Alert.alert('Apagar Venda', `${response.data}`)
+    } catch (error) {
+      Alert.alert('Erro ao apagar venda','Não pode alterar. Pedido já está concluido')
+    }
+  }
+
   function filtrarItePed(codped) {
     const pedidofiltrado = data.filter(function (items) {
       return items.cod == codped;
@@ -137,10 +146,54 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         {data.visualizarItens ? <Text style={styles.listText}>Obs: {data.obs}</Text> : null}
         {data.visualizarItens ? <Text style={{ textAlign: 'center', fontSize: 18, color: '#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold' }} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Bruto: R$ {data.valPro.toFixed(2).replace('.', ',')}</Text> : <Text></Text>}
-        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Desconto: R$ {data.valDes.toFixed(2).replace('.', ',')}</Text> : <Text></Text>}
+        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Bruto: R$ {data.valPro.toFixed(2).replace('.', ',')}</Text> : null}
+        {data.visualizarItens ? <Text style={styles.ValVenText}>Total Desconto: R$ {data.valDes.toFixed(2).replace('.', ',')}</Text> : null}
         <Text style={styles.ValVenText}>Total: R$ {(data.valPro - data.valDes).toFixed(2).replace('.', ',')}</Text>
         <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.Icons}
+            activeOpacity={0.5}
+            onPress={() => { ImprimePDF(data.cod) }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'md-print' : 'print'}
+              size={22}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.Icons}
+            activeOpacity={0.5}
+            onPress={() => { SharePDF(data.cod) }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'md-share-social-sharp' : 'ios-share'}
+              size={22}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.Icons}
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate('Carrinho', { codven: data.cod })
+            }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'pencil' : 'pencil'}
+              size={22}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.TrashIcon}
+            activeOpacity={0.5}
+            onPress={() => {deletarPed(data.cod)}}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'trash' : 'trash'}
+              size={22}
+              color="black"
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: "row", alignContent: 'center', justifyContent: 'center' }}>
           <TouchableOpacity
             style={styles.DetalhesButton}
             activeOpacity={0.5}
@@ -154,26 +207,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
               }
             }}>
             <Text style={styles.TextButton}> {data.visualizarItens ? 'Fechar' : 'Detalhes(+)'} </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.Icon}
-            activeOpacity={0.5}
-            onPress={() => { ImprimePDF(data.cod) }}>
-            <Ionicons
-              name={Platform.OS === 'android' ? 'md-print' : 'print'}
-              size={23}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.Icon}
-            activeOpacity={0.5}
-            onPress={() => { SharePDF(data.cod) }}>
-            <Ionicons
-              name={Platform.OS === 'android' ? 'md-share-social-sharp' : 'ios-share'}
-              size={23}
-              color="black"
-            />
           </TouchableOpacity>
         </View>
       </View>
@@ -511,16 +544,26 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 0,
     marginBottom: 15,
-    marginHorizontal: 5,
+    marginHorizontal: 0,
     backgroundColor: '#000',
   },
-  Icon: {
+  Icons: {
     marginTop: 15,
     height: 50,
     padding: 15,
     marginBottom: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     backgroundColor: '#36c75c',
+    borderRadius: 25,
+    borderWidth: 0,
+  },
+  TrashIcon: {
+    marginTop: 15,
+    height: 50,
+    padding: 15,
+    marginBottom: 15,
+    marginHorizontal: 10,
+    backgroundColor: 'red',
     borderRadius: 25,
     borderWidth: 0,
   },
