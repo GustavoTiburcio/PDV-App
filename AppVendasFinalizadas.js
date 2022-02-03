@@ -10,6 +10,14 @@ import * as Print from 'expo-print';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Sharing from 'expo-sharing';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {
+  buscarItensCarrinhoNoBanco,
+  gravarItensCarrinhoNoBanco,
+  limparItensCarrinhoNoBanco,
+  deletarItenCarrinhoNoBanco,
+  buscarCodVenBanco
+} from './controle/CarrinhoStorage';
+
 
 export default function AppVendasFinalizadas({ route, navigation }) {
 
@@ -90,7 +98,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       const response = await api.delete(`http://192.168.25.167:8089/api/pedidos/deletarPedido?cod=${codped}`)
       Alert.alert('Apagar Venda', `${response.data}`)
     } catch (error) {
-      Alert.alert('Erro ao apagar venda','Não pode alterar. Pedido já está concluido')
+      Alert.alert('Erro ao apagar venda', 'Não pode alterar. Pedido já está concluido')
     }
   }
 
@@ -125,6 +133,29 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       )
     });
     return itens;
+  }
+  function preparaItensCarrinho(codped) {
+    const pedidofiltrado = data.filter(function (items) {
+      return items.cod == codped;
+    });
+
+    const itens = pedidofiltrado[0].itensPedido.map(item => {
+      return { codmer: item.codmer, quantidade: item.qua, item: item.mer, valor: item.valUni }
+    });
+    console.log(itens);
+
+    itens.map(item => {
+      gravarItensCarrinhoNoBanco(item).then(resultado => {
+            Alert.alert('', 'Adicionou');
+          });
+    })
+
+    // itens.forEach(async item => {
+    //   await gravarItensCarrinhoNoBanco(item).then(resultado => {
+    //     Alert.alert('', 'Adicionou');
+    //   });
+    // });
+
   }
 
   function ListItem({ data }) {
@@ -174,7 +205,9 @@ export default function AppVendasFinalizadas({ route, navigation }) {
             style={styles.Icons}
             activeOpacity={0.5}
             onPress={() => {
-              navigation.navigate('Carrinho', { codven: data.cod })
+              //limparItensCarrinhoNoBanco()
+              preparaItensCarrinho(data.cod)
+              //navigation.navigate('Carrinho', { codven: data.cod })
             }}>
             <Ionicons
               name={Platform.OS === 'android' ? 'pencil' : 'pencil'}
@@ -185,7 +218,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           <TouchableOpacity
             style={styles.TrashIcon}
             activeOpacity={0.5}
-            onPress={() => {deletarPed(data.cod)}}>
+            onPress={() => { deletarPed(data.cod) }}>
             <Ionicons
               name={Platform.OS === 'android' ? 'trash' : 'trash'}
               size={22}

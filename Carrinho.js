@@ -67,6 +67,8 @@ const Carrinho = ({ route, navigation }) => {
     }
     async function buscarItens() {
         await buscarItensCarrinhoNoBanco().then(resultado => {
+            console.log('resultado')
+            console.log(resultado)
             if ((resultado != null) && (resultado !== [])) {
                 const setValorBrutoInicial = () => resultado.reduce(
                     (valorAnterior, item) =>
