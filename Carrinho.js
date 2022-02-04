@@ -30,8 +30,8 @@ const Carrinho = ({ route, navigation }) => {
     const [porDes, setPorDes] = useState('0');
     const [obs, setObs] = useState('');
     const [loading, setLoading] = useState(false);
+    const [editando, setEditando] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState();
-
 
     async function getLoginData() {
         try {
@@ -67,8 +67,8 @@ const Carrinho = ({ route, navigation }) => {
     }
     async function buscarItens() {
         await buscarItensCarrinhoNoBanco().then(resultado => {
-            console.log('resultado')
-            console.log(resultado)
+            // console.log('resultado')
+            // console.log(resultado)
             if ((resultado != null) && (resultado !== [])) {
                 const setValorBrutoInicial = () => resultado.reduce(
                     (valorAnterior, item) =>
@@ -92,6 +92,13 @@ const Carrinho = ({ route, navigation }) => {
     }
 
     useEffect(() => {
+        if (codven != undefined) {
+            setEditando(true)
+        }
+    }, [codven]);
+
+
+    useEffect(() => {
         navigation.addListener('focus', () => {
             buscarItens();
             getClienteData();
@@ -105,7 +112,6 @@ const Carrinho = ({ route, navigation }) => {
     useEffect(() => {
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
-        console.log('Usuario logado: ' + nomRep + ', categoria: ' + codcat);
     }, [getLoginData])
 
     function enviaPedido() {
@@ -313,6 +319,7 @@ const Carrinho = ({ route, navigation }) => {
     return (
         <View id={"pai"} >
             <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Carrinho</Text>
+            {editando ? <Text style={{ textAlign: 'center', fontSize: 24, color: 'blue', paddingTop: 10 }}>Editando Venda {codven}</Text> : null}
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
                     <View id={"itens"} >

@@ -25,8 +25,17 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
         await AsyncStorage.setItem('i', '1');
         const jsonValue = JSON.stringify(itens)
         await AsyncStorage.setItem('itensCarrinho', jsonValue)
-        console.log('jsonValue')
-        console.log(jsonValue)
+    } catch (e) {
+        console.log(e)
+    }
+};
+
+export const gravarItensCarrinhoParaEditar = async (itensCarrinho) => {
+    try {
+        await AsyncStorage.removeItem('itensCarrinho');
+        await AsyncStorage.setItem('i', '1');
+        const jsonValue = JSON.stringify(itensCarrinho)
+        await AsyncStorage.setItem('itensCarrinho', jsonValue)
     } catch (e) {
         console.log(e)
     }

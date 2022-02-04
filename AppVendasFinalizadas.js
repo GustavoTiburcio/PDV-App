@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   buscarItensCarrinhoNoBanco,
   gravarItensCarrinhoNoBanco,
+  gravarItensCarrinhoParaEditar,
   limparItensCarrinhoNoBanco,
   deletarItenCarrinhoNoBanco,
   buscarCodVenBanco
@@ -134,28 +135,15 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     });
     return itens;
   }
+
   function preparaItensCarrinho(codped) {
     const pedidofiltrado = data.filter(function (items) {
       return items.cod == codped;
     });
-
     const itens = pedidofiltrado[0].itensPedido.map(item => {
       return { codmer: item.codmer, quantidade: item.qua, item: item.mer, valor: item.valUni }
     });
-    console.log(itens);
-
-    itens.map(item => {
-      gravarItensCarrinhoNoBanco(item).then(resultado => {
-            Alert.alert('', 'Adicionou');
-          });
-    })
-
-    // itens.forEach(async item => {
-    //   await gravarItensCarrinhoNoBanco(item).then(resultado => {
-    //     Alert.alert('', 'Adicionou');
-    //   });
-    // });
-
+    gravarItensCarrinhoParaEditar(itens);
   }
 
   function ListItem({ data }) {
@@ -205,9 +193,19 @@ export default function AppVendasFinalizadas({ route, navigation }) {
             style={styles.Icons}
             activeOpacity={0.5}
             onPress={() => {
-              //limparItensCarrinhoNoBanco()
               preparaItensCarrinho(data.cod)
-              //navigation.navigate('Carrinho', { codven: data.cod })
+              Alert.alert(
+                `Editando Venda ${data.cod}`,
+                "",
+                [
+                  {
+                    text: "Ok",
+                    onPress: () => {
+                      navigation.navigate('Carrinho', { codven: data.cod, valdesc: data.valDes })
+                    },
+                  },
+                ]
+              );
             }}>
             <Ionicons
               name={Platform.OS === 'android' ? 'pencil' : 'pencil'}
