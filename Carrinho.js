@@ -15,23 +15,24 @@ import LottieView from 'lottie-react-native';
 
 const Carrinho = ({ route, navigation }) => {
     const codven = route.params?.codven;
+    const dadosPed = route.params?.dadosPed;
+    const dadosCli = route.params?.dadosCli;
+
     var date = new Date();
     var dathor = date.toISOString();
 
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
-    const isFocused = useIsFocused();
     const [nomRep, setNomRep] = useState('');
     const [codcat, setCodCat] = useState();
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
-    const [codPed, setCodPed] = useState();
     const [valDes, setValDes] = useState('0');
     const [porDes, setPorDes] = useState('0');
     const [obs, setObs] = useState('');
     const [loading, setLoading] = useState(false);
     const [editando, setEditando] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState();
+    const [codVenda, setCodVenda] = useState('');
 
     async function getLoginData() {
         try {
@@ -45,9 +46,9 @@ const Carrinho = ({ route, navigation }) => {
         try {
             const clientedados = await AsyncStorage.getItem('@Cliente_data')
             setDadosCliente(JSON.parse(clientedados))
-            console.log('Pegou dados cliente: ' + clientedados)
+            // console.log('Pegou dados cliente: ' + clientedados)
         } catch (e) {
-            console.log('Erro ao ler login')
+            console.log('Erro ao pegar dados do cliente')
         }
     }
 
@@ -93,10 +94,14 @@ const Carrinho = ({ route, navigation }) => {
 
     useEffect(() => {
         if (codven != undefined) {
+            removeClienteValue('@Cliente_data');
+            setDadosCliente(dadosCli._W)
+            setObs(dadosPed.obs)
+            setValDes((dadosPed.valdes).toString())
             setEditando(true)
+            setCodVenda(codven)
         }
     }, [codven]);
-
 
     useEffect(() => {
         navigation.addListener('focus', () => {
@@ -319,7 +324,7 @@ const Carrinho = ({ route, navigation }) => {
     return (
         <View id={"pai"} >
             <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Carrinho</Text>
-            {editando ? <Text style={{ textAlign: 'center', fontSize: 24, color: 'blue', paddingTop: 10 }}>Editando Venda {codven}</Text> : null}
+            {editando ? <Text style={{ textAlign: 'center', fontSize: 24, color: 'blue', paddingTop: 10 }}>Editando Venda {codVenda}</Text> : null}
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
                     <View id={"itens"} >

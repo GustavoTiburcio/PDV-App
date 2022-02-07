@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity, LogBox } from 'react-native';
 import api from './api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
@@ -10,15 +10,7 @@ import * as Print from 'expo-print';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Sharing from 'expo-sharing';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {
-  buscarItensCarrinhoNoBanco,
-  gravarItensCarrinhoNoBanco,
-  gravarItensCarrinhoParaEditar,
-  limparItensCarrinhoNoBanco,
-  deletarItenCarrinhoNoBanco,
-  buscarCodVenBanco
-} from './controle/CarrinhoStorage';
-
+import { gravarItensCarrinhoParaEditar } from './controle/CarrinhoStorage';;
 
 export default function AppVendasFinalizadas({ route, navigation }) {
 
@@ -146,6 +138,17 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     gravarItensCarrinhoParaEditar(itens);
   }
 
+  async function buscaDadosCliente(raz) {
+    const response = await api.get(`/usuarios/pesquisar?page=0&pesquisa=${raz}`)
+    console.log(response.data.content[0])
+    return response.data.content[0]
+  }
+
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+  ]);
+
+
   function ListItem({ data }) {
 
     const navigation = useNavigation();
@@ -201,7 +204,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                   {
                     text: "Ok",
                     onPress: () => {
-                      navigation.navigate('Carrinho', { codven: data.cod, valdesc: data.valDes })
+                      navigation.navigate('Carrinho', { codven: data.cod, valdesc: data.valDes, dadosCli: buscaDadosCliente(data.cliente.raz), dadosPed: { obs: data.obs, valdes: data.valDes } })
                     },
                   },
                 ]
