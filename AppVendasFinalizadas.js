@@ -91,7 +91,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
   async function deletarPed(codped) {
     try {
-      const response = await api.delete(`http://192.168.25.167:8089/api/pedidos/deletarPedido?cod=${codped}`)
+      const response = await api.delete(`/pedidos/deletarPedido?cod=${codped}`)
       Alert.alert('Excluir Venda', `${response.data}`)
     } catch (error) {
       Alert.alert('Erro ao apagar venda', 'Não pode alterar. Pedido já está concluido')
