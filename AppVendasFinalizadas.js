@@ -27,19 +27,22 @@ export default function AppVendasFinalizadas({ route, navigation }) {
 
   useEffect(() => {
     loadApi();
+    console.log('1')
   }, [data])
 
-  //   useEffect(() => {
-  //     navigation.addListener('focus', () => {
-  //       loadApi();
-  //     });
-  // }, [navigation]);
+  useEffect(() => {
+    navigation.addListener('tabPress', () => {
+      loadApi();
+      console.log('2')
+    });
+  }, [navigation]);
 
   useEffect(() => {
-
+    console.log('3')
   }, [dadosPedido])
 
   useEffect(() => {
+    console.log('4')
     setRefresh(false)
   }, [refresh])
 
@@ -64,7 +67,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
       .map(e => JSON.parse(e));
 
-    console.log(cabPed)
+    //console.log(cabPed)
 
     setData([...data, ...cabPed]);
 
@@ -89,7 +92,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   async function deletarPed(codped) {
     try {
       const response = await api.delete(`http://192.168.25.167:8089/api/pedidos/deletarPedido?cod=${codped}`)
-      Alert.alert('Apagar Venda', `${response.data}`)
+      Alert.alert('Excluir Venda', `${response.data}`)
     } catch (error) {
       Alert.alert('Erro ao apagar venda', 'Não pode alterar. Pedido já está concluido')
     }
@@ -99,8 +102,8 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const pedidofiltrado = data.filter(function (items) {
       return items.cod == codped;
     });
-    console.log('teste itens filtrados');
-    console.log(pedidofiltrado[0].itensPedido);
+    //console.log('teste itens filtrados');
+    //console.log(pedidofiltrado[0].itensPedido);
 
     const itens = pedidofiltrado[0].itensPedido.map(item => {
       return (
@@ -136,12 +139,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       return { codmer: item.codmer, quantidade: item.qua, item: item.mer, valor: item.valUni }
     });
     gravarItensCarrinhoParaEditar(itens);
-  }
-
-  async function buscaDadosCliente(raz) {
-    const response = await api.get(`/usuarios/pesquisar?page=0&pesquisa=${raz}`)
-    console.log(response.data.content[0])
-    return response.data.content[0]
   }
 
   LogBox.ignoreLogs([
@@ -204,7 +201,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
                   {
                     text: "Ok",
                     onPress: () => {
-                      navigation.navigate('Carrinho', { codven: data.cod, valdesc: data.valDes, dadosCli: buscaDadosCliente(data.cliente.raz), dadosPed: { obs: data.obs, valdes: data.valDes } })
+                      navigation.navigate('Carrinho', { codven: data.cod, valdesc: data.valDes, raz: data.cliente.raz, dadosPed: { obs: data.obs, valdes: data.valDes } })
                     },
                   },
                 ]
@@ -219,7 +216,23 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           <TouchableOpacity
             style={styles.TrashIcon}
             activeOpacity={0.5}
-            onPress={() => { deletarPed(data.cod) }}>
+            onPress={() => {
+              Alert.alert(
+                "Excluir venda",
+                "Confirmar exclusão?",
+                [
+                  {
+                    text: "Sim",
+                    onPress: () => {
+                      deletarPed(data.cod)
+                    },
+                  },
+                  {
+                    text: "Não",
+                  },
+                ]
+              );
+            }}>
             <Ionicons
               name={Platform.OS === 'android' ? 'trash' : 'trash'}
               size={22}
@@ -251,8 +264,8 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     setDadosPedido(response.data)
 
-    console.log('Dados pedido')
-    console.log(response.data.Pedidos[0]);
+    //console.log('Dados pedido')
+    //console.log(response.data.Pedidos[0]);
 
     async function createAndPrintPDF() {
       var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
@@ -374,7 +387,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           html: htmlContent,
           width: 1000, height: 1500
         });
-        console.log(uri)
+        //console.log(uri)
         await Print.printAsync({
           uri: uri
         })
@@ -508,7 +521,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           html: htmlContent,
           width: 1000, height: 1500
         });
-        console.log(uri);
+        //console.log(uri);
         Sharing.shareAsync(uri)
       } catch (error) {
         console.error(error);
@@ -597,7 +610,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     marginHorizontal: 10,
-    backgroundColor: 'red',
+    backgroundColor: '#d11b49',
     borderRadius: 25,
     borderWidth: 0,
   },

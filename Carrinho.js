@@ -4,8 +4,8 @@ import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInp
 import BotaoVermelho from './components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { postPedido } from './services/requisicaoInserePedido';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { postPedido, putAlterarPedido } from './services/requisicaoInserePedido';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Print from 'expo-print';
@@ -16,7 +16,7 @@ import LottieView from 'lottie-react-native';
 const Carrinho = ({ route, navigation }) => {
     const codven = route.params?.codven;
     const dadosPed = route.params?.dadosPed;
-    const dadosCli = route.params?.dadosCli;
+    const raz = route.params?.raz;
 
     var date = new Date();
     var dathor = date.toISOString();
@@ -33,6 +33,7 @@ const Carrinho = ({ route, navigation }) => {
     const [loading, setLoading] = useState(false);
     const [editando, setEditando] = useState(false);
     const [codVenda, setCodVenda] = useState('');
+    const [refresh, setRefresh] = useState('');
 
     async function getLoginData() {
         try {
@@ -46,9 +47,22 @@ const Carrinho = ({ route, navigation }) => {
         try {
             const clientedados = await AsyncStorage.getItem('@Cliente_data')
             setDadosCliente(JSON.parse(clientedados))
-            // console.log('Pegou dados cliente: ' + clientedados)
+            //console.log('Pegou dados cliente: ' + clientedados)
         } catch (e) {
             console.log('Erro ao pegar dados do cliente')
+        }
+    }
+
+    async function buscaDadosClienteESalvaStore(raz) {
+        const response = await api.get(`/usuarios/pesquisar?page=0&pesquisa=${raz}`)
+        try {
+            await AsyncStorage.removeItem('@Cliente_data');
+            const jsonValue = JSON.stringify(response.data.content[0])
+            await AsyncStorage.setItem('@Cliente_data', jsonValue)
+            setDadosCliente(response.data.content[0])
+            setRefresh('')
+        } catch (e) {
+            console.log('erro ao salvar informações de Cliente' + e)
         }
     }
 
@@ -68,8 +82,6 @@ const Carrinho = ({ route, navigation }) => {
     }
     async function buscarItens() {
         await buscarItensCarrinhoNoBanco().then(resultado => {
-            // console.log('resultado')
-            // console.log(resultado)
             if ((resultado != null) && (resultado !== [])) {
                 const setValorBrutoInicial = () => resultado.reduce(
                     (valorAnterior, item) =>
@@ -94,27 +106,47 @@ const Carrinho = ({ route, navigation }) => {
 
     useEffect(() => {
         if (codven != undefined) {
-            removeClienteValue('@Cliente_data');
-            setDadosCliente(dadosCli._W)
+            buscaDadosClienteESalvaStore(raz)
             setObs(dadosPed.obs)
             setValDes((dadosPed.valdes).toString())
             setEditando(true)
             setCodVenda(codven)
         }
+        
     }, [codven]);
 
+    // useEffect(() => {
+    //     navigation.addListener('focus', () => {
+    //         buscarItens();
+    //         getClienteData();
+    //     });
+    // }, [navigation]);
+
+    // useEffect(() => {
+    //     getLoginData();
+    // }, [])
+
     useEffect(() => {
-        navigation.addListener('focus', () => {
-            buscarItens();
+        
+    }, [dadosCliente, refresh])
+
+    useFocusEffect(
+        React.useCallback(() => {
             getClienteData();
-        });
-    }, [navigation]);
+            buscarItens();
+            getLoginData();
+            
+            //alert('Screen was focused');
+            return () => {
+                //alert('Screen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
+        }, [])
+    );
 
     useEffect(() => {
-        getLoginData();
-    }, [])
-
-    useEffect(() => {
+        
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
     }, [getLoginData])
@@ -314,11 +346,201 @@ const Carrinho = ({ route, navigation }) => {
             })
         };
     }
+    function AlteraPedido() {
 
-    function ImprimeDadosCliente() {
-        if (dadosCliente != null) {
-            return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
+        function CalculaValorDesconto() {
+            let valorDesconto = parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes);
+            if (isNaN(valorDesconto)) {
+                return 0;
+            }
+            return valorDesconto;
         }
+
+        if (dadosCliente == null) {
+            Alert.alert("Atenção", "Favor selecionar o cliente da venda");
+        } else {
+            const appuser = { id: dadosCliente.id };
+            const itensPedido = itensCarrinho.map((iten) => {
+                return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
+            });
+            const ped = JSON.stringify({
+                cod: codVenda, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                trarednom: '', valdes: CalculaValorDesconto(), appuser, itensPedido
+            })
+            console.log('PutPedido: ')
+            console.log(ped)
+            setLoading(true)
+            putAlterarPedido(ped).then(resultado => {
+                console.log('resultado')
+                console.log(resultado)
+                function currencyFormat(num) {
+                    return num.toFixed(2);
+                }
+
+                var PrintItems = itensPedido.map(function (item) {
+                    return `<tr>
+                <td style={{ fontSize: "44px" , maxWidth:"145px"}}>
+                    <b>${item.mercador.mer}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"20px"}} >
+                    <b>${item.qua}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"60px" }}>
+                    <b>${currencyFormat(item.valuni).replace('.', ',')}</b>
+                </td>
+                <td style={{ fontSize: "44px" , maxWidth:"80px" }}>
+                    <b>${currencyFormat(item.valuni * item.qua).replace('.', ',')}</b>
+                </td>
+                </tr>`;
+                });
+
+                function quantidadeTotal() {
+                    try {
+                        var soma = 0;
+                        for (let i = 0; i < itensPedido.length; i++) {
+                            soma += parseInt(itensPedido[i].qua);
+                        }
+                        return soma.toFixed(2).replace('.', ',');
+                    } catch (error) {
+                        console.log(error.message)
+                    }
+                }
+
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Pdf Content</title>
+                        <style>
+                            body {
+                                color: #000000;
+                            }
+                            p {
+                            font-family: "Didot", "Times New Roman";
+                            font-size: 44px;
+                            margin: 0;
+                            }
+                            table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            }
+                            th, td {
+                            text-align: left;
+                            padding: 8px;
+                            font-family: "Didot", "Times New Roman";
+                            font-size: 44px;
+                            }
+                            tr:nth-child(even) {
+                            background-color: #f2f2f2;
+                            margin-bottom:0px
+                            }
+                            div.small{
+                            
+                            }
+                        </style>
+                    </head>
+                    <body>
+                    <div class="small">
+                    </br>
+                    </br>
+                        <p></p>
+                        <p align="right"><b>Venda ${codVenda}</b></p>
+                        </br>
+                        <p align="center"><b>GOLD CHAVES ACESSORIOS LTDA</b></p>
+                        </br>
+                        <p align="center"><b>Av. Brasil, 2796 - LOJA 03 - CENTRO, Maringá - PR, 87013-000</b></p>
+                        <p align="center"><b>(44) 3227-5493</b></p>
+                        </br>
+                        </br>
+                        <div>
+                        <p><b>Data: ${date.toLocaleDateString()}</b></p>
+                        <p><b>Vendedor: ${nomRep}</b></p>
+                        <p><b>Razão Social:</b><b> ${dadosCliente.raz}</b></p>
+                        <p><b>CPF/CNPJ: ${dadosCliente.cgc}</b><b> Telefone: ${dadosCliente.fon}</b></p>
+                        <p><b>Email: ${dadosCliente.ema}</b></p>
+                        <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
+                        <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
+                        <p><b>Obs: ${obs}</b></p>
+                        </div>
+                        <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Descricao</th>
+                                                        <th>Qtd</th>
+                                                        <th>Vlr</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                ${PrintItems}
+                                                </tbody>
+                        </table>
+                        </div>
+                        </br>
+                        <p style="text-align:right"><b>Qtd Total: ${quantidadeTotal()} Uni</b></p>
+                        <p style="text-align:right"><b>Total Bruto: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
+                        <p style="text-align:right"><b>Total Desconto: R$ ${(parseFloat(valorBruto / 100 * porDes) + parseFloat(valDes)).toFixed(2).replace('.', ',')}</b></p>
+                        <p style="text-align:right"><b>Total Líquido: R$ ${((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</b></p>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        <p style="text-align:center"><b>_______________________________________________</b></p>
+                        <p style="text-align:center"><b>${dadosCliente.raz}</b></p>
+                    </body>
+                    </html>
+                `;
+                const createAndPrintPDF = async () => {
+                    try {
+                        const { uri } = await Print.printToFileAsync({
+                            html: htmlContent,
+                            width: 1000, height: 1500
+                        });
+                        console.log(uri)
+                        await Print.printAsync({
+                            uri: uri
+                        })
+                    } catch (error) {
+                        console.error(error);
+                    }
+                };
+                if (resultado != "erro ao salvar pedido") {
+                    setLoading(false)
+                    limparItensCarrinhoNoBanco().then(resultado => {
+                        setItensCarrinho(null);
+                        setValorBruto(0);
+                        setObs('');
+                        setValDes('0');
+                        setPorDes('0');
+                        removeClienteValue('@Cliente_data');
+                        setEditando(false)
+                        navigation.navigate('AppListProdutos');
+                        Alert.alert(
+                            "Venda finalizada",
+                            "Deseja imprimir?",
+                            [
+                                {
+                                    text: "Sim",
+                                    onPress: () => {
+                                        createAndPrintPDF()
+                                    },
+                                },
+                                {
+                                    text: "Não",
+                                },
+                            ]
+                        );
+                    });
+                }
+            }, reject => {
+                setLoading(false)
+                console.log(reject)
+            })
+        };
     }
 
     return (
@@ -413,6 +635,33 @@ const Carrinho = ({ route, navigation }) => {
                                 </View>
                             )
                         })}
+                        <View style={{ alignItems: 'flex-end' }}>
+                            <TouchableOpacity
+                                style={{
+                                    marginTop: 15,
+                                    marginRight:5,
+                                    height: 10,
+                                    width: '30%',
+                                    padding: 15,
+                                    borderRadius: 25,
+                                    marginBottom: 5,
+                                    justifyContent: 'center',
+                                    alignContent: 'center',
+                                    backgroundColor: '#d11b49',
+                                }}
+                                onPress={() => {
+                                    limparItensCarrinhoNoBanco()
+                                    setItensCarrinho(null);
+                                    setValorBruto(0);
+                                    setValDes('0');
+                                    setPorDes('0');
+                                }}
+                            >
+                                <Text style={styles.TextButton}>
+                                    Limpar
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                         <TouchableOpacity
                             style={{
                                 marginTop: 15,
@@ -479,7 +728,7 @@ const Carrinho = ({ route, navigation }) => {
                             <Text style={styles.textValorPedido}> Valor Líquido: </Text>
                             <Text style={styles.valorTotalPedido}>R$ {((valorBruto - valorBruto / 100 * porDes) - valDes).toFixed(2).replace('.', ',')}</Text>
                         </View>
-                        <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {ImprimeDadosCliente()}</Text>
+                        <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {dadosCliente != null ? <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text> : null}</Text>
                         <View flexDirection="row">
                             <BotaoVermelho
                                 text={'Selecionar Cliente'}
@@ -490,11 +739,33 @@ const Carrinho = ({ route, navigation }) => {
                                 }}
                             />
                         </View>
-                        <BotaoVermelho
-                            text={`Finalizar Venda`}
-                            onPress={() => enviaPedido()}>
-                        </BotaoVermelho>
-
+                        {editando === false ?
+                            <BotaoVermelho
+                                text={`Finalizar Venda`}
+                                onPress={() => enviaPedido()}>
+                            </BotaoVermelho> :
+                            <View>
+                                <BotaoVermelho
+                                    text={`Salvar alterações`}
+                                    onPress={() => AlteraPedido()}>
+                                </BotaoVermelho>
+                                <TouchableOpacity
+                                    style={styles.CancelarButton}
+                                    activeOpacity={0.5}
+                                    onPress={() => {
+                                        removeClienteValue('@Cliente_data')
+                                        limparItensCarrinhoNoBanco()
+                                        setItensCarrinho(null);
+                                        setValorBruto(0);
+                                        setObs('');
+                                        setValDes('0');
+                                        setPorDes('0');
+                                        setEditando(false)
+                                    }}>
+                                    <Text style={styles.TextButton}>Cancelar Edição</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
                         {loading &&
                             <View style={styles.loading}>
                                 <ActivityIndicator size='large' color="#121212" />
@@ -532,6 +803,23 @@ const styles = StyleSheet.create({
     container: {
         padding: 4,
         justifyContent: 'space-between'
+    },
+    TextButton: {
+        fontSize: 20,
+        color: '#FFF',
+        textAlign: 'center',
+    },
+    CancelarButton: {
+        marginTop: 5,
+        height: 50,
+        padding: 15,
+        borderRadius: 25,
+        borderWidth: 0,
+        marginBottom: 15,
+        marginHorizontal: 70,
+        justifyContent: 'center',
+        alignContent: 'center',
+        backgroundColor: '#d11b49',
     },
     cabeçalho: {
         padding: 10,

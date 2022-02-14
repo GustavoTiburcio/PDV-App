@@ -66,10 +66,6 @@ export default function AppListProdutos({ navigation }) {
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View>
         <View style={{ alignItems: 'center'}}>
-          {/* <Image
-          style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
-          source={require('./images/nenhum_prod.png')}
-        /> */}
           <LottieView
             source={require('./assets/notfound.json')}
             autoPlay={true}

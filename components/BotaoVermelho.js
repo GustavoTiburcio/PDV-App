@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 
   SubmitButtonStyle: {
-    marginTop: 25,
+    marginTop: 5,
     height:50,
     padding: 15,
     borderRadius: 25,

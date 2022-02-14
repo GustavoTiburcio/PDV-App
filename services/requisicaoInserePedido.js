@@ -17,3 +17,17 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
         }
     }).catch(error => { reject(error); console.log(error.message); Alert.alert("Erro ao salvar pedido", error.message) });
 });
+
+export const putAlterarPedido = (dadosPedido) => new Promise((resolve, reject) => {
+    return api.put('/pedidos/alterarPedido', dadosPedido, {
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
+    }).then(response => {
+        if (response.data) {
+            resolve(response.data);
+        } else {
+            reject("erro ao salvar pedido")
+        }
+    }).catch(error => { reject(error); console.log(error.message); Alert.alert("Erro ao salvar pedido", error.message) });
+});

@@ -46,19 +46,22 @@ const ListaCarrinho = ({ route, navigation }) => {
         getListarDetalhes()
         getListarEstoque()
         getLoginData()
+
     }, [quantidade, valorItem, codigoProd])
 
     useEffect(() => {
         if (valor == null && valor == undefined) {
             Alert.alert('Valor de venda zerado', item + ' está sem valor de venda, avise a loja para corrigir o valor no sistema.')
+
         }
+
     }, [navigation]);
 
     function converteValVen(num) {
         if (num != null && num != undefined) {
-          return num.toFixed(2).replace('.',',')
+            return num.toFixed(2).replace('.', ',')
         }
-      }
+    }
 
     const salvaPedido = () => {
         if (quantidade == undefined || quantidade == 0) {
@@ -68,7 +71,7 @@ const ListaCarrinho = ({ route, navigation }) => {
         } else {
             switch (dadosLogin.codcat) {
                 case null:
-                    Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user')                  
+                    Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user')
                     break;
                 case 1:
                     if (quantidade > dataEstoque.estest1 || dataEstoque.estest1 == null) {
