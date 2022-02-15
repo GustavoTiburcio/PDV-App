@@ -54,6 +54,7 @@ export default function AppListProdutos({ navigation }) {
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
+        onClearPress={() => setPesquisa('08')}
       />
       <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Produtos</Text>
       {data != '' ? <FlatList

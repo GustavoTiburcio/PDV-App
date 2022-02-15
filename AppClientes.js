@@ -43,6 +43,7 @@ export default function Home({ navigation }) {
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
+        onClearPress={() => setPesquisa('chave')}
       />
       <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Clientes</Text>
       {data != '' ? <FlatList

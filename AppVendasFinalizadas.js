@@ -17,7 +17,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('Gold');
+  const [pesquisa, setPesquisa] = useState('');
   const [itensPedidos, setItensPedidos] = useState([]);
   const [dadosPedido, setDadosPedido] = useState();
   const [refresh, setRefresh] = useState(false);
@@ -56,7 +56,7 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const login = JSON.parse(jsonValue)
     setNomRep(login.username);
 
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
+    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}&cliente=${pesquisa}`)
 
     const cabPedAux = response.data.map((ped) => {
       return { cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep, status: ped.status, valPro: ped.valPro, valDes: ped.valDes, obs: ped.obs, visualizarItens: false, cliente: ped.cliente, itensPedido: ped.itensPedido }
@@ -537,9 +537,10 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         style={styles.SearchBar}
         placeholder="Digite o nome do cliente"
         onChangeText={(text) => setPesquisa(text)}
-        onSearchPress={() => { }}
+        onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
-        onSubmitEditing={() => { }}
+        onSubmitEditing={() => novaPesquisa()}
+        onClearPress={() => setPesquisa('')}
       />
       <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Histórico de vendas</Text>
       <FlatList
