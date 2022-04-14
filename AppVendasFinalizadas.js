@@ -548,7 +548,10 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         data={data}
         keyExtractor={item => String(item.cod)}
         renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={loadApi}
+        onEndReached={({ distanceFromEnd }) => {
+          if (distanceFromEnd < 0) return;
+          loadApi()
+        }}
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterList load={loading} />}
       />

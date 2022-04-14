@@ -62,11 +62,14 @@ export default function AppListProdutos({ navigation }) {
         data={data}
         keyExtractor={item => String(item.codBar)}
         renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={loadApi}
-        onEndReachedThreshold={0.1}
+        onEndReached={({ distanceFromEnd }) => {
+          if (distanceFromEnd < 0) return;
+          loadApi()
+        }}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View>
-        <View style={{ alignItems: 'center'}}>
+        <View style={{ alignItems: 'center' }}>
           <LottieView
             source={require('./assets/notfound.json')}
             autoPlay={true}
