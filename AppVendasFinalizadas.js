@@ -421,8 +421,11 @@ export default function AppVendasFinalizadas({ route, navigation }) {
         data={data}
         keyExtractor={item => String(item.cod)}
         renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={loadApi}
-        onEndReachedThreshold={0.1}
+        onEndReached={({ distanceFromEnd }) => {
+          if (distanceFromEnd < 0) return;
+          loadApi()
+        }}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
       />
     </View>
@@ -470,7 +473,7 @@ const styles = StyleSheet.create({
   },
   Icon: {
     marginTop: 15,
-    height: 50,
+    height: 55,
     padding: 15,
     marginBottom: 15,
     marginHorizontal: 20,

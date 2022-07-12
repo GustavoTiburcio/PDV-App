@@ -115,6 +115,7 @@ const ListaCarrinho = ({ route, navigation }) => {
 
             {/* Cor e tamanho para varejo */}
             {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
+            <Text></Text>
             <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
             <ScrollView>
                 <Text style={styles.text}>Valor R$:</Text>

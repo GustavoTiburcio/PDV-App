@@ -18,7 +18,7 @@ export default function AppListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('');
+  const [pesquisa, setPesquisa] = useState('Jaq');
 
   useEffect(()=>{
     loadApi();
@@ -59,8 +59,11 @@ export default function AppListProdutos(){
         data={data}
         keyExtractor={item => String(item.codBar)}
         renderItem={({ item }) => <ListItem data={item}/>}
-        onEndReached={loadApi}
-        onEndReachedThreshold={0.1}
+        onEndReached={({ distanceFromEnd }) => {
+          if (distanceFromEnd < 0) return;
+          loadApi()
+        }}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View><View style={{ alignItems: 'center' }}>
       <Image

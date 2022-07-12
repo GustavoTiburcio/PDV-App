@@ -47,8 +47,11 @@ export default function Home({ navigation }) {
         data={data}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={getClientes}
-        onEndReachedThreshold={0.1}
+        onEndReached={({ distanceFromEnd }) => {
+          if (distanceFromEnd < 0) return;
+          getClientes()
+        }}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View><View style={{ alignItems: 'center' }}>
         <Image

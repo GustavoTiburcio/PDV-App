@@ -21,9 +21,9 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        console.log(response.data);
-        console.log(response.data.cores);
-        console.log(response.data.tamanhos);
+        // console.log(response.data);
+        // console.log(response.data.cores);
+        // console.log(response.data.tamanhos);
         setData(response.data);
         setCores(response.data.cores);
         setTamanhos(response.data.tamanhos);
@@ -91,33 +91,30 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
         }
     }
 
-    function CalculaHeight() {
-        return cores.length * 100;
-    }
 
     function grade() {
         const grade =
-            <ScrollView horizontal={true} style={{ height: 3000 }}>
+            <ScrollView horizontal={true} style={{}}>
                 <ScrollView
                     nestedScrollEnabled
                     bounces={false}
-                    contentContainerStyle={{ height: CalculaHeight() }}
+                    contentContainerStyle={{ height: cores ? cores.length * 120 : 0  }}
                 >
-                    <View style={{ height: "80%" }}>
+                    <View style={{ }}>
                         <DataTable style={styles.modalView2}>
-                            <DataTable.Header style={{ marginHorizontal: -28 }}>
+                            <DataTable.Header style={{ marginLeft: '2%' }}>
                                 <DataTable.Title />
                                 <DataTable.Title />
                                 <DataTable.Title />
                                 {tamanhos.map(tamanho => {
-                                    return <DataTable.Title key={tamanho}>{tamanho}</DataTable.Title>
+                                    return <DataTable.Title key={tamanho} style={{marginLeft: '4%'}}>{tamanho}</DataTable.Title>
                                 })}
                             </DataTable.Header>
                             {cores.map(cor => {
                                 return <DataTable.Row style={styles.modalView2} key={cor.cod}>
-                                    <View style={{ width: 110, justifyContent: 'center'}}><Text>{cor.padmer}</Text></View>
+                                    <View style={{ width: '20%', justifyContent: 'center'}}><Text>{cor.padmer}</Text></View>
                                     {tamanhos.map(tamanho => {
-                                        return <DataTable.Cell style={{ marginLeft: 5 }} key={tamanho}>
+                                        return <DataTable.Cell style={{ }} key={tamanho}>
                                             <TextInput
                                                 style={styles.input}
                                                 value={number}
@@ -143,14 +140,14 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 visible={modalVisible}
                 propagateSwipe={true}
                 onRequestClose={() => {
-                    console.log('O modal foi fechado')
+                    // console.log('O modal foi fechado')
                     setModalVisible(!modalVisible);
                 }}
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>GRADE</Text>
-                        {tamanhos ? grade() : null}
+                        {tamanhos !== undefined && cores !== undefined? grade() : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => {
@@ -178,13 +175,10 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 }
 const styles = StyleSheet.create({
     centeredView: {
-        flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 22
     },
     modalView: {
-        margin: "0%",
         backgroundColor: "white",
         borderRadius: 20,
         padding: 5,
@@ -243,19 +237,12 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: '#F3F3F3',
-        height: 40,
-        margin: 15,
+        height: 35,
         borderWidth: 1,
         padding: 5
     },
     textCor: {
         height: 20,
         margin: 12,
-    },
-    cellCabeçalho: {
-        borderWidth: 0,
-        borderColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center'
     },
 });
