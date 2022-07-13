@@ -1,19 +1,18 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'react-native';
-import BotaoVermelho from './components/BotaoVermelho';
-import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from './controle/CarrinhoStorage';
-import { useIsFocused } from '@react-navigation/native';
-import api from './api';
-import CorTamanho from './components/CorTamanho';
-import GradeAtacado from './components/GradeAtacado';
+import BotaoVermelho from '../../components/BotaoVermelho';
+import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from '../../controle/CarrinhoStorage';
+import api from '../../services/api';
+import CorTamanho from '../../components/CorTamanho';
+import GradeAtacado from '../../components/GradeAtacado';
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
     const codbar = route.params?.codbar;
     const item = route.params?.mer;
 
-    //Valor vindo do card(AppListProdutos), ficará errado se tiver variação de preço por cor/tamanho
+    //Valor vindo do card(ListProdutos), ficará errado se tiver variação de preço por cor/tamanho
     const valor = route.params?.valor;
 
     const [quantidade, setQuantidade] = useState();
@@ -45,24 +44,16 @@ const ListaCarrinho = ({ route, navigation }) => {
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
-        console.log(response.data)
         setData(response.data)
         try {
             setFoto(response.data.fotos[0].linkfot);
         } catch (error) {
-            console.log('Produto sem foto')
             console.log(error)
         }
-        
-        console.log(foto)
     }
 
     const salvaPedido = () => {
-
-        console.log(itensCarrinho);
         gravarItensCarrinhoNoBanco(itensCarrinho).then(resultado => {
-            console.log('Adicionado ao carrinho: ')
-            console.log(itensCarrinho)
             Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
         });
@@ -73,8 +64,6 @@ const ListaCarrinho = ({ route, navigation }) => {
         // }else{
         //     let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem, cor: cor, tamanho: tamanho };
         // gravarItensCarrinhoNoBanco(itens).then(resultado => {
-        //     console.log('Adicionado ao carrinho: ')
-        //     console.log(itens)
         //     Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
         //     navigation.pop();
         // });
@@ -82,10 +71,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     };
 
     function fotoProduto(link) {
-        console.log('teste link')
-        console.log(link)
         if (link != undefined) {
-            console.log('Aqui 1')
             return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
                 <Image
                     style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
@@ -95,7 +81,6 @@ const ListaCarrinho = ({ route, navigation }) => {
                 />
             </View>
         } else {
-            console.log('Aqui 2')
             return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
                 <Image
                     style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}

@@ -1,17 +1,16 @@
 import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
-import api from './api';
+import api from '../../services/api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
-import BotaoVermelho from './components/BotaoVermelho';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import * as Print from 'expo-print';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Sharing from 'expo-sharing';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function AppVendasFinalizadas({ route, navigation }) {
+export default function VendasFinalizadas({ route, navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,8 +60,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
       .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
       .map(e => JSON.parse(e));
 
-    console.log(cabPed)
-
     setData([...data, ...cabPed]);
 
     setPage(page + 1);
@@ -87,8 +84,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
     const pedidofiltrado = data.filter(function (items) {
       return items.cod == codped;
     });
-    console.log('teste itens filtrados');
-    console.log(pedidofiltrado[0].itensPedido);
 
     const itens = pedidofiltrado[0].itensPedido.map(item => {
       return (
@@ -177,9 +172,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
   async function ImprimePDF(codped) {
     const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
     setDadosPedido(response.data)
-
-    console.log('Dados pedido')
-    console.log(response.data.Pedidos[0]);
 
     async function createAndPrintPDF() {
       var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
@@ -280,7 +272,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           html: htmlContent,
           width: 1000, height: 1500
         });
-        console.log(uri)
         await Print.printAsync({
           uri: uri
         })
@@ -393,7 +384,6 @@ export default function AppVendasFinalizadas({ route, navigation }) {
           html: htmlContent,
           width: 1000, height: 1500
         });
-        console.log(uri);
         Sharing.shareAsync(uri)
       } catch (error) {
         console.error(error);

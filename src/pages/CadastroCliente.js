@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TextInput, ScrollView, TouchableOpacity, StyleSheet, LogBox, Alert } from 'react-native';
-import api from './api';
-import { useNavigation } from '@react-navigation/native';
+import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export default function Home({ navigation }) {
+export default function CadastroCliente({ navigation }) {
 
     const [raz, setRaz] = useState('');
     const [fan, setFan] = useState('');
@@ -26,9 +25,8 @@ export default function Home({ navigation }) {
         try {
             removeClienteValue('@Cliente_data');
             await AsyncStorage.setItem('@Cliente_data', DadosCliente)
-            // console.log('salvou localstorage informações do cliente: ' + DadosCliente)
         } catch (e) {
-            console.log('erro ao salvar informações de Cliente' + e)
+            console.log('erro ao salvar informações de Cliente ' + e)
         }
     }
 
@@ -40,15 +38,12 @@ export default function Home({ navigation }) {
             username: cgc, log: log, num: num, ema: email, cgc: cgc, datnas: null, fon: fon, raz: raz,
             password: 'operaz', insest: insest, fan: fan, bai: bai, cep: cep, cid: cid, uf: uf, comlog: comLog, id: codusu
         })
-        console.log(endUsu)
         try {
             const response = await api.post('/endusus/salvar', endUsu, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-            // console.log('Salvou endusu')
-            // console.log(response)
             Alert.alert('Cliente cadastrado com sucesso', `${codusu} - ${fan}`)
             storeClienteData(dadosClienteStorage);
             navigation.pop();
@@ -74,15 +69,12 @@ export default function Home({ navigation }) {
             cgc: cgc, ema: email, name: fan, username: cgc,
             password: 'operaz', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan, tipusu: 'comum'
         })
-        console.log(dadosCliente)
         try {
             const response = await api.post('/usuarios/salvar', dadosCliente, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-            // console.log('Enviou cliente')
-            // console.log(response)
             SalvarEndUsu(response.data.id)
         } catch (error) {
             Alert.alert('Erro ao salvar');
@@ -93,9 +85,7 @@ export default function Home({ navigation }) {
     //Validações de formulários
 
     async function BuscaEnd(cep) {
-        console.log(cep)
         const response = await api.get(`https://viacep.com.br/ws/${cep}/json/`)
-        // console.log(response.data)
         setBai(response.data.bairro)
         setCid(response.data.localidade)
         setLog(response.data.logradouro)

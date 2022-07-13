@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'react-native';
-import api from '../api';
+import api from '../services/api';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function CorTamanho({ codbar, setCor, setTamanho }) {

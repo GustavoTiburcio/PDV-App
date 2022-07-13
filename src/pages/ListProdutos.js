@@ -8,12 +8,12 @@ import {
   ActivityIndicator, 
   Alert, 
   TouchableOpacity} from 'react-native';
-import api from './api';
+import api from '../../services/api';
 import {StatusBar} from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import {useNavigation} from '@react-navigation/native';
 
-export default function AppListProdutos(){
+export default function ListProdutos(){
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -68,7 +68,7 @@ export default function AppListProdutos(){
       /> : <View><View style={{ alignItems: 'center' }}>
       <Image
         style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
-        source={require('./images/nenhum_prod.png')}
+        source={require('../assets/nenhum_prod.png')}
       />
     </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum produto foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
     </View>
@@ -117,7 +117,7 @@ function ListItem( {data} ){
             <TouchableOpacity
             style={styles.CarrinhoButton}
             activeOpacity={0.5}
-            onPress={() => {navigation.navigate('AppEstoque', {codbar: data.codBar})}}>
+            onPress={() => {navigation.navigate('Estoque', {codbar: data.codBar})}}>
               <Text style={styles.TextButton}>   Estoque   </Text>
             </TouchableOpacity>
           </View> */}

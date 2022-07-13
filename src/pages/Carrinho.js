@@ -1,15 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert, RefreshControl } from 'react-native';
-import BotaoVermelho from './components/BotaoVermelho';
-import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from './controle/CarrinhoStorage';
+import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
+import BotaoVermelho from '../../components/BotaoVermelho';
+import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../../controle/CarrinhoStorage';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
-import { postPedido } from './services/requisicaoInserePedido';
-import api from './api';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { postPedido } from '../../services/requisicaoInserePedido';
+import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PrintPDF, { getDadosPedido } from './PrintPDF';
 import * as Print from 'expo-print';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -26,7 +25,6 @@ const Carrinho = ({ route, navigation }) => {
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
     const [codPed, setCodPed] = useState();
-    const [selectedLanguage, setSelectedLanguage] = useState();
 
 
     async function getLoginData() {
@@ -41,7 +39,6 @@ const Carrinho = ({ route, navigation }) => {
         try {
             const clientedados = await AsyncStorage.getItem('@Cliente_data')
             setDadosCliente(JSON.parse(clientedados))
-            console.log('Pegou dados cliente: ' + clientedados)
         } catch (e) {
             console.log('Erro ao ler login')
         }
@@ -50,8 +47,6 @@ const Carrinho = ({ route, navigation }) => {
     async function getUltimoCodPed() {
         const response = await api.get(`/pedidos/recuperaUltimoCod`)
         setCodPed(response.data)
-        console.log('Código do ultimo pedido');
-        console.log(response.data);
     }
 
     //Gera GUID
@@ -98,12 +93,12 @@ const Carrinho = ({ route, navigation }) => {
             buscarItens();
             getUltimoCodPed();
             getLoginData();
-          //alert('Screen was focused');
-          return () => {
-            //alert('Screen was unfocused');
-            // Do something when the screen is unfocused
-            // Useful for cleanup functions
-          };
+            //alert('Screen was focused');
+            return () => {
+                //alert('Screen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
         }, [])
     );
 
@@ -125,8 +120,6 @@ const Carrinho = ({ route, navigation }) => {
                 cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
                 trarednom: '', appuser, itensPedido
             })
-            console.log('PostPedido: ')
-            console.log(ped)
             postPedido(ped).then(resultado => {
                 function currencyFormat(num) {
                     return num.toFixed(2);
@@ -228,7 +221,6 @@ const Carrinho = ({ route, navigation }) => {
                             html: htmlContent,
                             width: 1000, height: 1500
                         });
-                        console.log(uri)
                         await Print.printAsync({
                             uri: uri
                         })
@@ -256,7 +248,7 @@ const Carrinho = ({ route, navigation }) => {
                         setItensCarrinho(null);
                         setValorBruto(0);
                         removeClienteValue('@Cliente_data');
-                        navigation.navigate('AppListProdutos');
+                        navigation.navigate('ListProdutos');
                     });
                 } else { Alert.alert("falhou ao salvar, tente novamente"); }
             })
@@ -267,80 +259,6 @@ const Carrinho = ({ route, navigation }) => {
         if (dadosCliente != null) {
             return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
         }
-    }
-
-    function salvarApi() {
-        const pedido = {
-            cod: 1,
-            dathor: new Date(),
-            appuser: {
-                id: 1
-            },
-            itensPedido: itensCarrinho
-        }
-    }
-    function salvarSqlLite() {
-
-        let codped = 0;
-        var db = openDatabase({ name: 'VendaDatabase.db' });
-        db.transaction(function (txn) {
-            txn.executeSql(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='table_pedido'",
-                [],
-                function (tx, res) {
-                    if (res.rows.length > 0) {
-                        txn.executeSql('DROP TABLE IF EXISTS table_pedido', []);
-                        txn.executeSql(
-                            'CREATE TABLE IF NOT EXISTS table_pedido(pedido_id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_codcli INTEGER)',
-                            []
-                        );
-                        txn.executeSql('DROP TABLE IF EXISTS table_itenPedido', []);
-                        txn.executeSql(
-                            'CREATE TABLE IF NOT EXISTS table_itenPedido(itenPedido_id INTEGER PRIMARY KEY AUTOINCREMENT, itenPedido_codped INTEGER, itenPedido_codmer INTEGER, itenPedido_qua INTEGER, itenPedido_valuni VARCHAR(20),itenPedido_mer VARCHAR(20))',
-                            []
-                        );
-                    }
-                }
-            );
-            db.transaction(function (tx) {
-                tx.executeSql(
-                    'INSERT INTO table_pedido (pedido_codcli) VALUES (?)',
-                    ['1'],
-                    (tx, results) => {
-                        if (results.rowsAffected > 0) {
-                            console.log('Success You are Registered Successfully');
-                        } else console.log('Registration Failed');
-                    },
-                );
-            });
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'SELECT max(pedido_id) pedido_id FROM table_pedido  ', [],
-                    (tx, results) => {
-                        var len = results.rows.length;
-                        if (len > 0) {
-                            let res = results.rows.item(0);
-                            codped = res.pedido_id;
-                        } else {
-                            console.log('No user found');
-                        }
-                    },
-                );
-            });
-            itensCarrinho.map((itemCar) => {
-                db.transaction(function (tx) {
-                    tx.executeSql(
-                        'INSERT INTO table_itenPedido (itenPedido_codped, itenPedido_codmer, itenPedido_qua, itenPedido_valuni, itenPedido_mer) VALUES (?,?,?,?,?)',
-                        [codped, itemCar.codmer, itemCar.quantidade, itemCar.valor, itemCar.item],
-                        (tx, results) => {
-                            if (results.rowsAffected > 0) {
-                                console.log('Success You are Registered Successfully');
-                            } else console.log('Registration Failed');
-                        },
-                    );
-                });
-            });
-        });
     }
 
     return (
@@ -445,7 +363,7 @@ const Carrinho = ({ route, navigation }) => {
                                     style={styles.Clientes}
                                     activeOpacity={0.5}
                                     onPress={() => {
-                                        navigation.navigate('AppClientes', {
+                                        navigation.navigate('Clientes', {
                                             onGoBack: () => Refresh()
                                         });
                                     }}>
@@ -456,7 +374,8 @@ const Carrinho = ({ route, navigation }) => {
                                 <TouchableOpacity
                                     style={styles.NovoCliente}
                                     activeOpacity={0.5}
-                                    onPress={() => { navigation.navigate('AppCadastroCliente', {
+                                    onPress={() => {
+                                        navigation.navigate('CadastroCliente', {
                                             onGoBack: () => Refresh()
                                         });
                                     }}>
@@ -477,7 +396,7 @@ const Carrinho = ({ route, navigation }) => {
                         <View style={{ alignItems: 'center' }}>
                             <Image
                                 style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}
-                                source={require('./images/carrinhovazio.png')}
+                                source={require('../assets/carrinhovazio.png')}
                             />
                         </View>
                     </View>

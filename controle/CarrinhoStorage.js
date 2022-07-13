@@ -13,14 +13,8 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
             const getJsonValue = await AsyncStorage.getItem('itensCarrinho');
             if (getJsonValue != null) {
                 itens = JSON.parse(getJsonValue);
-                console.log('TESTE CARRINHO NO BANCO')
-                console.log(itens)
-                console.log('TESTE ITENS CARRINHO')
-                console.log(itensCarrinho)
 
                 diferenca = itensCarrinho.filter(ite => !itens.some(item => ite.codmer === item.codmer))
-                console.log('diferença --')
-                console.log(diferenca)
                 
                 itens.map((item) => {
                     itensCarrinho.map((ite) => {
@@ -31,8 +25,6 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
                         }
                     }) 
                 })
-                console.log('TEST DO MAP');
-                console.log(itens);
                 if (diferenca) {
                     diferenca.map(item => {
                         itens.push(item)

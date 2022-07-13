@@ -8,7 +8,6 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
         let url = link;
         if (url === 'https://operazjeans-api.herokuapp.com/api') {
             link = url + '/pedidos/salvarPed';
-            console.log(dadosPedido);
             return axios.post(link, dadosPedido, {
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'

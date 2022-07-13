@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Modal, ScrollView, Text, Alert, Image, Pressable, View, ActivityIndicator } from 'react-native';
-import api from '../api';
+import api from '../services/api';
 import { DataTable, TextInput } from 'react-native-paper';
 
 export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
@@ -21,9 +21,6 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        // console.log(response.data);
-        // console.log(response.data.cores);
-        // console.log(response.data.tamanhos);
         setData(response.data);
         setCores(response.data.cores);
         setTamanhos(response.data.tamanhos);
@@ -31,34 +28,25 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     function adicionaProdutoPelaGrade(cor, tamanho, quantidade) {
         let codmer;
-        console.log('cor: ' + cor)
-        console.log('tamanho: ' + tamanho)
         const codmerc = data.detalhes.filter(item => {
             return item.cor === cor && item.tamanho === tamanho
         })
-        console.log(codmerc)
         if (quantidade != '' && quantidade != '0' && quantidade != '00') {
             if (codmerc != '') {
                 codmer = codmerc[0].codigo
                 let itemcarrinho = { codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho }
-                // console.log('Para adicionar no array: ');
-                // console.log(itemcarrinho);
                 let pos = itensCarrinho.findIndex(itensCarrinho => {
                     return itensCarrinho.codmer === codmer;
                 });
                 if (pos == '-1') {
                     itensCarrinho.push(itemcarrinho);
-                    console.log(itensCarrinho);
                 } else {
                     var itemRemovido = itensCarrinho.splice(pos, 1)
-                    console.log('Item removido: ')
-                    console.log(itemRemovido)
                     itensCarrinho.push(itemcarrinho);
-                    console.log(itensCarrinho);
                 }
 
             } else {
-                console.log('Não encontrado produto ' + cor + ' ' + tamanho);
+                //console.log('Não encontrado produto ' + cor + ' ' + tamanho);
             }
         } else {
             if (codmerc != '') {
@@ -66,15 +54,11 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 let pos = itensCarrinho.findIndex(itensCarrinho => {
                     return itensCarrinho.codmer === codmer;
                 });
-                console.log('indice do array ' + pos);
                 if (pos != '-1') {
                     var itemRemovido = itensCarrinho.splice(pos, 1)
-                    console.log('Item removido: ')
-                    console.log(itemRemovido)
                 }
-                console.log(itensCarrinho)
             } else {
-                console.log('Não encontrado produto ' + cor + ' ' + tamanho);
+                //console.log('Não encontrado produto ' + cor + ' ' + tamanho);
             }
         }
     }
@@ -140,7 +124,6 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 visible={modalVisible}
                 propagateSwipe={true}
                 onRequestClose={() => {
-                    // console.log('O modal foi fechado')
                     setModalVisible(!modalVisible);
                 }}
             >
