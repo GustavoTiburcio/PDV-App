@@ -72,7 +72,7 @@ export default function VendasFinalizadas({ route, navigation }) {
   }
 
   function FooterList(Load) {
-    if(!Load.load) return null;
+    if (!Load.load) return null;
     return (
       <View style={styles.loading}>
         <ActivityIndicator size='large' color="#121212" />
@@ -89,7 +89,7 @@ export default function VendasFinalizadas({ route, navigation }) {
       return (
         <View key={item.codmer}>
           <Grid>
-            <Col size={15}>
+            <Col size={15} style={{ }}>
               <Row style={styles.cell}>
                 <Text>{item.qua}x</Text>
               </Row>
@@ -129,7 +129,7 @@ export default function VendasFinalizadas({ route, navigation }) {
         {data.visualizarItens ? <Text style={{ textAlign: 'center', fontSize: 18, color: '#000000', paddingTop: 5, paddingBottom: 10, fontWeight: 'bold' }} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
         <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.', ',')}</Text>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
           <TouchableOpacity
             style={styles.DetalhesButton}
             activeOpacity={0.5}
@@ -453,13 +453,12 @@ const styles = StyleSheet.create({
   },
   DetalhesButton: {
     marginTop: 15,
-    height: 50,
+    height: 55,
     padding: 15,
     borderRadius: 25,
-    borderWidth: 0,
+    marginHorizontal: 20,
     marginBottom: 15,
-    marginHorizontal: 5,
-    backgroundColor: '#000',
+    backgroundColor: '#38A69D',
   },
   Icon: {
     marginTop: 15,
@@ -467,16 +466,15 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     marginHorizontal: 20,
-    backgroundColor: '#36c75c',
+    backgroundColor: '#0fa35b',
     borderRadius: 25,
-    borderWidth: 0,
   },
   SearchBar: {
     backgroundColor: '#F3F3F3',
     marginTop: 20,
   },
   cell: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#000',
     flex: 1,
     justifyContent: 'flex-start',

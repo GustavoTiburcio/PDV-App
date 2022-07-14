@@ -67,7 +67,7 @@ export default function () {
           options={{
             title: 'Bem-Vindo',
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'
@@ -79,7 +79,7 @@ export default function () {
           options={{
             title: 'Inserir item',
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'
@@ -105,7 +105,7 @@ export default function () {
           options={{
             title: 'Selecionar Cliente',
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'
@@ -117,7 +117,7 @@ export default function () {
           options={{
             title: 'Cadastro Novo Cliente',
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'
@@ -129,7 +129,7 @@ export default function () {
           options={{
             title: 'Estoque',
             headerStyle: {
-              backgroundColor: '#121212',
+              backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'

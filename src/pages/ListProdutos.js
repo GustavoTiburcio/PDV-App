@@ -18,7 +18,7 @@ export default function ListProdutos(){
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('Jaq');
+  const [pesquisa, setPesquisa] = useState('');
 
   useEffect(()=>{
     loadApi();
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     marginBottom: 15,
     marginHorizontal: 50,
-    backgroundColor: '#121212',
+    backgroundColor: '#38A69D',
   },
   TextButton: {
     fontSize: 14,

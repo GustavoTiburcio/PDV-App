@@ -74,7 +74,7 @@ export default function Login() {
           <Text style={styles.buttonText}>Acessar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonRegister}>
+        <TouchableOpacity style={styles.buttonRegister} onPress={() => Alert.alert('Credenciais de acesso', 'Entre em contato com o nosso suporte para mais informações. (44) 3023-7230')}>
           <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
         </TouchableOpacity>
 

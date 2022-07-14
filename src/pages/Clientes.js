@@ -74,26 +74,16 @@ function FooterList(Load) {
 
 async function removeClienteValue(key) {
   try {
-      await AsyncStorage.removeItem(key);
-      return true;
+    await AsyncStorage.removeItem(key);
+    return true;
   }
   catch (exception) {
-      return false;
+    return false;
   }
 }
 
 function ListItem({ data }) {
   const navigation = useNavigation();
-
-  async function storeClienteData() {
-    try {
-      removeClienteValue('@Cliente_data');
-      const jsonValue = JSON.stringify(data)
-      await AsyncStorage.setItem('@Cliente_data', jsonValue)
-    } catch (e) {
-      console.log('erro ao salvar informações de Cliente' + e)
-    }
-  }
 
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -113,8 +103,12 @@ function ListItem({ data }) {
           style={styles.CarrinhoButton}
           activeOpacity={0.5}
           onPress={() => {
-            storeClienteData()
-            navigation.pop()
+            let cliente = data;
+            navigation.navigate({
+              name: 'Carrinho',
+              params: { cliente },
+              merge: true,
+            });
           }}>
           <Text style={styles.TextButton}> Selecionar </Text>
         </TouchableOpacity>

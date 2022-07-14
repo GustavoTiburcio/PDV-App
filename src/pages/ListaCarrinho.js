@@ -95,15 +95,15 @@ const ListaCarrinho = ({ route, navigation }) => {
     return (
         <View id={codmer} style={styles.container}>
             {fotoProduto(foto)}
-            <Text style={styles.item}> {codbar} </Text>
-            <Text style={styles.item}> {item} </Text>
-
-            {/* Cor e tamanho para varejo */}
-            {/* <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
-            <Text></Text>
-            <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
             <ScrollView>
+                <Text style={{alignSelf: 'center'}}> {codbar} </Text>
+                <Text style={styles.item}>{item}</Text>
+                {/* Cor e tamanho para varejo
+                <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
                 <Text style={styles.text}>Valor R$:</Text>
+                <Text style={styles.textinput}>{valor}</Text>
+                <Text></Text>
+                <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
                 {/* <TextInput
                     style={styles.textinput}
                     keyboardType="numeric"
@@ -111,7 +111,6 @@ const ListaCarrinho = ({ route, navigation }) => {
                     onChangeText={value => setValorItem(value.replace(',', '.'))}>
                     {valor.toFixed(2).replace('.', ',')}
                 </TextInput> */}
-                <Text style={styles.textinput}>{valor}</Text>
                 <BotaoVermelho
                     text={
                         'Adicionar '
@@ -154,7 +153,8 @@ const styles = StyleSheet.create({
     textinput: {
         fontSize: 20,
         borderBottomColor: '#000000',
-        borderBottomWidth: 2,
+        borderBottomWidth: 1,
+        width: '90%'
     },
     texto: {
         color: '#000000',

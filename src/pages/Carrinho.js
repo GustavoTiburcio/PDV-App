@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
 import BotaoVermelho from '../../components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../../controle/CarrinhoStorage';
-import { openDatabase } from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { postPedido } from '../../services/requisicaoInserePedido';
@@ -19,12 +18,11 @@ const Carrinho = ({ route, navigation }) => {
 
     const [itensCarrinho, setItensCarrinho] = useState();
     const [valorBruto, setValorBruto] = useState(0);
-    const isFocused = useIsFocused();
     const [nomRep, setNomRep] = useState('');
     const [codcat, setCodCat] = useState();
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
-    const [codPed, setCodPed] = useState();
+    const [codPed, setCodPed] = useState(0);
 
 
     async function getLoginData() {
@@ -34,27 +32,6 @@ const Carrinho = ({ route, navigation }) => {
         } catch (e) {
             console.log('Erro ao ler login')
         }
-    }
-    async function getClienteData() {
-        try {
-            const clientedados = await AsyncStorage.getItem('@Cliente_data')
-            setDadosCliente(JSON.parse(clientedados))
-        } catch (e) {
-            console.log('Erro ao ler login')
-        }
-    }
-
-    async function getUltimoCodPed() {
-        const response = await api.get(`/pedidos/recuperaUltimoCod`)
-        setCodPed(response.data)
-    }
-
-    //Gera GUID
-    function uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
     }
 
     async function deleteClick(mer) {
@@ -87,25 +64,25 @@ const Carrinho = ({ route, navigation }) => {
         }
     }
 
-    useFocusEffect(
-        React.useCallback(() => {
-            getClienteData();
+    useEffect(() => {
+        navigation.addListener('focus', () => {
             buscarItens();
-            getUltimoCodPed();
             getLoginData();
-            //alert('Screen was focused');
-            return () => {
-                //alert('Screen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
+        });
+    }, [navigation]);
 
     useEffect(() => {
         setNomRep(dadosLogin.username)
         setCodCat(dadosLogin.codcat)
     }, [dadosLogin])
+
+    useEffect(() => {
+        //console.log('route.params?.cliente')
+        if (route.params?.cliente) {
+            setDadosCliente(route.params?.cliente)
+        }
+        console.log(route.params)
+    }, [route.params?.cliente])
 
     function enviaPedido() {
 
@@ -117,7 +94,7 @@ const Carrinho = ({ route, navigation }) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
-                cod: codPed, codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
                 trarednom: '', appuser, itensPedido
             })
             postPedido(ped).then(resultado => {
@@ -561,7 +538,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         marginBottom: 15,
         marginHorizontal: 30,
-        backgroundColor: '#121212',
+        backgroundColor: '#38A69D',
     },
     NovoCliente: {
         marginTop: 25,
