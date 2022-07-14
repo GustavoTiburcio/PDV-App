@@ -86,20 +86,6 @@ export default function () {
           }}
         />
         <Stack.Screen
-          name="Carrinho"
-          component={Carrinho}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="VendasFinalizadas"
-          component={VendasFinalizadas}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
           name="Clientes"
           component={Clientes}
           options={{

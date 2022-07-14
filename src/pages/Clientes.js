@@ -3,7 +3,6 @@ import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, Fl
 import api from '../../services/api';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Clientes({ navigation }) {
@@ -70,16 +69,6 @@ function FooterList(Load) {
       <ActivityIndicator size='large' color="#121212" />
     </View>
   )
-}
-
-async function removeClienteValue(key) {
-  try {
-    await AsyncStorage.removeItem(key);
-    return true;
-  }
-  catch (exception) {
-    return false;
-  }
 }
 
 function ListItem({ data }) {

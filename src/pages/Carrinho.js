@@ -4,12 +4,10 @@ import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInp
 import BotaoVermelho from '../../components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../../controle/CarrinhoStorage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { postPedido } from '../../services/requisicaoInserePedido';
-import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Print from 'expo-print';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import { PrintPDF } from '../../components/printPDF';
 
 
 const Carrinho = ({ route, navigation }) => {
@@ -23,7 +21,6 @@ const Carrinho = ({ route, navigation }) => {
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
     const [codPed, setCodPed] = useState(0);
-
 
     async function getLoginData() {
         try {
@@ -54,16 +51,6 @@ const Carrinho = ({ route, navigation }) => {
         });
     }
 
-    async function removeClienteValue(key) {
-        try {
-            await AsyncStorage.removeItem(key);
-            return true;
-        }
-        catch (exception) {
-            return false;
-        }
-    }
-
     useEffect(() => {
         navigation.addListener('focus', () => {
             buscarItens();
@@ -77,15 +64,12 @@ const Carrinho = ({ route, navigation }) => {
     }, [dadosLogin])
 
     useEffect(() => {
-        //console.log('route.params?.cliente')
         if (route.params?.cliente) {
             setDadosCliente(route.params?.cliente)
         }
-        console.log(route.params)
     }, [route.params?.cliente])
 
     function enviaPedido() {
-
         if (dadosCliente == null) {
             Alert.alert("Atenção", "Favor selecionar o cliente da venda");
         } else {
@@ -98,115 +82,8 @@ const Carrinho = ({ route, navigation }) => {
                 trarednom: '', appuser, itensPedido
             })
             postPedido(ped).then(resultado => {
-                function currencyFormat(num) {
-                    return num.toFixed(2);
-                }
-                var PrintItems = itensCarrinho.map(function (item) {
-                    return `<tr>
-                <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-                    <b>${item.item} ${item.cor} ${item.tamanho}</b>
-                </td>
-                <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
-                    <b>${item.quantidade}</b>
-                </td>
-                <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
-                    <b>${currencyFormat(item.valor).replace('.', ',')}</b>
-                </td>
-                <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
-                    <b>${currencyFormat(item.valor * item.quantidade).replace('.', ',')}</b>
-                </td>
-                </tr>`;
-                });
-                const htmlContent = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Pdf Content</title>
-                <style>
-                    body {
-                        color: #000000;
-                    }
-                    p {
-                      font-family: "Didot", "Times New Roman";
-                      font-size: 38px;
-                      margin: 0;
-                    }
-                    table {
-                      border-collapse: collapse;
-                      width: 100%;
-                    }
-                    th, td {
-                      text-align: left;
-                      padding: 8px;
-                      font-family: "Didot", "Times New Roman";
-                      font-size: 38px;
-                    }
-                    tr:nth-child(even) {
-                      background-color: #f2f2f2;
-                      margin-bottom:0px
-                    }
-                    div.small{
-                      
-                    }
-                </style>
-            </head>
-            <body>
-              <div class="small">
-              </br>
-              </br>
-                <p></p>
-                <p align="right"><b>Venda ${codPed}</b></p>
-                </br>
-                <p align="center"><b>OPERA Z</b></p>
-                </br>
-                <p align="center"><b></b></p>
-                </br>
-                </br>
-                <div>
-                <p><b>Data: ${date.toLocaleDateString()}</b></p>
-                <p><b>Vendedor: ${nomRep}</b></p>
-                <p><b>Razão Social:</b><b> ${dadosCliente.raz}</b></p>
-                <p><b>CPF/CNPJ: ${dadosCliente.cgc}</b><b> Telefone: ${dadosCliente.fon}</b></p>
-                <p><b>Email: ${dadosCliente.ema}</b></p>
-                <p><b> Endereço: ${dadosCliente.log + ', ' + dadosCliente.num}</b></p>
-                <p><b>Bairro: ${dadosCliente.bai}</b><b> Cidade: ${dadosCliente.cid + ' - ' + dadosCliente.uf}</b></p>
-                </div>
-                <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Descricao</th>
-                                                <th>Qtd</th>
-                                                <th>Vlr</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        ${PrintItems}
-                                        </tbody>
-                </table>
-                </div>
-                </br>
-                <p style="text-align:right"><b>Total geral: R$ ${valorBruto.toFixed(2).replace('.', ',')}</b></p>
-            </body>
-            </html>
-        `;
-                const createAndPrintPDF = async () => {
-                    try {
-                        const { uri } = await Print.printToFileAsync({
-                            html: htmlContent,
-                            width: 1000, height: 1500
-                        });
-                        await Print.printAsync({
-                            uri: uri
-                        })
-                    } catch (error) {
-                        console.error(error);
-                    }
-                };
-                if (resultado != "erro ao salvar pedido") {
-                    limparItensCarrinhoNoBanco().then(resultado => {
+                if (resultado) {
+                    limparItensCarrinhoNoBanco().then(result => {
                         Alert.alert(
                             "Venda finalizada",
                             "Deseja imprimir?",
@@ -214,7 +91,7 @@ const Carrinho = ({ route, navigation }) => {
                                 {
                                     text: "Sim",
                                     onPress: () => {
-                                        createAndPrintPDF()
+                                        PrintPDF(itensCarrinho, dadosCliente, valorBruto, codPed, nomRep)
                                     },
                                 },
                                 {
@@ -224,38 +101,25 @@ const Carrinho = ({ route, navigation }) => {
                         );
                         setItensCarrinho(null);
                         setValorBruto(0);
-                        removeClienteValue('@Cliente_data');
                         navigation.navigate('ListProdutos');
                     });
-                } else { Alert.alert("falhou ao salvar, tente novamente"); }
+                }
+            }, rejeted => {
+                Alert.alert('Erro ao salvar')
+                console.log(rejeted)
             })
         };
     }
 
-    function ImprimeDadosCliente() {
-        if (dadosCliente != null) {
-            return <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text>
-        }
-    }
-
     return (
-        <View id={"pai"} >
-            <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Carrinho</Text>
+        <View>
+            <Text style={styles.title}>Carrinho</Text>
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
-                    <View id={"itens"} >
+                    <View>
                         <View style={styles.cabeçalho}>
                             <TouchableOpacity
-                                style={{
-                                    flex: 1,
-                                    flexDirection: 'column',
-                                    justifyContent: 'flex-start',
-                                    borderColor: 'black',
-                                    borderStyle: 'dotted',
-                                    borderWidth: 2,
-                                    borderRadius: 1,
-                                    position: 'relative',
-                                }}
+                                style={styles.dottedLine}
                             >
                             </TouchableOpacity>
                             <Grid>
@@ -281,16 +145,7 @@ const Carrinho = ({ route, navigation }) => {
                                 </Col>
                             </Grid>
                             <TouchableOpacity
-                                style={{
-                                    flex: 1,
-                                    flexDirection: 'column',
-                                    justifyContent: 'flex-start',
-                                    borderColor: 'black',
-                                    borderStyle: 'dotted',
-                                    borderWidth: 2,
-                                    borderRadius: 1,
-                                    position: 'relative',
-                                }}
+                                style={styles.dottedLine}
                             >
                             </TouchableOpacity>
                         </View>
@@ -333,7 +188,7 @@ const Carrinho = ({ route, navigation }) => {
                             <Text style={styles.textValorPedido}> Valor Total: </Text>
                             <Text style={styles.valorTotalPedido}>R$ {valorBruto.toFixed(2).replace('.', ',')}</Text>
                         </View>
-                        <Text style={{ fontSize: 16, color: '#000000' }}>Cliente: {ImprimeDadosCliente()}</Text>
+                        <Text style={{ fontSize: 16 }}>Cliente: {dadosCliente !== null ? <Text>{dadosCliente.raz} - {dadosCliente.fan}</Text> : null}</Text>
                         <View flexDirection="row">
                             <View>
                                 <TouchableOpacity
@@ -362,14 +217,10 @@ const Carrinho = ({ route, navigation }) => {
                         </View>
                         <BotaoVermelho
                             text={`Finalizar Venda`}
-                            onPress={() => enviaPedido()}></BotaoVermelho>
-                        <Text></Text>
-                        <Text></Text>
-                        <Text></Text>
-                        <Text></Text>
+                            onPress={() => enviaPedido()}
+                        />
                     </View>
                     : <View>
-                        {/* <Text style={styles.textCarinhoVazio}>Carrinho Vazio ... </Text> */}
                         <View style={{ alignItems: 'center' }}>
                             <Image
                                 style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}
@@ -382,6 +233,7 @@ const Carrinho = ({ route, navigation }) => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         padding: 4,
@@ -390,6 +242,22 @@ const styles = StyleSheet.create({
     cabeçalho: {
         padding: 10,
         justifyContent: 'space-between'
+    },
+    title: {
+        textAlign: 'center',
+        fontSize: 24,
+        color: '#000000',
+        paddingTop: 10
+    },
+    dottedLine: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        borderColor: 'black',
+        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderRadius: 1,
+        position: 'relative',
     },
     itenWiew: {
         flexDirection: 'row',
