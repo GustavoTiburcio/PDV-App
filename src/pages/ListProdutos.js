@@ -79,7 +79,7 @@ function FooterList( Load ){
   if(!Load.load) return null;
   return(
     <View style={styles.loading}>
-    <ActivityIndicator size='large' color="#121212" />
+    <ActivityIndicator size='large' color="#38A69D" />
     </View>
   )
 }

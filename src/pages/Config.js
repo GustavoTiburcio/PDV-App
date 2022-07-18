@@ -18,7 +18,7 @@ export default function Config({ navigation }) {
     async function Salvar() {
         await gravarUsaCorTamanho(usaCorTamanho.toString())
         await gravarUsaGrade(usaGrade.toString())
-        Alert.alert('Sucesso', 'Configurações salvas',[
+        Alert.alert('Sucesso', 'Configurações salvas', [
             {
                 text: "Ok",
                 onPress: () => {
@@ -42,7 +42,7 @@ export default function Config({ navigation }) {
             getConfig()
         });
     }, [navigation]);
-    
+
 
     return (
         <View style={styles.container}>
@@ -88,7 +88,7 @@ export default function Config({ navigation }) {
                             onPress={() => {
                                 Salvar()
                             }}>
-                            <Text style={styles.TextButton}>Confirmar</Text>
+                            <Text style={styles.TextButton}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

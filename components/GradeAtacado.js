@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Modal, ScrollView, Text, Alert, Image, Pressable, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Modal, ScrollView, Text, Pressable, View, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 import { DataTable, TextInput } from 'react-native-paper';
 
@@ -69,7 +69,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
         } else {
             return (
                 <View style={styles.loading}>
-                    <ActivityIndicator size='large' color="#121212" />
+                    <ActivityIndicator size='large' color="#38A69D" />
                 </View>
             )
         }
@@ -78,7 +78,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
 
     function grade() {
         const grade =
-            <ScrollView horizontal={true} style={{}}>
+            <ScrollView horizontal={true}>
                 <ScrollView
                     nestedScrollEnabled
                     bounces={false}

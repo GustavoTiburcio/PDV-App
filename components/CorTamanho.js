@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -49,9 +49,17 @@ export default function CorTamanho({ codbar, setCor, setTamanho }) {
                 open={openCorPicker}
                 value={valueCor}
                 items={cores}
-                setOpen={setOpenCorPicker}
+                setOpen={() => { setOpenCorPicker(!openCorPicker); setOpenTamanhoPicker(false) }}
                 setValue={setValueCor}
                 setItems={setCores}
+                dropDownContainerStyle={{
+                    width: '50%'
+                }}
+                ListEmptyComponent={() => (
+                    <View style={{ justifyContent: 'center' }}>
+                        <ActivityIndicator size="large" color="#38A69D" />
+                    </View>
+                )}
             />
             <Text style={styles.text}>Tamanho:</Text>
             <DropDownPicker
@@ -60,50 +68,27 @@ export default function CorTamanho({ codbar, setCor, setTamanho }) {
                 open={openTamanhoPicker}
                 value={valueTamanho}
                 items={tamanhos}
-                setOpen={setOpenTamanhoPicker}
+                setOpen={() => { setOpenTamanhoPicker(!openTamanhoPicker); setOpenCorPicker(false) }}
                 setValue={setValueTamanho}
                 setItems={setTamanhos}
+                dropDownContainerStyle={{
+                    width: '50%'
+                }}
+                ListEmptyComponent={() => (
+                    <View style={{justifyContent: 'center'}}>
+                        <ActivityIndicator size="large" color="#38A69D" />
+                    </View>
+                )}
             />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingLeft: 20,
-        justifyContent: 'flex-start',
-    },
-    textcadastro: {
-        color: '#000000',
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    item: {
-        color: '#000000',
-        fontSize: 20,
-        marginTop: 15,
-        alignItems: 'center',
-    },
     text: {
-        color: '#000000',
+        color: '#555555',
         fontSize: 16,
         marginTop: 15,
-    },
-    textinput: {
-        fontSize: 20,
-        borderBottomColor: '#000000',
-        borderBottomWidth: 2,
-    },
-    texto: {
-        color: '#000000',
-        alignSelf: 'center',
-    },
-    listItem: {
-        flex: 1,
-        flexDirection: 'column',
-        color: 'red',
     },
     picker: {
         width: '50%'

@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput } from 'react-native';
-import BotaoVermelho from '../../components/BotaoVermelho';
-import { gravarItensCarrinhoNoBanco, buscarItensCarrinhoNoBanco } from '../../controle/CarrinhoStorage';
+import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput, TouchableOpacity } from 'react-native';
+import { gravarItensCarrinhoNoBanco } from '../../controle/CarrinhoStorage';
 import api from '../../services/api';
 import CorTamanho from '../../components/CorTamanho';
 import GradeAtacado from '../../components/GradeAtacado';
+import { buscarUsaCorTamanho, buscarUsaGrade } from '../../controle/ConfigStorage';
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
@@ -23,17 +23,16 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [tamanho, setTamanho] = useState();
     const [itensCarrinho, setItensCarrinho] = useState();
     const [foto, setFoto] = useState();
-
-    // useEffect(() => {
-    //     getListarDetalhes()
-    // }, [codbar])
+    const [usaCorTamanho, setUsaCorTamanho] = useState(false);
+    const [usaGrade, setUsaGrade] = useState(false);
 
     useEffect(() => {
     }, [data, foto])
 
     useEffect(() => {
         navigation.addListener('focus', () => {
-            getListarDetalhes()
+            getListarDetalhes();
+            getConfig();
         });
     }, [navigation]);
 
@@ -52,7 +51,16 @@ const ListaCarrinho = ({ route, navigation }) => {
         }
     }
 
-    const salvaPedido = () => {
+    async function getConfig() {
+        buscarUsaCorTamanho().then(result => {
+            setUsaCorTamanho(JSON.parse(result))
+        })
+        buscarUsaGrade().then(result => {
+            setUsaGrade(JSON.parse(result))
+        })
+    }
+
+    const addItemCarrinho = () => {
         gravarItensCarrinhoNoBanco(itensCarrinho).then(resultado => {
             Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
@@ -95,15 +103,14 @@ const ListaCarrinho = ({ route, navigation }) => {
     return (
         <View id={codmer} style={styles.container}>
             {fotoProduto(foto)}
-            <ScrollView>
+            <View>
                 <Text style={{alignSelf: 'center'}}> {codbar} </Text>
-                <Text style={styles.item}>{item}</Text>
-                {/* Cor e tamanho para varejo
-                <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> */}
+                <Text style={styles.item}>{item}</Text>          
                 <Text style={styles.text}>Valor R$:</Text>
                 <Text style={styles.textinput}>{valor}</Text>
                 <Text></Text>
-                <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
+                {usaGrade ? <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} /> : null}
+                {usaCorTamanho ? <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> : null}        
                 {/* <TextInput
                     style={styles.textinput}
                     keyboardType="numeric"
@@ -111,7 +118,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     onChangeText={value => setValorItem(value.replace(',', '.'))}>
                     {valor.toFixed(2).replace('.', ',')}
                 </TextInput> */}
-                <BotaoVermelho
+                {/* <BotaoVermelho
                     text={
                         'Adicionar '
                         // +
@@ -120,10 +127,20 @@ const ListaCarrinho = ({ route, navigation }) => {
                         //     Number.parseInt(quantidade ? quantidade : 1)
                         // ).toFixed(2)
                     }
-                    onPress={() => salvaPedido()}
+                    onPress={() => addItemCarrinho()}
 
-                />
-            </ScrollView>
+                /> */}
+                <View>
+                        <TouchableOpacity
+                            style={styles.AdicionarButton}
+                            activeOpacity={0.5}
+                            onPress={() => {
+                                addItemCarrinho()
+                            }}>
+                            <Text style={styles.TextButton}>Adicionar</Text>
+                        </TouchableOpacity>
+                    </View>
+            </View>
         </View>
     );
 };
@@ -167,6 +184,21 @@ const styles = StyleSheet.create({
     },
     picker: {
         width: '50%'
+    },
+    AdicionarButton: {
+        marginTop: 20,
+        height: 50,
+        marginHorizontal: '20%',
+        padding: 15,
+        borderRadius: 25,
+        borderWidth: 0,
+        marginBottom: 15,
+        backgroundColor: '#38A69D',
+    },
+    TextButton: {
+        fontSize: 18,
+        color: '#FFF',
+        textAlign: 'center',
     },
 });
 

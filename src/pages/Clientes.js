@@ -66,7 +66,7 @@ function FooterList(Load) {
   if (!Load.load) return null;
   return (
     <View style={styles.loading}>
-      <ActivityIndicator size='large' color="#121212" />
+      <ActivityIndicator size='large' color="#38A69D" />
     </View>
   )
 }
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     marginBottom: 15,
     marginHorizontal: 40,
-    backgroundColor: '#121212',
+    backgroundColor: '#38A69D',
   },
   TextButton: {
     fontSize: 14,
