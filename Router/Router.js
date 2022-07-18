@@ -3,15 +3,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import TelaInicial from '../src/pages/TelaInicial';
+import Login from '../src/pages/Login';
 import ListProdutos from '../src/pages/ListProdutos';
-import Carrinho from '../src/pages/Carrinho';
-import ListaCarrinho from '../src/pages/ListaCarrinho';
-import VendasFinalizadas from '../src/pages/VendasFinalizadas';
-import Clientes from '../src/pages/Clientes';
 import Estoque from '../src/pages/Estoque';
+import ListaCarrinho from '../src/pages/ListaCarrinho';
+import Carrinho from '../src/pages/Carrinho';
 import CadastroCliente from '../src/pages/CadastroCliente';
-import SignIn from '../src/pages/Login';
-import Welcome from '../src/pages/TelaInicial';
+import Clientes from '../src/pages/Clientes';
+import VendasFinalizadas from '../src/pages/VendasFinalizadas';
+import Config from '../src/pages/Config'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,7 +24,7 @@ function Router() {
         style: {
           elevation: 0,
           shadowOpacity: 0,
-          height: 64,
+          height: '8%',
         },
         tabStyle: {
           flexDirection: 'row',
@@ -31,8 +32,7 @@ function Router() {
           justifyContent: 'center'
         },
         labelStyle: {
-          fontSize: 13,
-          marginLeft: 16
+          fontSize: 16,
         },
         inactiveBackgroundColor: '#fafafc',
         activeBackgroundColor: '#ebebf5',
@@ -43,6 +43,7 @@ function Router() {
       <Tab.Screen name="Produtos" component={ListProdutos} />
       <Tab.Screen name="Carrinho" component={Carrinho} />
       <Tab.Screen name="Histórico" component={VendasFinalizadas} />
+      <Tab.Screen name="Config" component={Config} />
     </Tab.Navigator>
   )
 }
@@ -50,15 +51,15 @@ function Router() {
 export default function () {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator initialRouteName="TelaInicial">
         <Stack.Screen
-          name="Welcome"
-          component={Welcome}
+          name="TelaInicial"
+          component={TelaInicial}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="SignIn"
-          component={SignIn}
+          name="Login"
+          component={Login}
           options={{ headerShown: false }}
         />
         <Stack.Screen

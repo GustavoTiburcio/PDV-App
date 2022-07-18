@@ -15,7 +15,7 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
                 itens = JSON.parse(getJsonValue);
 
                 diferenca = itensCarrinho.filter(ite => !itens.some(item => ite.codmer === item.codmer))
-                
+
                 itens.map((item) => {
                     itensCarrinho.map((ite) => {
                         if (item.codmer === ite.codmer) {
@@ -23,7 +23,7 @@ export const gravarItensCarrinhoNoBanco = async (itensCarrinho) => {
                             let som = parseInt(item.quantidade) + parseInt(ite.quantidade);
                             item.quantidade = som.toString();
                         }
-                    }) 
+                    })
                 })
                 if (diferenca) {
                     diferenca.map(item => {
@@ -79,37 +79,4 @@ export const deletarItenCarrinhoNoBanco = async (itemCarrinho) => {
         console.log(e)
     }
 }
-export const gravarLinkBanco = async (link) => {
-    try {
-        await AsyncStorage.setItem('linkdb', link);
-    } catch (e) {
-        console.log(e)
-    }
-}
-export const gravarCodVenBanco = async (codven) => {
-    try {
-        await AsyncStorage.setItem('codven', codven);
-    } catch (e) {
-        console.log(e)
-    }
-}
-export const buscarLinkBanco = async () => {
-    const value = await AsyncStorage.getItem('linkdb');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-export const buscarCodVenBanco = async () => {
-    const Value = await AsyncStorage.getItem('codven')
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(Value != null ? Value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
+

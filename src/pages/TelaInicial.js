@@ -32,7 +32,7 @@ export default function TelaInicial() {
         <Text style={styles.text}>Pressione Acessar para começar.</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('SignIn')}
+          onPress={() => navigation.navigate('Login')}
         >
           <Text style={styles.buttonText}>Acessar</Text>
         </TouchableOpacity>
