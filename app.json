@@ -1,14 +1,12 @@
 {
   "expo": {
-    "name": "Gold-App",
-    "slug": "Gold-App",
-    "version": "1.0.6",
+    "name": "OperaZ",
+    "slug": "OperaZ",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon3.png",
     "splash": {
-      "image": "./assets/splash2.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#d1ac97"
+      "backgroundColor": "#38A69D"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

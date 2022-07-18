@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox } from 'react-native';
-import api from './api';
+import api from '../../services/api';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StatusBar } from 'expo-status-bar';
-import LottieView from 'lottie-react-native';
 
 
-export default function Home({ navigation }) {
+export default function Clientes({ navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('chave');
+  const [pesquisa, setPesquisa] = useState('');
 
   async function getClientes() {
     if (loading) return;
@@ -35,7 +32,6 @@ export default function Home({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do Cliente"
@@ -43,7 +39,6 @@ export default function Home({ navigation }) {
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
-        onClearPress={() => setPesquisa('chave')}
       />
       <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Clientes</Text>
       {data != '' ? <FlatList
@@ -55,24 +50,14 @@ export default function Home({ navigation }) {
           if (distanceFromEnd < 0) return;
           getClientes()
         }}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
       /> : <View><View style={{ alignItems: 'center' }}>
-        {/* <Image
-        style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
-        source={require('./images/nenhum_prod.png')}
-      /> */}
-        <LottieView
-          source={require('./assets/notfound.json')}
-          autoPlay={true}
-          loop={true}
-          style={{
-            width: 300,
-            height: 300,
-            backgroundColor: '#fff',
-          }}
+        <Image
+          style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
+          source={require('../assets/nenhum_prod.png')}
         />
-      </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum Cliente foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
+      </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum cliente foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
     </View>
   );
 }
@@ -81,22 +66,13 @@ function FooterList(Load) {
   if (!Load.load) return null;
   return (
     <View style={styles.loading}>
-      <ActivityIndicator size='large' color="#121212" />
+      <ActivityIndicator size='large' color="#38A69D" />
     </View>
   )
 }
 
 function ListItem({ data }) {
   const navigation = useNavigation();
-
-  async function storeClienteData() {
-    try {
-      const jsonValue = JSON.stringify(data)
-      await AsyncStorage.setItem('@Cliente_data', jsonValue)
-    } catch (e) {
-      console.log('erro ao salvar informações de Cliente' + e)
-    }
-  }
 
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -116,8 +92,12 @@ function ListItem({ data }) {
           style={styles.CarrinhoButton}
           activeOpacity={0.5}
           onPress={() => {
-            storeClienteData()
-            navigation.goBack()
+            let cliente = data;
+            navigation.navigate({
+              name: 'Carrinho',
+              params: { cliente },
+              merge: true,
+            });
           }}>
           <Text style={styles.TextButton}> Selecionar </Text>
         </TouchableOpacity>
@@ -161,14 +141,11 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     marginBottom: 15,
     marginHorizontal: 40,
-    backgroundColor: '#121212',
+    backgroundColor: '#38A69D',
   },
   TextButton: {
     fontSize: 14,
     color: '#FFF',
     textAlign: 'center'
-  },
-  loading: {
-    padding: 10
-  },
+  }
 });

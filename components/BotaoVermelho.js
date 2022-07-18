@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
   },
 
   SubmitButtonStyle: {
-    marginTop: 5,
-    height:50,
+    marginTop: 25,
+    height:55,
     padding: 15,
     borderRadius: 25,
     borderWidth: 0,
     marginBottom: 15,
     marginHorizontal: 70,
-    backgroundColor: '#121212',
+    backgroundColor: '#38A69D',
     justifyContent: 'center',
   },
 

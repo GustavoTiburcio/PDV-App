@@ -1,9 +1,9 @@
 import React, { Component, useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import api from './api';
+import api from '../../services/api';
 
-export default function AppEstoque({ route, navigation }) {
+export default function Estoque({ route, navigation }) {
 
     const codbar = route.params?.codbar;
     let teste;
@@ -19,7 +19,7 @@ export default function AppEstoque({ route, navigation }) {
     },[])
 
     useEffect(() => {
-      console.log(data)
+      
     },[data])
     
   return (
