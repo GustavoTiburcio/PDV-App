@@ -195,9 +195,7 @@ const Carrinho = ({ route, navigation }) => {
                                     style={styles.Clientes}
                                     activeOpacity={0.5}
                                     onPress={() => {
-                                        navigation.navigate('Clientes', {
-                                            onGoBack: () => Refresh()
-                                        });
+                                        navigation.navigate('Clientes');
                                     }}>
                                     <Text style={styles.TextButton}>Selecionar Cliente</Text>
                                 </TouchableOpacity>
@@ -207,9 +205,7 @@ const Carrinho = ({ route, navigation }) => {
                                     style={styles.NovoCliente}
                                     activeOpacity={0.5}
                                     onPress={() => {
-                                        navigation.navigate('CadastroCliente', {
-                                            onGoBack: () => Refresh()
-                                        });
+                                        navigation.navigate('CadastroCliente');
                                     }}>
                                     <Text style={styles.TextButton}>Novo cliente</Text>
                                 </TouchableOpacity>

@@ -18,18 +18,6 @@ export default function VendasFinalizadas() {
   const [refresh, setRefresh] = useState(false);
 
 
-  useEffect(() => {
-    loadApi();
-  }, [data])
-
-  useEffect(() => {
-
-  }, [dadosPedido])
-
-  useEffect(() => {
-    setRefresh(false)
-  }, [refresh])
-
   async function loadApi() {
     if (loading) return;
 
@@ -57,6 +45,30 @@ export default function VendasFinalizadas() {
 
     setPage(page + 1);
     setLoading(false);
+  }
+
+  async function deletarPed(codped) {
+    Alert.alert(
+      "Excluir venda",
+      "Confirmar exclusão?",
+      [
+        {
+          text: "Sim",
+          onPress: async () => {
+            try {
+              const response = await api.delete(`/pedidos/deletarPedido?cod=${codped}`)
+              console.log(response)
+              Alert.alert('Excluir Venda', `${response.data}`)
+            } catch (error) {
+              Alert.alert('Erro ao apagar venda', 'Não pode alterar. Pedido já está concluido')
+            }
+          },
+        },
+        {
+          text: "Não",
+        },
+      ]
+    );
   }
 
   // function novaPesquisa() {
@@ -154,10 +166,32 @@ export default function VendasFinalizadas() {
               color="black"
             />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.TrashIcon}
+            activeOpacity={0.5}
+            onPress={() => { deletarPed(data.cod) }}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'trash' : 'trash'}
+              size={22}
+              color="black"
+            />
+          </TouchableOpacity>
         </View>
       </View>
     )
   }
+
+  useEffect(() => {
+    loadApi();
+  }, [data])
+
+  useEffect(() => {
+
+  }, [dadosPedido])
+
+  useEffect(() => {
+    setRefresh(false)
+  }, [refresh])
 
   return (
     <View style={styles.container}>
@@ -229,8 +263,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
   DetalhesButton: {
+    alignSelf: 'center',
     marginTop: 15,
-    height: 55,
+    height: 50,
     padding: 15,
     borderRadius: 25,
     marginHorizontal: 20,
@@ -259,5 +294,14 @@ const styles = StyleSheet.create({
   },
   loading: {
     padding: 10
-  }
+  },
+  TrashIcon: {
+    marginTop: 15,
+    height: 55,
+    padding: 15,
+    marginBottom: 15,
+    marginHorizontal: 20,
+    backgroundColor: '#d11b49',
+    borderRadius: 25,
+  },
 });

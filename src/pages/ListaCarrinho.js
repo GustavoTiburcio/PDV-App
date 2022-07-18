@@ -104,42 +104,79 @@ const ListaCarrinho = ({ route, navigation }) => {
         <View id={codmer} style={styles.container}>
             {fotoProduto(foto)}
             <View>
-                <Text style={{alignSelf: 'center'}}> {codbar} </Text>
-                <Text style={styles.item}>{item}</Text>          
-                <Text style={styles.text}>Valor R$:</Text>
-                <Text style={styles.textinput}>{valor}</Text>
-                <Text></Text>
-                {usaGrade ? <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} /> : null}
-                {usaCorTamanho ? <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho}/> : null}        
-                {/* <TextInput
-                    style={styles.textinput}
-                    keyboardType="numeric"
-                    placeholder="Valor do produto"
-                    onChangeText={value => setValorItem(value.replace(',', '.'))}>
-                    {valor.toFixed(2).replace('.', ',')}
-                </TextInput> */}
-                {/* <BotaoVermelho
-                    text={
-                        'Adicionar '
-                        // +
-                        // (
-                        //     Number.parseFloat(valorItem).toPrecision(7) *
-                        //     Number.parseInt(quantidade ? quantidade : 1)
-                        // ).toFixed(2)
-                    }
-                    onPress={() => addItemCarrinho()}
-
-                /> */}
-                <View>
+                <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
+                <Text style={styles.item}>{item}</Text>
+                {usaCorTamanho === false && usaGrade === false ?
+                    <View>
+                        <Text style={styles.text}>Quantidade:</Text>
+                        <TextInput
+                            style={styles.textinput}
+                            keyboardType="numeric"
+                            autoFocus={true}
+                            placeholder="Informe a quantidade"
+                            onChangeText={value => setQuantidade(value)}>
+                            {quantidade}
+                        </TextInput>
+                        <Text style={styles.text}>Valor R$:</Text>
+                        <TextInput
+                            style={styles.textinput}
+                            keyboardType="numeric"
+                            placeholder="Valor do produto"
+                            onChangeText={value => setValorItem(value.replace(',', '.'))}>
+                            {valor.toFixed(2).replace('.', ',')}
+                        </TextInput>
+                    </View>
+                    : null
+                }
+                {usaGrade ?
+                    <View style={{marginTop: '5%'}}>
+                        <Text style={styles.text}>Valor R$:</Text>
+                        <Text style={styles.textinput}>{valor}</Text>
+                        <Text/>
+                        <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
                         <TouchableOpacity
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}
-                            onPress={() => {
-                                addItemCarrinho()
-                            }}>
+                            onPress={() => { addItemCarrinho() }}>
                             <Text style={styles.TextButton}>Adicionar</Text>
                         </TouchableOpacity>
                     </View>
+                    : null
+                }
+                {usaCorTamanho ?
+                    <View>
+                        <Text style={styles.text}>Valor R$:</Text>
+                        <Text style={styles.textinput}>{valor}</Text>
+                        <Text style={styles.text}>Quantidade:</Text>
+                        <TextInput
+                            style={styles.textinput}
+                            keyboardType="numeric"
+                            autoFocus={true}
+                            placeholder="Informe a quantidade"
+                            onChangeText={value => setQuantidade(value)}>
+                            {quantidade}
+                        </TextInput>
+                        <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho} />
+                        <View>
+                            <TouchableOpacity
+                                style={styles.AdicionarButton}
+                                activeOpacity={0.5}
+                                onPress={() => { addItemCarrinho() }}>
+                                <Text style={styles.TextButton}>Adicionar {Number.parseFloat(valorItem).toPrecision(7) * Number.parseInt(quantidade ? quantidade : 1).toFixed(2)}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    : null
+                }
+                {usaCorTamanho === false && usaGrade === false || usaCorTamanho === undefined && usaGrade === undefined ?
+                    <View>
+                        <TouchableOpacity
+                            style={styles.AdicionarButton}
+                            activeOpacity={0.5}
+                            onPress={() => { addItemCarrinho() }}>
+                            <Text style={styles.TextButton}>Adicionar {Number.parseFloat(valorItem).toPrecision(7) * Number.parseInt(quantidade ? quantidade : 1).toFixed(2)}</Text>
+                        </TouchableOpacity>
+                    </View> : null}
             </View>
         </View>
     );
