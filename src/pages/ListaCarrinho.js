@@ -6,6 +6,8 @@ import api from '../../services/api';
 import CorTamanho from '../../components/CorTamanho';
 import GradeAtacado from '../../components/GradeAtacado';
 import { buscarUsaCorTamanho, buscarUsaGrade } from '../../controle/ConfigStorage';
+import Slider from '../../components/Slider';
+import LottieView from 'lottie-react-native';
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
@@ -22,12 +24,12 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
     const [itensCarrinho, setItensCarrinho] = useState();
-    const [foto, setFoto] = useState();
+    const [fotos, setFotos] = useState([]);
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
 
     useEffect(() => {
-    }, [data, foto])
+    }, [data, fotos])
 
     useEffect(() => {
         navigation.addListener('focus', () => {
@@ -42,13 +44,12 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     async function getListarDetalhes() {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        var prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
+        let prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
+        let fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } })
+        // console.log(response.data);
+        console.log(fotos)
         setData(response.data)
-        try {
-            setFoto(response.data.fotos[0].linkfot);
-        } catch (error) {
-            console.log(error)
-        }
+        setFotos(fotos);
     }
 
     async function getConfig() {
@@ -102,7 +103,22 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     return (
         <View id={codmer} style={styles.container}>
-            {fotoProduto(foto)}
+            {/* {fotoProduto(foto)} */}
+            {fotos != '' ?
+                <Slider fotos={fotos} /> :
+                <View>
+                    <LottieView
+                        source={require('../assets/camera.json')}
+                        autoPlay={true}
+                        loop={true}
+                        style={{
+                            width: 250,
+                            height: 250,
+                           
+                        }}
+                    />
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginTop: '7%', marginBottom: '3%' }}>Nenhuma foto encontrada.</Text>
+                </View>}
             <View>
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
                 <Text style={styles.item}>{item}</Text>
@@ -129,10 +145,10 @@ const ListaCarrinho = ({ route, navigation }) => {
                     : null
                 }
                 {usaGrade ?
-                    <View style={{marginTop: '5%'}}>
+                    <View style={{ marginTop: '5%' }}>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valor}</Text>
-                        <Text/>
+                        <Text />
                         <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
                         <TouchableOpacity
                             style={styles.AdicionarButton}
