@@ -55,3 +55,21 @@ export const buscarUsaGrade = async () => {
         }
     })
 }
+export const gravarEstoquePorCategoria = async (EstoquePorCategoria) => {
+    try {
+        await AsyncStorage.removeItem('EstoquePorCategoria')
+        await AsyncStorage.setItem('EstoquePorCategoria', EstoquePorCategoria);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarEstoquePorCategoria = async () => {
+    const value = await AsyncStorage.getItem('EstoquePorCategoria');
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(value != null ? value : null);
+        } catch (e) {
+            reject(e)
+        }
+    })
+}

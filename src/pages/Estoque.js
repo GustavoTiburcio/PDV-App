@@ -5,45 +5,45 @@ import api from '../../services/api';
 
 export default function Estoque({ route, navigation }) {
 
-    const codbar = route.params?.codbar;
-    let teste;
-    const [data, setData] = useState({});
-    
-    async function getListarEstoque(){
-      const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-      setData(response.data)
-    }
-    
-    useEffect(()=>{
-    getListarEstoque();
-    },[])
+  const codbar = route.params?.codbar;
+  let teste;
+  const [data, setData] = useState({});
 
-    useEffect(() => {
-      
-    },[data])
-    
+  async function getListarEstoque() {
+    const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+    setData(response.data)
+  }
+
+  useEffect(() => {
+    getListarEstoque();
+  }, [])
+
+  useEffect(() => {
+
+  }, [data])
+
   return (
     <View style={styles.container}>
-      <Text style={{textAlign: 'center', fontSize: 24, color:'#000000', paddingTop: 10}}>Estoque</Text>
+      <Text style={styles.title}>Estoque</Text>
       <View style={styles.tableView}>
         <Grid>
           <Col size={50}>
             <Row style={styles.cell}>
             </Row>
             <Row style={styles.cell}>
-              <Text>Matriz</Text>
+              <Text>Categoria 1</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Andre</Text>
+              <Text>Categoria 2</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Alexandre</Text>
+              <Text>Categoria 3</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Fabio</Text>
+              <Text>Categoria 4</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Cilas</Text>
+              <Text>Categoria 5</Text>
             </Row>
           </Col>
           <Col size={25}>
@@ -77,6 +77,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  title: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: '#000000',
+    paddingTop: 10
+  },
   tableView: {
     width: '100%',
     height: 300,
@@ -87,7 +93,7 @@ const styles = StyleSheet.create({
   cell: {
     borderWidth: 1,
     borderColor: '#ddd',
-    flex: 1, 
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
   },

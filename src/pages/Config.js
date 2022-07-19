@@ -8,16 +8,25 @@ import {
     Alert
 } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import { gravarUsaCorTamanho, buscarUsaCorTamanho, gravarUsaGrade, buscarUsaGrade } from '../../controle/ConfigStorage';
+import {
+    gravarUsaCorTamanho,
+    buscarUsaCorTamanho,
+    gravarUsaGrade,
+    buscarUsaGrade,
+    gravarEstoquePorCategoria,
+    buscarEstoquePorCategoria
+} from '../../controle/ConfigStorage';
 
 export default function Config({ navigation }) {
     const [raz, setRaz] = useState('');
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
+    const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
 
     async function Salvar() {
         await gravarUsaCorTamanho(usaCorTamanho.toString())
         await gravarUsaGrade(usaGrade.toString())
+        await gravarEstoquePorCategoria(usaEstoquePorCategoria.toString())
         Alert.alert('Sucesso', 'Configurações salvas', [
             {
                 text: "Ok",
@@ -34,6 +43,9 @@ export default function Config({ navigation }) {
         })
         buscarUsaGrade().then(result => {
             setUsaGrade(JSON.parse(result))
+        })
+        buscarEstoquePorCategoria().then(result => {
+            setUsaEstoquePorCategoria(JSON.parse(result))
         })
     }
 
@@ -77,6 +89,16 @@ export default function Config({ navigation }) {
                                 if (usaCorTamanho) {
                                     setUsaCorTamanho(false)
                                 }
+                            }}
+                            style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView}>
+                        <Text style={styles.fieldText}>Usa estoque por Categoria?</Text>
+                        <Checkbox
+                            value={usaEstoquePorCategoria}
+                            onValueChange={() => {
+                                setUsaEstoquePorCategoria(!usaEstoquePorCategoria)
                             }}
                             style={styles.checkBox}
                         />

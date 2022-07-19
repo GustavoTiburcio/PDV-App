@@ -24,15 +24,3 @@ export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
         reject("erro ao salvar pedido");
     }
 });
-
-/*export const getPedido = () => new Promise((resolve, reject) =>{
-    return axios.get(url+'/pedidos/listarNaoImportadosDetalhado')
-         .then(resp =>{
-             if(resp.data){
-                 resolve(resp.data)
-             }else{
-                 reject("secao não encontrado")
-             }
-         }).catch(error => reject(error));
- });
-*/

@@ -13,17 +13,30 @@ import {
 import api from '../../services/api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
-import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import { buscarEstoquePorCategoria } from '../../controle/ConfigStorage';
 
 const { width } = Dimensions.get("window");
 
-export default function ListProdutos() {
+export default function ListProdutos({navigation}) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('');
+  const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
+
+  async function getConfig() {
+    buscarEstoquePorCategoria().then(result => {
+      setUsaEstoquePorCategoria(JSON.parse(result));
+    })
+  }
+
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+        getConfig();
+    });
+}, [navigation]);
 
   useEffect(() => {
     loadApi();
@@ -47,6 +60,68 @@ export default function ListProdutos() {
     setData([]);
   }
 
+  function FooterList(Load) {
+    if (!Load.load) return null;
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size='large' color="#38A69D" />
+      </View>
+    )
+  }
+
+  function ListItem({ data }) {
+
+    // const navigation = useNavigation();
+
+    function currencyFormat(num) {
+      return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    function foto(linkfoto) {
+      if (linkfoto == null) {
+        return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
+      } else {
+        return 'https://' + linkfoto;
+      }
+    }
+    return (
+      <View style={styles.listItem}>
+        <View style={{ width: '100%', paddingTop: '70%' }}>
+          <Image
+            style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
+            source={{
+              uri: foto(data.linkFot),
+            }}
+          />
+        </View>
+        <Text style={styles.listText}>{data.codBar}</Text>
+        <Text></Text>
+        <Text style={styles.listText}>{data.mer}</Text>
+        <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.', ',')}</Text>
+        <View flexDirection={'row'} style={{ justifyContent: 'space-evenly' }}>
+          {usaEstoquePorCategoria ?
+            <View>
+              <TouchableOpacity
+                style={styles.CarrinhoButton}
+                activeOpacity={0.5}
+                onPress={() => { navigation.navigate('Estoque', { codbar: data.codBar }) }}>
+                <Text style={styles.TextButton}>Estoque</Text>
+              </TouchableOpacity>
+            </View> : null}
+          <View>
+            <TouchableOpacity
+              style={styles.CarrinhoButton}
+              activeOpacity={0.5}
+              onPress={() => {
+                navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer, valor: data.valVenMin })
+              }}>
+              <Text style={styles.TextButton}>Detalhes</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -58,8 +133,8 @@ export default function ListProdutos() {
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
       />
-      <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Produtos</Text>
-      {data != '' ? <FlatList
+      <Text style={styles.title}>Lista de Produtos</Text>
+      {data.length > 0 ? <FlatList
         contentContainerStyle={{ marginHorizontal: 20 }}
         data={data}
         keyExtractor={item => String(item.codBar)}
@@ -92,70 +167,16 @@ export default function ListProdutos() {
   )
 }
 
-function FooterList(Load) {
-  if (!Load.load) return null;
-  return (
-    <View style={styles.loading}>
-      <ActivityIndicator size='large' color="#38A69D" />
-    </View>
-  )
-}
-
-function ListItem({ data }) {
-
-  const navigation = useNavigation();
-
-  function currencyFormat(num) {
-    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  }
-  function foto(linkfoto) {
-    if (linkfoto == null) {
-      return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
-    } else {
-      return 'https://' + linkfoto;
-    }
-  }
-  return (
-    <View style={styles.listItem}>
-      <View style={{ width: '100%', paddingTop: '70%' }}>
-        <Image
-          style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
-          source={{
-            uri: foto(data.linkFot),
-          }}
-        />
-      </View>
-      <Text style={styles.listText}>{data.codBar}</Text>
-      <Text></Text>
-      <Text style={styles.listText}>{data.mer}</Text>
-      <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.', ',')}</Text>
-
-      {/* <View>
-            <TouchableOpacity
-            style={styles.CarrinhoButton}
-            activeOpacity={0.5}
-            onPress={() => {navigation.navigate('Estoque', {codbar: data.codBar})}}>
-              <Text style={styles.TextButton}>   Estoque   </Text>
-            </TouchableOpacity>
-          </View> */}
-      <View>
-        <TouchableOpacity
-          style={styles.CarrinhoButton}
-          activeOpacity={0.5}
-          onPress={() => {
-            navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer, valor: data.valVenMin })
-          }}>
-          <Text style={styles.TextButton}> Detalhes </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: '#000000',
+    paddingTop: 10
   },
   listItem: {
     backgroundColor: '#F3F3F3',
@@ -178,11 +199,9 @@ const styles = StyleSheet.create({
   CarrinhoButton: {
     marginTop: 25,
     height: 50,
+    width: 120,
     padding: 15,
     borderRadius: 25,
-    borderWidth: 0,
-    marginBottom: 15,
-    marginHorizontal: 50,
     backgroundColor: '#38A69D',
   },
   TextButton: {

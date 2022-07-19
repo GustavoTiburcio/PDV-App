@@ -43,8 +43,8 @@ export default function Clientes({ navigation }) {
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
       />
-      <Text style={{ textAlign: 'center', fontSize: 24, color: '#000000', paddingTop: 10 }}>Lista de Clientes</Text>
-      {data != '' ? <FlatList
+      <Text style={styles.title}>Lista de Clientes</Text>
+      {data.length > 0 ? <FlatList
         contentContainerStyle={{ marginHorizontal: 20 }}
         data={data}
         keyExtractor={item => String(item.id)}
@@ -125,6 +125,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF'
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: '#000000',
+    paddingTop: 10
   },
   button: {
     alignItems: "center",

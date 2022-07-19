@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityInd
 import { useNavigation } from '@react-navigation/native'
 import * as Animatable from 'react-native-animatable'
 import api from '../../services/api';
-import { gravarLogin, buscarLogin, limparLogin } from '../../controle/LoginStorage';
+import { gravarLogin, buscarLogin } from '../../controle/LoginStorage';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -21,11 +21,11 @@ export default function Login() {
         setLoading(false);
       } else {
         setLoading(false);
-        gravarLogin(response.data)
-        navigation.navigate('ListProdutos', { title: `Bem-Vindo ${response.data.username}` })
+        gravarLogin(response.data);
+        navigation.navigate('ListProdutos', { title: `Bem-Vindo ${response.data.username}` });
       }
     } else {
-      Alert.alert('Campos em branco', 'Favor informar Usuário e Senha')
+      Alert.alert('Campos em branco', 'Favor informar Usuário e Senha');
       setLoading(false);
     }
   }
