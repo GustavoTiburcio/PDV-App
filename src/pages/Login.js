@@ -1,38 +1,27 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator, LogBox } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import * as Animatable from 'react-native-animatable'
 import api from '../../services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { gravarLogin, buscarLogin, limparLogin } from '../../controle/LoginStorage';
 
 export default function Login() {
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
-  async function storeData(loginData) {
-    try {
-      const jsonValue = JSON.stringify(loginData)
-      await AsyncStorage.setItem('@login_data', jsonValue)
-      // console.log(jsonValue)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
   async function loginAuthenticate() {
     setLoading(true);
     if (username != '' && password != '') {
       const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
       if (response.data == []) {
-        Alert.alert('Usuário ou senha incorretos', 'Verique as credenciais informadas')
+        Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
         setLoading(false);
       } else {
         setLoading(false);
-        storeData(response.data)
+        gravarLogin(response.data)
         navigation.navigate('ListProdutos')
       }
     } else {
@@ -41,12 +30,24 @@ export default function Login() {
     }
   }
 
+  async function VerificarLogado() {
+    let login = await buscarLogin();
+    if (login) {
+      navigation.navigate('ListProdutos')
+    }
+  }
+
+  LogBox.ignoreLogs(["EventEmitter.removeListener"]);
+
+  useEffect(() => {
+    VerificarLogado()
+  }, [])
+
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
         <Text style={styles.message}>Bem-vindo(a)</Text>
       </Animatable.View>
-
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
         <Text style={styles.title}>Usuário</Text>
         <TextInput
@@ -64,22 +65,17 @@ export default function Login() {
           onSubmitEditing={loginAuthenticate}
           onChangeText={setPassword}
         />
-
         {loading ? <ActivityIndicator size='large' color="#38A69D" /> : null}
-
         <TouchableOpacity
           style={styles.button}
           onPress={loginAuthenticate}
         >
           <Text style={styles.buttonText}>Acessar</Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.buttonRegister} onPress={() => Alert.alert('Credenciais de acesso', 'Entre em contato com o nosso suporte para mais informações. (44) 3023-7230')}>
           <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
         </TouchableOpacity>
-
       </Animatable.View>
-
     </View>
   );
 }
