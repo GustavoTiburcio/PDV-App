@@ -22,7 +22,7 @@ export default function Login() {
       } else {
         setLoading(false);
         gravarLogin(response.data)
-        navigation.navigate('ListProdutos')
+        navigation.navigate('ListProdutos', { title: `Bem-Vindo ${response.data.username}` })
       }
     } else {
       Alert.alert('Campos em branco', 'Favor informar Usuário e Senha')
@@ -33,7 +33,7 @@ export default function Login() {
   async function VerificarLogado() {
     let login = await buscarLogin();
     if (login) {
-      navigation.navigate('ListProdutos')
+      navigation.navigate('ListProdutos', { title: `Bem-Vindo ${login.username}` })
     }
   }
 

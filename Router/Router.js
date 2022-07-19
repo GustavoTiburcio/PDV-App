@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { buscarLogin } from '../controle/LoginStorage';
 
 import TelaInicial from '../src/pages/TelaInicial';
 import Login from '../src/pages/Login';
@@ -65,14 +66,14 @@ export default function () {
         <Stack.Screen
           name="ListProdutos"
           component={Router}
-          options={{
-            title: 'Bem-Vindo',
+          options={({ route }) => ({
+            title: route.params.title,
             headerStyle: {
               backgroundColor: '#38A69D',
               padding: 40,
             },
             headerTintColor: '#FFF'
-          }}
+          })}
         />
         <Stack.Screen
           name="ListaCarrinho"
