@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert, Dimensions } from 'react-native';
 import BotaoVermelho from '../../components/BotaoVermelho';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../../controle/CarrinhoStorage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,9 @@ import { postPedido } from '../../services/requisicaoInserePedido';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { PrintPDF } from '../../components/printPDF';
+import LottieView from 'lottie-react-native';
 
+const { width } = Dimensions.get("window");
 
 const Carrinho = ({ route, navigation }) => {
     var date = new Date();
@@ -112,7 +114,7 @@ const Carrinho = ({ route, navigation }) => {
     }
 
     return (
-        <View>
+        <View style={{ flex: 1, backgroundColor: '#FFF' }}>
             <Text style={styles.title}>Carrinho</Text>
             <ScrollView style={styles.scrollContainer}>
                 {itensCarrinho != null ?
@@ -216,12 +218,19 @@ const Carrinho = ({ route, navigation }) => {
                             onPress={() => enviaPedido()}
                         />
                     </View>
-                    : <View>
-                        <View style={{ alignItems: 'center' }}>
-                            <Image
-                                style={{ resizeMode: 'contain', paddingTop: 600, height: 250, width: 280 }}
-                                source={require('../assets/carrinhovazio.png')}
+                    : <View style={{ backgroundColor: '#FFF' }}>
+                        <View style={{ alignItems: 'center', marginTop: '40%', width, height: '50%', }}>
+                            <LottieView
+                                source={require('../assets/carrinhovazio.json')}
+                                autoPlay={true}
+                                loop={true}
+                                style={{
+                                    width, height: '100%',
+                                    resizeMode: 'contain',
+                                    alignSelf: 'center',
+                                }}
                             />
+                            <Text style={{ textAlign: 'center', fontSize: 24 }}>Carrinho vazio...</Text>
                         </View>
                     </View>
                 }
@@ -232,8 +241,7 @@ const Carrinho = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 4,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     cabeçalho: {
         padding: 10,

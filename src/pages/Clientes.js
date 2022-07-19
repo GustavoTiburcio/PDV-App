@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox } from 'react-native';
+import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox, Dimensions } from 'react-native';
 import api from '../../services/api';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+
+const { width } = Dimensions.get("window");
 
 
 export default function Clientes({ navigation }) {
@@ -52,12 +55,24 @@ export default function Clientes({ navigation }) {
         }}
         onEndReachedThreshold={0.01}
         ListFooterComponent={<FooterList load={loading} />}
-      /> : <View><View style={{ alignItems: 'center' }}>
-        <Image
-          style={{ resizeMode: 'contain', paddingTop: '60%', marginTop: '30%', height: '30%', width: '40%' }}
-          source={require('../assets/nenhum_prod.png')}
-        />
-      </View><Text style={{ textAlign: 'center', fontSize: 24, color: '#000000' }}>Nenhum cliente foi encontrado...{"\n"}Verifique o valor digitado.</Text></View>}
+      /> :
+        <View>
+          <View style={{ alignItems: 'center', width, height: '60%', }}>
+            <LottieView
+              source={require('../assets/not-found.json')}
+              autoPlay={true}
+              loop={true}
+              style={{
+                width, height: '100%',
+                resizeMode: 'contain',
+                alignSelf: 'center',
+                backgroundColor: '#fff',
+              }}
+            />
+          </View>
+          <Text style={{ textAlign: 'center', fontSize: 24 }}>Nenhum cliente foi encontrado...</Text>
+        </View>
+      }
     </View>
   );
 }
