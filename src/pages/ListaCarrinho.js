@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Alert, Image, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Dimensions, Text, Alert, Image, View, TextInput, TouchableOpacity } from 'react-native';
 import { gravarItensCarrinhoNoBanco } from '../../controle/CarrinhoStorage';
 import api from '../../services/api';
 import CorTamanho from '../../components/CorTamanho';
@@ -8,6 +8,8 @@ import GradeAtacado from '../../components/GradeAtacado';
 import { buscarUsaCorTamanho, buscarUsaGrade } from '../../controle/ConfigStorage';
 import Slider from '../../components/Slider';
 import LottieView from 'lottie-react-native';
+
+const { width } = Dimensions.get("window");
 
 const ListaCarrinho = ({ route, navigation }) => {
     let codmer;
@@ -46,8 +48,6 @@ const ListaCarrinho = ({ route, navigation }) => {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         let prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         let fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } })
-        // console.log(response.data);
-        console.log(fotos)
         setData(response.data)
         setFotos(fotos);
     }
@@ -79,47 +79,24 @@ const ListaCarrinho = ({ route, navigation }) => {
         // }
     };
 
-    function fotoProduto(link) {
-        if (link != undefined) {
-            return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
-                <Image
-                    style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
-                    source={{
-                        uri: 'https://' + link
-                    }}
-                />
-            </View>
-        } else {
-            return <View style={{ width: '100%', paddingTop: '70%', marginTop: 20 }}>
-                <Image
-                    style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
-                    source={{
-                        uri: 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg'
-                    }}
-                />
-            </View>
-        }
-    }
-
     return (
         <View id={codmer} style={styles.container}>
-            {/* {fotoProduto(foto)} */}
             {fotos != '' ?
                 <Slider fotos={fotos} /> :
-                <View>
+                <View style={{ alignSelf: 'center', width, height: '35%', }}>
                     <LottieView
                         source={require('../assets/camera.json')}
                         autoPlay={true}
                         loop={true}
                         style={{
-                            width: 250,
-                            height: 250,
-                           
+                            width, height: '100%',
+                            resizeMode: 'contain',
+                            alignSelf: 'center'
                         }}
                     />
-                    <Text style={{ fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginTop: '7%', marginBottom: '3%' }}>Nenhuma foto encontrada.</Text>
+                    {/* <Text style={{ fontSize: 23, fontWeight: 'bold', textAlign: 'center' }}>Nenhuma foto encontrada.</Text> */}
                 </View>}
-            <View>
+            <View style={styles.fields}>
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
                 <Text style={styles.item}>{item}</Text>
                 {usaCorTamanho === false && usaGrade === false ?
@@ -201,13 +178,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        paddingLeft: 20,
         justifyContent: 'flex-start',
     },
     textcadastro: {
         color: '#000000',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    fields: {
+        marginLeft: 20,
     },
     item: {
         color: '#000000',
