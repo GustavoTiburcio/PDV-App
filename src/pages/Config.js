@@ -27,6 +27,7 @@ export default function Config({ navigation }) {
         await gravarUsaCorTamanho(usaCorTamanho.toString())
         await gravarUsaGrade(usaGrade.toString())
         await gravarEstoquePorCategoria(usaEstoquePorCategoria.toString())
+        
         Alert.alert('Sucesso', 'Configurações salvas', [
             {
                 text: "Ok",

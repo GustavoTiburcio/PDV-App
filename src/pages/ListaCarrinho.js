@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Dimensions, Text, Alert, Image, View, TextInput, TouchableOpacity } from 'react-native';
-import { gravarItensCarrinhoNoBanco } from '../../controle/CarrinhoStorage';
 import api from '../../services/api';
 import CorTamanho from '../../components/CorTamanho';
 import GradeAtacado from '../../components/GradeAtacado';
-import { buscarUsaCorTamanho, buscarUsaGrade } from '../../controle/ConfigStorage';
+import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../../controle/CarrinhoStorage';
+import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria } from '../../controle/ConfigStorage';
+import { buscarLogin } from '../../controle/LoginStorage';
 import Slider from '../../components/Slider';
 import LottieView from 'lottie-react-native';
 
@@ -21,14 +22,20 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState(valor);
-    const [buscaDetalhes, setBuscaDetalhes] = useState([]);
     const [data, setData] = useState();
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
     const [itensCarrinho, setItensCarrinho] = useState();
     const [fotos, setFotos] = useState([]);
+    const [codigoProd, setCodigoProd] = useState();
+
+    //configs
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
+    const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
+
+    //login
+    const [dadosLogin, setDadosLogin] = useState();
 
     useEffect(() => {
     }, [data, fotos])
@@ -48,6 +55,8 @@ const ListaCarrinho = ({ route, navigation }) => {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         let prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         let fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } })
+        // console.log(response.data)
+        setCodigoProd(prod[0][0])
         setData(response.data)
         setFotos(fotos);
     }
@@ -59,20 +68,106 @@ const ListaCarrinho = ({ route, navigation }) => {
         buscarUsaGrade().then(result => {
             setUsaGrade(JSON.parse(result))
         })
+        buscarEstoquePorCategoria().then(result => {
+            setUsaEstoquePorCategoria(JSON.parse(result))
+        })
+        buscarLogin().then(result => {
+            setDadosLogin(result)
+        })
     }
 
     const addItemCarrinho = () => {
-        gravarItensCarrinhoNoBanco(itensCarrinho).then(resultado => {
-            Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
-            navigation.pop();
-        });
+        if (usaGrade) {
+            gravarItensCarrinhoUsaGrade(itensCarrinho).then(resultado => {
+                Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                navigation.pop();
+            })
+        } else if (usaCorTamanho) {
+            console.log('usa cor e tamanho varejo');
+            return
+        } else {
+            let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            if (quantidade == undefined) {
+                Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+            } else {
+                if (usaEstoquePorCategoria) {
+                    switch (dadosLogin.codcat) {
+                        case null:
+                            Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user representante')
+                            break;
+                        case 1:
+                            if (quantidade > data.estest1 || data.estest1 == null) {
+                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest1 + ' Unidades')
+                            } else {
+                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                                gravarItensCarrinho(itens).then(resultado => {
+                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                                    navigation.pop();
+                                });
+                            }
+                            break;
+                        case 2:
+                            if (quantidade > data.estest2 || data.estest2 == null) {
+                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest2 + ' Unidades')
+                            } else {
+                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                                gravarItensCarrinho(itens).then(resultado => {
+                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                                    navigation.pop();
+                                });
+                            }
+                            break;
+                        case 3:
+                            if (quantidade > data.estest3 || data.estest3 == null) {
+                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest3 + ' Unidades')
+                            } else {
+                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                                gravarItensCarrinho(itens).then(resultado => {
+                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                                    navigation.pop();
+                                });
+                            }
+                            break;
+                        case 4:
+                            if (quantidade > data.estest4 || data.estest4 == null) {
+                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest4 + ' Unidades')
+                            } else {
+                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                                gravarItensCarrinho(itens).then(resultado => {
+                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                                    navigation.pop();
+                                });
+                            }
+                            break;
+                        case 5:
+                            if (quantidade > data.estest5 || data.estest5 == null) {
+                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest5 + ' Unidades')
+                            } else {
+                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+                                gravarItensCarrinho(itens).then(resultado => {
+                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                                    navigation.pop();
+                                });
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    gravarItensCarrinho(itens).then(resultado => {
+                        Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                        navigation.pop();
+                    })
+                }
+            }
+        }
         // if (quantidade == undefined) {
         //     Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         // }else if(codmer == undefined) {
         //     Alert.alert('Erro ao adicionar item', 'Não existe cadastro desse produto com cor ' + cor + ' e tamanho ' + tamanho + ', favor entrar em contato com a fabrica.');
         // }else{
         //     let itens = { codmer: codmer, quantidade: quantidade, item: item, valor: valorItem, cor: cor, tamanho: tamanho };
-        // gravarItensCarrinhoNoBanco(itens).then(resultado => {
+        // gravarItensCarrinho(itens).then(resultado => {
         //     Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
         //     navigation.pop();
         // });
@@ -80,8 +175,8 @@ const ListaCarrinho = ({ route, navigation }) => {
     };
 
     return (
-        <View id={codmer} style={styles.container}>
-            {fotos != '' ?
+        <View style={styles.container}>
+            {fotos.length > 0 ?
                 <Slider fotos={fotos} /> :
                 <View style={{ alignSelf: 'center', width, height: '35%', }}>
                     <LottieView
@@ -94,7 +189,6 @@ const ListaCarrinho = ({ route, navigation }) => {
                             alignSelf: 'center'
                         }}
                     />
-                    {/* <Text style={{ fontSize: 23, fontWeight: 'bold', textAlign: 'center' }}>Nenhuma foto encontrada.</Text> */}
                 </View>}
             <View style={styles.fields}>
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
@@ -167,7 +261,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}
                             onPress={() => { addItemCarrinho() }}>
-                            <Text style={styles.TextButton}>Adicionar {Number.parseFloat(valorItem).toPrecision(7) * Number.parseInt(quantidade ? quantidade : 1).toFixed(2)}</Text>
+                            <Text style={styles.TextButton}>Adicionar {(valorItem * (quantidade ? quantidade : 0)).toFixed(2).replace('.', ',')}</Text>
                         </TouchableOpacity>
                     </View> : null}
             </View>

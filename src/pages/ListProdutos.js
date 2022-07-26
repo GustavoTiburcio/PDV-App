@@ -18,7 +18,7 @@ import { buscarEstoquePorCategoria } from '../../controle/ConfigStorage';
 
 const { width } = Dimensions.get("window");
 
-export default function ListProdutos({navigation}) {
+export default function ListProdutos({ navigation }) {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,9 +34,9 @@ export default function ListProdutos({navigation}) {
 
   useEffect(() => {
     navigation.addListener('focus', () => {
-        getConfig();
+      getConfig();
     });
-}, [navigation]);
+  }, [navigation]);
 
   useEffect(() => {
     loadApi();
@@ -48,6 +48,9 @@ export default function ListProdutos({navigation}) {
     setLoading(true)
 
     const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
+
+    //campo=gold é para ordenar retorno da pesquisa para o cliente Gold Chaves
+    // const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}&CODTABPRE=1&campo=gold`)
 
     setData([...data, ...response.data.content])
     setPage(page + 1);
@@ -73,9 +76,6 @@ export default function ListProdutos({navigation}) {
 
     // const navigation = useNavigation();
 
-    function currencyFormat(num) {
-      return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
     function foto(linkfoto) {
       if (linkfoto == null) {
         return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
@@ -96,7 +96,7 @@ export default function ListProdutos({navigation}) {
         <Text style={styles.listText}>{data.codBar}</Text>
         <Text></Text>
         <Text style={styles.listText}>{data.mer}</Text>
-        <Text style={styles.listText}>R$ {currencyFormat(data.valVenMin).replace('.', ',')}</Text>
+        <Text style={styles.listText}>R$ {data.valVenMin.toFixed(2).replace('.', ',')}</Text>
         <View flexDirection={'row'} style={{ justifyContent: 'space-evenly' }}>
           {usaEstoquePorCategoria ?
             <View>
