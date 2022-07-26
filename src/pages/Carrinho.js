@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity, ScrollView, TextInput, Image, Alert, Dimensions } from 'react-native';
-import BotaoVermelho from '../../components/BotaoVermelho';
-import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../../controle/CarrinhoStorage';
+import BotaoVermelho from '../components/BotaoVermelho';
+import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco, deletarItenCarrinhoNoBanco, buscarCodVenBanco } from '../controle/CarrinhoStorage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { postPedido } from '../../services/requisicaoInserePedido';
+import { postPedido } from '../services/requisicaoInserePedido';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { PrintPDF } from '../../components/printPDF';
+import { PrintPDF } from '../components/printPDF';
 import LottieView from 'lottie-react-native';
 
 const { width } = Dimensions.get("window");

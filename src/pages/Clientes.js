@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox, Dimensions } from 'react-native';
-import api from '../../services/api';
+import api from '../services/api';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';

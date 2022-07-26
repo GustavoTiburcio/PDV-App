@@ -10,11 +10,11 @@ import {
   TouchableOpacity,
   Dimensions
 } from 'react-native';
-import api from '../../services/api';
+import api from '../services/api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import LottieView from 'lottie-react-native';
-import { buscarEstoquePorCategoria } from '../../controle/ConfigStorage';
+import { buscarEstoquePorCategoria } from '../controle/ConfigStorage';
 
 const { width } = Dimensions.get("window");
 

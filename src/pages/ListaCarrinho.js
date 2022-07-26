@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, Dimensions, Text, Alert, Image, View, TextInput, TouchableOpacity } from 'react-native';
-import api from '../../services/api';
-import CorTamanho from '../../components/CorTamanho';
-import GradeAtacado from '../../components/GradeAtacado';
-import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../../controle/CarrinhoStorage';
-import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria, buscarUsaControleEstoque } from '../../controle/ConfigStorage';
-import { buscarLogin } from '../../controle/LoginStorage';
-import Slider from '../../components/Slider';
+import api from '../services/api';
+import CorTamanho from '../components/CorTamanho';
+import GradeAtacado from '../components/GradeAtacado';
+import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/CarrinhoStorage';
+import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
+import { buscarLogin } from '../controle/LoginStorage';
+import Slider from '../components/Slider';
 import LottieView from 'lottie-react-native';
 
 const { width } = Dimensions.get("window");

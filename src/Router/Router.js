@@ -3,16 +3,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import TelaInicial from '../src/pages/TelaInicial';
-import Login from '../src/pages/Login';
-import ListProdutos from '../src/pages/ListProdutos';
-import Estoque from '../src/pages/Estoque';
-import ListaCarrinho from '../src/pages/ListaCarrinho';
-import Carrinho from '../src/pages/Carrinho';
-import CadastroCliente from '../src/pages/CadastroCliente';
-import Clientes from '../src/pages/Clientes';
-import VendasFinalizadas from '../src/pages/VendasFinalizadas';
-import Config from '../src/pages/Config'
+import TelaInicial from '../pages/TelaInicial';
+import Login from '../pages/Login';
+import ListProdutos from '../pages/ListProdutos';
+import Estoque from '../pages/Estoque';
+import ListaCarrinho from '../pages/ListaCarrinho';
+import Carrinho from '../pages/Carrinho';
+import CadastroCliente from '../pages/CadastroCliente';
+import Clientes from '../pages/Clientes';
+import VendasFinalizadas from '../pages/VendasFinalizadas';
+import Config from '../pages/Config'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

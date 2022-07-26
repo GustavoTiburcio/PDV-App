@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TextInput, ScrollView, TouchableOpacity, StyleSheet, LogBox, Alert, ActivityIndicator } from 'react-native';
-import api from '../../services/api';
-import { validaCpfCnpj, cnpj, cpf, validaEmail } from '../../components/FormValidation'
+import api from '../services/api';
+import { validaCpfCnpj, cnpj, cpf, validaEmail } from '../components/FormValidation'
 
 
 export default function CadastroCliente({ navigation }) {

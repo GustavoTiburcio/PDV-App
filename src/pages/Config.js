@@ -17,10 +17,10 @@ import {
     buscarEstoquePorCategoria,
     gravarUsaControleEstoque,
     buscarUsaControleEstoque
-} from '../../controle/ConfigStorage';
+} from '../controle/ConfigStorage';
 
 export default function Config({ navigation }) {
-    const [raz, setRaz] = useState('');
+    const [endApi, setEndApi] = useState('');
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
     const [usaControleEstoque, setUsaControleEstoque] = useState(false);
@@ -72,8 +72,8 @@ export default function Config({ navigation }) {
                     <Text style={styles.fieldText}>Endereço da API: </Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={text => { setRaz(text) }}
-                        value={raz}
+                        onChangeText={text => { setEndApi(text) }}
+                        value={endApi}
                     />
                     <View style={styles.checkBoxView}>
                         <Text style={styles.fieldText}>Usa cor e tamanho(Varejo)?</Text>

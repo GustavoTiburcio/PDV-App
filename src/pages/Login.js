@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator, LogBox } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import * as Animatable from 'react-native-animatable'
-import api from '../../services/api';
-import { gravarLogin, buscarLogin } from '../../controle/LoginStorage';
+import api from '../services/api';
+import { gravarLogin, buscarLogin } from '../controle/LoginStorage';
 
 export default function Login() {
   const [username, setUsername] = useState('');

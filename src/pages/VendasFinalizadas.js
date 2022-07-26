@@ -1,12 +1,12 @@
 import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
-import api from '../../services/api';
+import api from '../services/api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { reqPrintPDF, reqSharePDF } from '../../components/printPDF';
+import { reqPrintPDF, reqSharePDF } from '../components/printPDF';
 
 export default function VendasFinalizadas() {
 
