@@ -14,20 +14,24 @@ import {
     gravarUsaGrade,
     buscarUsaGrade,
     gravarEstoquePorCategoria,
-    buscarEstoquePorCategoria
+    buscarEstoquePorCategoria,
+    gravarUsaControleEstoque,
+    buscarUsaControleEstoque
 } from '../../controle/ConfigStorage';
 
 export default function Config({ navigation }) {
     const [raz, setRaz] = useState('');
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
+    const [usaControleEstoque, setUsaControleEstoque] = useState(false);
     const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
 
     async function Salvar() {
         await gravarUsaCorTamanho(usaCorTamanho.toString())
         await gravarUsaGrade(usaGrade.toString())
         await gravarEstoquePorCategoria(usaEstoquePorCategoria.toString())
-        
+        await gravarUsaControleEstoque(usaControleEstoque.toString())
+
         Alert.alert('Sucesso', 'Configurações salvas', [
             {
                 text: "Ok",
@@ -47,6 +51,9 @@ export default function Config({ navigation }) {
         })
         buscarEstoquePorCategoria().then(result => {
             setUsaEstoquePorCategoria(JSON.parse(result))
+        })
+        buscarUsaControleEstoque().then(result => {
+            setUsaControleEstoque(JSON.parse(result))
         })
     }
 
@@ -74,8 +81,9 @@ export default function Config({ navigation }) {
                             value={usaCorTamanho}
                             onValueChange={() => {
                                 setUsaCorTamanho(!usaCorTamanho)
-                                if (usaGrade) {
+                                if (usaGrade || usaEstoquePorCategoria) {
                                     setUsaGrade(false)
+                                    setUsaEstoquePorCategoria(false)
                                 }
                             }}
                             style={styles.checkBox}
@@ -87,9 +95,20 @@ export default function Config({ navigation }) {
                             value={usaGrade}
                             onValueChange={() => {
                                 setUsaGrade(!usaGrade)
-                                if (usaCorTamanho) {
+                                if (usaCorTamanho || usaEstoquePorCategoria) {
                                     setUsaCorTamanho(false)
+                                    setUsaEstoquePorCategoria(false)
                                 }
+                            }}
+                            style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView}>
+                        <Text style={styles.fieldText}>Usa controle de estoque?</Text>
+                        <Checkbox
+                            value={usaControleEstoque}
+                            onValueChange={() => {
+                                setUsaControleEstoque(!usaControleEstoque)
                             }}
                             style={styles.checkBox}
                         />
@@ -100,6 +119,10 @@ export default function Config({ navigation }) {
                             value={usaEstoquePorCategoria}
                             onValueChange={() => {
                                 setUsaEstoquePorCategoria(!usaEstoquePorCategoria)
+                                if (usaCorTamanho || usaGrade) {
+                                    setUsaCorTamanho(false)
+                                    setUsaGrade(false)
+                                }
                             }}
                             style={styles.checkBox}
                         />

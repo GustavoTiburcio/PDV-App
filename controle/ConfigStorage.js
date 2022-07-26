@@ -55,6 +55,24 @@ export const buscarUsaGrade = async () => {
         }
     })
 }
+export const gravarUsaControleEstoque = async (ControleEstoque) => {
+    try {
+        await AsyncStorage.removeItem('ControleEstoque')
+        await AsyncStorage.setItem('ControleEstoque', ControleEstoque);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarUsaControleEstoque = async () => {
+    const value = await AsyncStorage.getItem('ControleEstoque');
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(value != null ? value : null);
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 export const gravarEstoquePorCategoria = async (EstoquePorCategoria) => {
     try {
         await AsyncStorage.removeItem('EstoquePorCategoria')

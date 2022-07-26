@@ -5,7 +5,7 @@ import api from '../../services/api';
 import CorTamanho from '../../components/CorTamanho';
 import GradeAtacado from '../../components/GradeAtacado';
 import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../../controle/CarrinhoStorage';
-import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria } from '../../controle/ConfigStorage';
+import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria, buscarUsaControleEstoque } from '../../controle/ConfigStorage';
 import { buscarLogin } from '../../controle/LoginStorage';
 import Slider from '../../components/Slider';
 import LottieView from 'lottie-react-native';
@@ -32,6 +32,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     //configs
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
+    const [usaControleEstoque, setUsaControleEstoque] = useState(false)
     const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
 
     //login
@@ -74,6 +75,9 @@ const ListaCarrinho = ({ route, navigation }) => {
         buscarLogin().then(result => {
             setDadosLogin(result)
         })
+        buscarUsaControleEstoque().then(result => {
+            setUsaControleEstoque(JSON.parse(result))
+        })
     }
 
     const addItemCarrinho = () => {
@@ -90,6 +94,7 @@ const ListaCarrinho = ({ route, navigation }) => {
             if (quantidade == undefined) {
                 Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
             } else {
+                //Verificação de estoque por categoria, Exemplo de cliente que utiliza: Gold chaves
                 if (usaEstoquePorCategoria) {
                     switch (dadosLogin.codcat) {
                         case null:
@@ -154,10 +159,14 @@ const ListaCarrinho = ({ route, navigation }) => {
                             break;
                     }
                 } else {
-                    gravarItensCarrinho(itens).then(resultado => {
-                        Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                        navigation.pop();
-                    })
+                    if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
+                        gravarItensCarrinho(itens).then(resultado => {
+                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                            navigation.pop();
+                        })
+                    } else {
+                        Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque)
+                    }
                 }
             }
         }
