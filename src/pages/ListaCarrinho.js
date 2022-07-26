@@ -28,6 +28,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [itensCarrinho, setItensCarrinho] = useState();
     const [fotos, setFotos] = useState([]);
     const [codigoProd, setCodigoProd] = useState();
+    const [obs, setObs] = useState('');
 
     //configs
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
@@ -88,9 +89,10 @@ const ListaCarrinho = ({ route, navigation }) => {
             })
         } else if (usaCorTamanho) {
             console.log('usa cor e tamanho varejo');
+            Alert.alert('Opção em construção')
             return
         } else {
-            let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
             if (quantidade == undefined) {
                 Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
             } else {
@@ -220,6 +222,14 @@ const ListaCarrinho = ({ route, navigation }) => {
                             placeholder="Valor do produto"
                             onChangeText={value => setValorItem(value.replace(',', '.'))}>
                             {valor.toFixed(2).replace('.', ',')}
+                        </TextInput>
+                        <Text style={styles.text}>Observação:</Text>
+                        <TextInput
+                            style={styles.textinput}
+                            placeholder="Obs"
+                            multiline={true}
+                            onChangeText={value => setObs(value)}>
+                            {obs}
                         </TextInput>
                     </View>
                     : null
