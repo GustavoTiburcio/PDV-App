@@ -2,27 +2,24 @@ import * as Print from 'expo-print';
 import api from '../services/api';
 import * as Sharing from 'expo-sharing';
 
-function currencyFormat(num) {
-    return num.toFixed(2);
-}
-
 const PrintPDF = async (itensCarrinho, dadosCliente, valorBruto, codPed, nomRep) => {
     let date = new Date();
     let PrintItems = itensCarrinho.map(function (item) {
         return `<tr>
     <td style={{ fontSize: "38px" , maxWidth:"145px"}}>
-        <b>${item.item} ${item.cor} ${item.tamanho}</b>
+        <b>${item.item} ${item?.cor ? item.cor : ''} ${item?.tamanho ? item.tamanho : ''}</b>
     </td>
     <td style={{ fontSize: "38px" , maxWidth:"20px"}} >
         <b>${item.quantidade}</b>
     </td>
     <td style={{ fontSize: "38px" , maxWidth:"60px" }}>
-        <b>${currencyFormat(item.valor).replace('.', ',')}</b>
+        <b>${parseFloat(item.valor).toFixed(2).replace('.', ',')}</b>
     </td>
     <td style={{ fontSize: "38px" , maxWidth:"80px" }}>
-        <b>${currencyFormat(item.valor * item.quantidade).replace('.', ',')}</b>
+        <b>${parseFloat(item.valor * item.quantidade).toFixed(2).replace('.', ',')}</b>
     </td>
-    </tr>`;
+    </tr>
+    <tr><td><b>-${item.obs}</b></td></tr>`;
     });
 
     const htmlContent = `
@@ -120,7 +117,7 @@ async function reqPrintPDF(codped) {
         var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
             return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
-              <b>${item.mer}  ${item.pad} ${item.codtam}</b>
+              <b>${item.mer}  ${item?.codpad ? item.codpad : ''} ${item?.codtam ? item.codtam : ''}</b>
           </td>
           <td style={{ fontSize: "36px" , maxWidth:"20px"}} >
               <b>${item.qua}</b>
@@ -131,7 +128,8 @@ async function reqPrintPDF(codped) {
           <td style={{ fontSize: "36px" , maxWidth:"80px" }}>
               <b>${(item.qua * item.valUni).toFixed(2).replace('.', ',')}</b>
           </td>
-          </tr>`;
+          </tr>
+          <tr><td><b> -${item.obs}</b></td></tr>`;
         });
 
         const htmlContent = `

@@ -1,26 +1,31 @@
-/* eslint-disable prettier/prettier */
-import axios from 'axios';
+import api from './api';
 import { Alert } from 'react-native';
 
+
 export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
-    let link = 'https://operazjeans-api.herokuapp.com/api';  //Produção Servidor TiFire
-    if (link !== null) {
-        let url = link;
-        if (url === 'https://operazjeans-api.herokuapp.com/api') {
-            link = url + '/pedidos/salvarPed';
-            return axios.post(link, dadosPedido, {
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            }).then(resp => {
-                if (resp.data) {
-                    resolve(resp.data)
-                } else {
-                    reject("erro ao salvar pedido")
-                }
-            }).catch(error => {reject(error);console.log(error.message); Alert.alert("Erro ao salvar pedido", error.message)});
+    return api.post('/pedidos/salvarPed', dadosPedido, {
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
         }
-    } else {
-        reject("erro ao salvar pedido");
-    }
+    }).then(response => {
+        if (response.data) {
+            resolve(response.data);
+        } else {
+            reject("erro ao salvar pedido")
+        }
+    }).catch(error => { reject(error); console.log(error.message); Alert.alert("Erro ao salvar pedido", error.message) });
+});
+
+export const putAlterarPedido = (dadosPedido) => new Promise((resolve, reject) => {
+    return api.put('/pedidos/alterarPedido', dadosPedido, {
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
+    }).then(response => {
+        if (response.data) {
+            resolve(response.data);
+        } else {
+            reject("erro ao salvar pedido")
+        }
+    }).catch(error => { reject(error); console.log(error.message); Alert.alert("Erro ao salvar pedido", error.message) });
 });

@@ -22,7 +22,6 @@ const Carrinho = ({ route, navigation }) => {
     const [codcat, setCodCat] = useState();
     const [dadosCliente, setDadosCliente] = useState({});
     const [dadosLogin, setDadosLogin] = useState({});
-    const [codPed, setCodPed] = useState(0);
 
     async function getLoginData() {
         try {
@@ -77,11 +76,11 @@ const Carrinho = ({ route, navigation }) => {
         } else {
             const appuser = { id: dadosCliente.id };
             const itensPedido = itensCarrinho.map((iten) => {
-                return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
+                return { obs: iten.obs, qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
-                codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-                trarednom: '', appuser, itensPedido
+                cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                trarednom: '', valdes: 0, appuser, itensPedido
             })
             postPedido(ped).then(resultado => {
                 if (resultado) {
@@ -93,7 +92,7 @@ const Carrinho = ({ route, navigation }) => {
                                 {
                                     text: "Sim",
                                     onPress: () => {
-                                        PrintPDF(itensCarrinho, dadosCliente, valorBruto, codPed, nomRep)
+                                        PrintPDF(itensCarrinho, dadosCliente, valorBruto, resultado.cod, nomRep)
                                     },
                                 },
                                 {
@@ -103,6 +102,7 @@ const Carrinho = ({ route, navigation }) => {
                         );
                         setItensCarrinho(null);
                         setValorBruto(0);
+                        setDadosCliente({});
                         navigation.navigate('ListProdutos');
                     });
                 }
@@ -140,7 +140,7 @@ const Carrinho = ({ route, navigation }) => {
                                         <Text>Vlr Total</Text>
                                     </Row>
                                 </Col>
-                                <Col size={25}>
+                                <Col size={15}>
                                     <Row style={styles.cellCabeçalho}>
                                         <Text></Text>
                                     </Row>
@@ -155,6 +155,7 @@ const Carrinho = ({ route, navigation }) => {
                             return (
                                 <View key={key} style={styles.container}>
                                     <Text style={styles.textItem}>{itemCar.item} {itemCar.cor} {itemCar.tamanho}</Text>
+                                    {itemCar.obs ? <Text style={styles.textObsItem}>{itemCar.obs}</Text> : null}
                                     <Grid>
                                         <Col size={15}>
                                             <Row style={styles.cell}>
@@ -171,7 +172,7 @@ const Carrinho = ({ route, navigation }) => {
                                                 <Text>R$ {Number.parseFloat(itemCar.valor * itemCar.quantidade).toFixed(2).replace('.', ',')}</Text>
                                             </Row>
                                         </Col>
-                                        <Col size={20}>
+                                        <Col size={15}>
                                             <Row style={styles.cell}>
                                                 <TouchableOpacity onPress={() => deleteClick(itemCar)} style={styles.deleteButton}>
                                                     <Ionicons
@@ -268,13 +269,18 @@ const styles = StyleSheet.create({
     },
     textItem: {
         width: '85%',
-        padding: 1,
         fontSize: 17,
         color: "#000000",
         fontWeight: "bold",
         textAlignVertical: "center",
         alignSelf: "center",
-        alignItems: 'flex-start',
+    },
+    textObsItem: {
+        width: '85%',
+        fontSize: 15,
+        color: "#000000",
+        textAlignVertical: "center",
+        alignSelf: "center",
     },
     textQuantidade: {
         width: '30%',

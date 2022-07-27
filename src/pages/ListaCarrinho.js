@@ -162,12 +162,12 @@ const ListaCarrinho = ({ route, navigation }) => {
                     }
                 } else {
                     if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
+                        Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque)
+                    } else {
                         gravarItensCarrinho(itens).then(resultado => {
                             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
                             navigation.pop();
                         })
-                    } else {
-                        Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque)
                     }
                 }
             }

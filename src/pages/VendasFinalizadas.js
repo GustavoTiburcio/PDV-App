@@ -57,8 +57,8 @@ export default function VendasFinalizadas() {
           onPress: async () => {
             try {
               const response = await api.delete(`/pedidos/deletarPedido?cod=${codped}`)
-              console.log(response)
               Alert.alert('Excluir Venda', `${response.data}`)
+              setRefresh(true);
             } catch (error) {
               Alert.alert('Erro ao apagar venda', 'Não pode alterar. Pedido já está concluido')
             }

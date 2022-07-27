@@ -66,7 +66,7 @@ export default function () {
           name="ListProdutos"
           component={Router}
           options={({ route }) => ({
-            title: route.params.title,
+            title: route.params?.title ? route.params.title : '',
             headerStyle: {
               backgroundColor: '#38A69D',
               padding: 40,
