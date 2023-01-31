@@ -44,16 +44,24 @@ export default function Config({ navigation }) {
 
     async function getConfig() {
         buscarUsaCorTamanho().then(result => {
-            setUsaCorTamanho(JSON.parse(result))
+            if (result) {
+                setUsaCorTamanho(JSON.parse(result));   
+            }
         })
         buscarUsaGrade().then(result => {
-            setUsaGrade(JSON.parse(result))
+            if (result) {
+                setUsaGrade(JSON.parse(result));
+            }
         })
         buscarEstoquePorCategoria().then(result => {
-            setUsaEstoquePorCategoria(JSON.parse(result))
+            if (result) {
+                setUsaEstoquePorCategoria(JSON.parse(result));
+            }
         })
         buscarUsaControleEstoque().then(result => {
-            setUsaControleEstoque(JSON.parse(result))
+            if (result) { 
+                setUsaControleEstoque(JSON.parse(result));
+            }
         })
     }
 
