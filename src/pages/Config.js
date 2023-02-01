@@ -30,10 +30,14 @@ export default function Config({ navigation }) {
 
     async function getConfig() {
         buscarUsaCorTamanho().then(result => {
-            setUsaCorTamanho(JSON.parse(result))
+            if (result) {
+                setUsaCorTamanho(JSON.parse(result))
+            }
         })
         buscarUsaGrade().then(result => {
-            setUsaGrade(JSON.parse(result))
+            if (result) {
+                setUsaGrade(JSON.parse(result))
+            }
         })
     }
 

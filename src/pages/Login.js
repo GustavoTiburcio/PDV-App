@@ -27,7 +27,8 @@ export default function Login() {
     setLoading(true);
     if (username != '' && password != '') {
       const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
-      if (response.data == []) {
+      console.log(response);
+      if (!response.data) {
         Alert.alert('Usuário ou senha incorretos', 'Verique as credenciais informadas')
         setLoading(false);
       } else {

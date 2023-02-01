@@ -86,12 +86,12 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 >
                     <View style={{ }}>
                         <DataTable style={styles.modalView2}>
-                            <DataTable.Header style={{ marginLeft: '2%' }}>
+                            <DataTable.Header style={{ marginLeft: '20%' }}>
                                 <DataTable.Title />
                                 <DataTable.Title />
                                 <DataTable.Title />
                                 {tamanhos.map(tamanho => {
-                                    return <DataTable.Title key={tamanho} style={{marginLeft: '4%'}}>{tamanho}</DataTable.Title>
+                                    return <DataTable.Title key={tamanho} style={{width: 50}}>{tamanho}</DataTable.Title>
                                 })}
                             </DataTable.Header>
                             {cores.map(cor => {
@@ -130,7 +130,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>GRADE</Text>
-                        {tamanhos !== undefined && cores !== undefined? grade() : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
+                        {tamanhos !== undefined && cores !== undefined ? grade() : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => {

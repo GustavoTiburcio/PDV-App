@@ -67,7 +67,7 @@ const PrintPDF = async (itensCarrinho, dadosCliente, valorBruto, codPed, nomRep)
     <p></p>
     <p align="right"><b>Venda ${codPed}</b></p>
     </br>
-    <p align="center"><b>OPERA Z</b></p>
+    <p align="center"><b>PAPER PLAS</b></p>
     </br>
     <p align="center"><b></b></p>
     </br>
@@ -176,14 +176,14 @@ async function reqPrintPDF(codped) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>OPERA Z</b></p>
+              <p align="center"><b>PAPER PLAS</b></p>
               </br>
               <p align="center"><b></b></p>
               </br>
               </br>
               <div>
                 <p><b>Data: ${response.data.Pedidos[0].dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</b></p>
-                <p><b>Vendedor: </b></p>
+                <p><b>Vendedor: TiFire</b></p>
                 <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
                 <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
                 <p><b>Email: ${response.data.Pedidos[0].cliente.ema}</b></p>
@@ -288,14 +288,14 @@ async function reqSharePDF(codped) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>OPERA Z</b></p>
+              <p align="center"><b>PAPER PLAS</b></p>
               </br>
               <p align="center"><b></b></p>
               </br>
               </br>
               <div>
                 <p><b>Data: ${response.data.Pedidos[0].dat.slice(0, 19).replace(/-/g, "/").replace("T", " ")}</b></p>
-                <p><b>Vendedor: </b></p>
+                <p><b>Vendedor: TiFire</b></p>
                 <p><b>Razão Social:</b><b> ${response.data.Pedidos[0].cliente.raz}</b></p>
                 <p><b>CPF/CNPJ: ${response.data.Pedidos[0].cliente.cgc}</b><b> Telefone: ${response.data.Pedidos[0].cliente.tel}</b></p>
                 <p><b>Email: ${response.data.Pedidos[0].cliente.ema}</b></p>

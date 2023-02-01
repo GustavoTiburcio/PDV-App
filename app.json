@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "OperaZ",
-    "slug": "OperaZ",
+    "name": "PDV-Mobile",
+    "slug": "PDV-Mobile",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon3.png",
@@ -25,6 +25,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a66e0952-62f2-4c17-8e1e-63052f93232a"
+      }
     }
   }
 }

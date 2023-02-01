@@ -78,10 +78,11 @@ const Carrinho = ({ route, navigation }) => {
                 return { qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
-                codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
+                cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: null, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
                 trarednom: '', appuser, itensPedido
             })
             postPedido(ped).then(resultado => {
+                console.log(resultado)
                 if (resultado) {
                     limparItensCarrinhoNoBanco().then(result => {
                         Alert.alert(

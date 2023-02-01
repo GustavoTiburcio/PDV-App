@@ -3,10 +3,11 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 
 export const postPedido = (dadosPedido) => new Promise((resolve, reject) => {
-    let link = 'https://operazjeans-api.herokuapp.com/api';  //Produção Servidor TiFire
+    let link = 'https://tifiredemonstracao-api.herokuapp.com/api';  //Produção Servidor TiFire
+    console.log(dadosPedido)
     if (link !== null) {
         let url = link;
-        if (url === 'https://operazjeans-api.herokuapp.com/api') {
+        if (url === 'https://tifiredemonstracao-api.herokuapp.com/api') {
             link = url + '/pedidos/salvarPed';
             return axios.post(link, dadosPedido, {
                 headers: {
