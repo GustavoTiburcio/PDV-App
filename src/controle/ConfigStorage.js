@@ -10,84 +10,89 @@ export const gravarLinkBanco = async (link) => {
     }
 }
 export const buscarLinkBanco = async () => {
-    const value = await AsyncStorage.getItem('linkdb');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-export const gravarUsaCorTamanho = async (CorTamanho) => {
     try {
-        await AsyncStorage.removeItem('CorTamanho')
-        await AsyncStorage.setItem('CorTamanho', CorTamanho);
+        const value = await AsyncStorage.getItem('linkdb');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarUsaCorTamanho = async (usaCorTamanho) => {
+    try {
+        await AsyncStorage.removeItem('usaCorTamanho')
+        await AsyncStorage.setItem('usaCorTamanho', usaCorTamanho);
     } catch (e) {
         console.log(e)
     }
 }
 export const buscarUsaCorTamanho = async () => {
-    const value = await AsyncStorage.getItem('CorTamanho');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-export const gravarUsaGrade = async (Grade) => {
     try {
-        await AsyncStorage.removeItem('Grade')
-        await AsyncStorage.setItem('Grade', Grade);
+        const value = await AsyncStorage.getItem('usaCorTamanho');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarUsaGrade = async (usaGrade) => {
+    try {
+        await AsyncStorage.removeItem('usaGrade')
+        await AsyncStorage.setItem('usaGrade', usaGrade);
     } catch (e) {
         console.log(e)
     }
 }
 export const buscarUsaGrade = async () => {
-    const value = await AsyncStorage.getItem('Grade');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-export const gravarUsaControleEstoque = async (ControleEstoque) => {
     try {
-        await AsyncStorage.removeItem('ControleEstoque')
-        await AsyncStorage.setItem('ControleEstoque', ControleEstoque);
+        const value = await AsyncStorage.getItem('usaGrade');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarUsaControleEstoque = async (usaControleEstoque) => {
+    try {
+        await AsyncStorage.removeItem('usaControleEstoque')
+        await AsyncStorage.setItem('usaControleEstoque', usaControleEstoque);
     } catch (e) {
         console.log(e)
     }
 }
 export const buscarUsaControleEstoque = async () => {
-    const value = await AsyncStorage.getItem('ControleEstoque');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-export const gravarEstoquePorCategoria = async (EstoquePorCategoria) => {
     try {
-        await AsyncStorage.removeItem('EstoquePorCategoria')
-        await AsyncStorage.setItem('EstoquePorCategoria', EstoquePorCategoria);
+        const value = await AsyncStorage.getItem('usaControleEstoque');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarUsaEstoquePorCategoria = async (usaEstoquePorCategoria) => {
+    try {
+        await AsyncStorage.removeItem('usaEstoquePorCategoria')
+        await AsyncStorage.setItem('usaEstoquePorCategoria', usaEstoquePorCategoria);
     } catch (e) {
         console.log(e)
     }
 }
-export const buscarEstoquePorCategoria = async () => {
-    const value = await AsyncStorage.getItem('EstoquePorCategoria');
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(value != null ? value : null);
-        } catch (e) {
-            reject(e)
+export const buscarUsaEstoquePorCategoria = async () => {
+    try {
+        const value = await AsyncStorage.getItem('usaEstoquePorCategoria');
+        if (value) {
+            return value;
         }
-    })
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
 }

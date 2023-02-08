@@ -222,12 +222,11 @@ const Carrinho = ({ route, navigation }) => {
                     : <View style={{ backgroundColor: '#FFF' }}>
                         <View style={{ alignItems: 'center', marginTop: '40%', width, height: '50%', }}>
                             <LottieView
-                                source={require('../assets/carrinhovazio.json')}
+                                source={require('../images/carrinhovazio.json')}
                                 autoPlay={true}
                                 loop={true}
                                 style={{
                                     width, height: '100%',
-                                    resizeMode: 'contain',
                                     alignSelf: 'center',
                                 }}
                             />

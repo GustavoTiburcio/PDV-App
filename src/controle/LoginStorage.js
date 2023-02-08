@@ -11,14 +11,15 @@ export const gravarLogin = async (loginData) => {
 }
 
 export const buscarLogin = async () => {
-    const jsonValue = await AsyncStorage.getItem('@login_data')
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(jsonValue != null ? JSON.parse(jsonValue) : null);
-        } catch (e) {
-            reject(e)
+    try {
+        const jsonValue = await AsyncStorage.getItem('@login_data')
+        if (jsonValue) {
+            return JSON.parse(jsonValue);
         }
-    })
+        return;
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export const limparLogin = async () => {

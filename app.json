@@ -4,7 +4,7 @@
     "slug": "PDV",
     "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/icon3.png",
+    "icon": "./assets/icon.png",
     "splash": {
       "backgroundColor": "#38A69D"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon4.png"
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "package": "com.tifire.tifireapp"
     },

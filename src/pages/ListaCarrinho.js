@@ -5,10 +5,11 @@ import api from '../services/api';
 import CorTamanho from '../components/CorTamanho';
 import GradeAtacado from '../components/GradeAtacado';
 import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/CarrinhoStorage';
-import { buscarUsaCorTamanho, buscarUsaGrade, buscarEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
+import { buscarUsaCorTamanho, buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
 import { buscarLogin } from '../controle/LoginStorage';
 import Slider from '../components/Slider';
 import LottieView from 'lottie-react-native';
+import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 
 const { width } = Dimensions.get("window");
 
@@ -57,121 +58,128 @@ const ListaCarrinho = ({ route, navigation }) => {
         const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
         let prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor])
         let fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } })
-        // console.log(response.data)
         setCodigoProd(prod[0][0])
         setData(response.data)
         setFotos(fotos);
     }
 
     async function getConfig() {
-        buscarUsaCorTamanho().then(result => {
-            setUsaCorTamanho(JSON.parse(result))
-        })
-        buscarUsaGrade().then(result => {
-            setUsaGrade(JSON.parse(result))
-        })
-        buscarEstoquePorCategoria().then(result => {
-            setUsaEstoquePorCategoria(JSON.parse(result))
-        })
-        buscarLogin().then(result => {
-            setDadosLogin(result)
-        })
-        buscarUsaControleEstoque().then(result => {
-            setUsaControleEstoque(JSON.parse(result))
-        })
+        const login = await buscarLogin();
+        const usaEstoquePorCategori = await buscarUsaEstoquePorCategoria();
+        const usaCorTamanh = await buscarUsaCorTamanho();
+        const usaGrad = await buscarUsaGrade();
+        const usaControleEstoqu = await buscarUsaControleEstoque();
+
+        if (login) {
+            setDadosLogin(login);
+        }
+        if (usaEstoquePorCategori) {
+            setUsaEstoquePorCategoria(JSON.parse(usaEstoquePorCategori));
+        }
+        if (usaCorTamanh) {
+            setUsaCorTamanho(JSON.parse(usaCorTamanh));
+        }
+        if (usaGrad) {
+            setUsaGrade(JSON.parse(usaGrad))
+        }
+        if (usaControleEstoqu) {
+            setUsaControleEstoque(JSON.parse(usaControleEstoqu))
+        }
     }
 
     const addItemCarrinho = () => {
+        let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
         if (usaGrade) {
             gravarItensCarrinhoUsaGrade(itensCarrinho).then(resultado => {
                 Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
                 navigation.pop();
+                return;
             })
-        } else if (usaCorTamanho) {
+            return;
+        }
+        if (usaCorTamanho) {
             console.log('usa cor e tamanho varejo');
             Alert.alert('Opção em construção')
-            return
-        } else {
-            let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
-            if (quantidade == undefined) {
-                Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
-            } else {
-                //Verificação de estoque por categoria, Exemplo de cliente que utiliza: Gold chaves
-                if (usaEstoquePorCategoria) {
-                    switch (dadosLogin.codcat) {
-                        case null:
-                            Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user representante')
-                            break;
-                        case 1:
-                            if (quantidade > data.estest1 || data.estest1 == null) {
-                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest1 + ' Unidades')
-                            } else {
-                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
-                                gravarItensCarrinho(itens).then(resultado => {
-                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                                    navigation.pop();
-                                });
-                            }
-                            break;
-                        case 2:
-                            if (quantidade > data.estest2 || data.estest2 == null) {
-                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest2 + ' Unidades')
-                            } else {
-                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
-                                gravarItensCarrinho(itens).then(resultado => {
-                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                                    navigation.pop();
-                                });
-                            }
-                            break;
-                        case 3:
-                            if (quantidade > data.estest3 || data.estest3 == null) {
-                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest3 + ' Unidades')
-                            } else {
-                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
-                                gravarItensCarrinho(itens).then(resultado => {
-                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                                    navigation.pop();
-                                });
-                            }
-                            break;
-                        case 4:
-                            if (quantidade > data.estest4 || data.estest4 == null) {
-                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest4 + ' Unidades')
-                            } else {
-                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
-                                gravarItensCarrinho(itens).then(resultado => {
-                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                                    navigation.pop();
-                                });
-                            }
-                            break;
-                        case 5:
-                            if (quantidade > data.estest5 || data.estest5 == null) {
-                                Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest5 + ' Unidades')
-                            } else {
-                                let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
-                                gravarItensCarrinho(itens).then(resultado => {
-                                    Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                                    navigation.pop();
-                                });
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                } else {
-                    if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
-                        Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque)
-                    } else {
-                        gravarItensCarrinho(itens).then(resultado => {
-                            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
-                            navigation.pop();
-                        })
-                    }
-                }
-            }
+            return;
         }
+        if (!quantidade) {
+            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+        }
+
+        //Verificação de estoque por categoria, Exemplo de cliente que utiliza: Gold chaves
+        if (usaEstoquePorCategoria) {
+            // switch (dadosLogin.codcat) {
+            //     case null:
+            //         Alert.alert('Usuário sem categoria', 'Favor contatar o suporte para colocar categoria no app_user representante')
+            //         break;
+            //     case 1:
+            //         if (quantidade > data.estest1 || data.estest1 == null) {
+            //             Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest1 + ' Unidades')
+            //         } else {
+            //             let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            //             gravarItensCarrinho(itens).then(resultado => {
+            //                 Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            //                 navigation.pop();
+            //             });
+            //         }
+            //         break;
+            //     case 2:
+            //         if (quantidade > data.estest2 || data.estest2 == null) {
+            //             Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest2 + ' Unidades')
+            //         } else {
+            //             let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            //             gravarItensCarrinho(itens).then(resultado => {
+            //                 Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            //                 navigation.pop();
+            //             });
+            //         }
+            //         break;
+            //     case 3:
+            //         if (quantidade > data.estest3 || data.estest3 == null) {
+            //             Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest3 + ' Unidades')
+            //         } else {
+            //             let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            //             gravarItensCarrinho(itens).then(resultado => {
+            //                 Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            //                 navigation.pop();
+            //             });
+            //         }
+            //         break;
+            //     case 4:
+            //         if (quantidade > data.estest4 || data.estest4 == null) {
+            //             Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest4 + ' Unidades')
+            //         } else {
+            //             let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            //             gravarItensCarrinho(itens).then(resultado => {
+            //                 Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            //                 navigation.pop();
+            //             });
+            //         }
+            //         break;
+            //     case 5:
+            //         if (quantidade > data.estest5 || data.estest5 == null) {
+            //             Alert.alert('Quantidade inválida', 'Estoque atual: ' + data.estest5 + ' Unidades')
+            //         } else {
+            //             let itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem };
+            //             gravarItensCarrinho(itens).then(resultado => {
+            //                 Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            //                 navigation.pop();
+            //             });
+            //         }
+            //         break;
+            //     default:
+            //         break;
+            // }
+        }
+        if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
+            Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque);
+            return;
+        }
+        gravarItensCarrinho(itens).then(resultado => {
+            Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+            navigation.pop();
+            return;
+        })
         // if (quantidade == undefined) {
         //     Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
         // }else if(codmer == undefined) {
@@ -189,22 +197,20 @@ const ListaCarrinho = ({ route, navigation }) => {
         <View style={styles.container}>
             {fotos.length > 0 ?
                 <Slider fotos={fotos} /> :
-                <View style={{ alignSelf: 'center', width, height: '35%', }}>
-                    <LottieView
-                        source={require('../assets/camera.json')}
-                        autoPlay={true}
-                        loop={true}
-                        style={{
-                            width, height: '100%',
-                            resizeMode: 'contain',
-                            alignSelf: 'center'
+                <View style={{ width, height: 250, alignSelf: 'center' }}>
+                    <Image
+                        resizeMode='center'
+                        style={{ height: 250 }}
+                        source={{
+                            uri: 'https://higa.membros.supermercadozen.com.br/assets/tema01/img/produto-sem-foto.png'
                         }}
                     />
                 </View>}
             <View style={styles.fields}>
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
                 <Text style={styles.item}>{item}</Text>
-                {usaCorTamanho === false && usaGrade === false ?
+                {!usaEstoquePorCategoria && !usaGrade && !usaCorTamanho && <Text>Estoque atual: {data?.detalhes[0]?.estoque ? parseFloat(data.detalhes[0].estoque).toFixed(2) : 0}</Text>}
+                {!usaCorTamanho && !usaGrade ?
                     <View>
                         <Text style={styles.text}>Quantidade:</Text>
                         <TextInput
@@ -232,13 +238,12 @@ const ListaCarrinho = ({ route, navigation }) => {
                             {obs}
                         </TextInput>
                     </View>
-                    : null
+                    : <></>
                 }
                 {usaGrade ?
-                    <View style={{ marginTop: '5%' }}>
+                    <View>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valor}</Text>
-                        <Text />
                         <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
                         <TouchableOpacity
                             style={styles.AdicionarButton}
@@ -247,7 +252,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                             <Text style={styles.TextButton}>Adicionar</Text>
                         </TouchableOpacity>
                     </View>
-                    : null
+                    : <></>
                 }
                 {usaCorTamanho ?
                     <View>
@@ -272,17 +277,18 @@ const ListaCarrinho = ({ route, navigation }) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    : null
+                    : <></>
                 }
-                {usaCorTamanho === false && usaGrade === false || usaCorTamanho === undefined && usaGrade === undefined ?
+                {!usaCorTamanho && !usaGrade ?
                     <View>
                         <TouchableOpacity
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}
                             onPress={() => { addItemCarrinho() }}>
-                            <Text style={styles.TextButton}>Adicionar {(valorItem * (quantidade ? quantidade : 0)).toFixed(2).replace('.', ',')}</Text>
+                            <Text style={styles.TextButton}>Adicionar {ConvertNumberParaReais((valorItem * (quantidade ? quantidade : 0)))}</Text>
                         </TouchableOpacity>
-                    </View> : null}
+                    </View> : <></>
+                }
             </View>
         </View>
     );
@@ -305,7 +311,6 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 20,
         marginTop: 15,
-        alignItems: 'center',
     },
     text: {
         color: '#000000',

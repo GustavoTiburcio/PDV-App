@@ -2,6 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import TelaInicial from '../pages/TelaInicial';
 import Login from '../pages/Login';
@@ -13,42 +15,77 @@ import CadastroCliente from '../pages/CadastroCliente';
 import Clientes from '../pages/Clientes';
 import VendasFinalizadas from '../pages/VendasFinalizadas';
 import Config from '../pages/Config'
+import { Platform, Dimensions } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function Router() {
+const { height } = Dimensions.get('window');
+const altura = height / 100 * 7;
+
+function Tabs() {
   return (
     <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Produtos') {
+            iconName = focused ? 'home' : 'home-outline';
+          }
+          if (route.name === 'Carrinho') {
+            iconName = focused ? 'cart' : 'cart-outline';
+          }
+          if (route.name === 'Histórico') {            
+            return <FontAwesome name='history' size={30} color={color} />;
+          }
+          if (route.name === 'Config') {
+            return <FontAwesome name='gear' size={30} color={color} />;
+          }
+
+          return <Ionicons name={iconName} size={30} color={color} />;
+        },
+      })}
       tabBarOptions={{
+        activeTintColor: '#32264d',
+        inactiveTintColor: '#c1bccc',
+        activeBackgroundColor: '#ebebf5',
+        inactiveBackgroundColor: '#FFF',
         style: {
           elevation: 0,
           shadowOpacity: 0,
-          height: '8%',
+          height: Platform.OS === 'ios' ? '10%' : altura
         },
         tabStyle: {
-          flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center'
         },
         labelStyle: {
           fontSize: 16,
         },
-        inactiveBackgroundColor: '#fafafc',
-        activeBackgroundColor: '#ebebf5',
-        inactiveTintColor: '#c1bccc',
-        activeTintColor: '#32264d'
       }}
     >
-      <Tab.Screen name="Produtos" component={ListProdutos} />
-      <Tab.Screen name="Carrinho" component={Carrinho} />
-      <Tab.Screen name="Histórico" component={VendasFinalizadas} />
-      <Tab.Screen name="Config" component={Config} />
+      <Tab.Screen
+        name="Produtos"
+        component={ListProdutos}
+      />
+      <Tab.Screen
+        name="Carrinho"
+        component={Carrinho}
+      />
+      <Tab.Screen
+        name="Histórico"
+        component={VendasFinalizadas}
+      />
+      <Tab.Screen
+        name="Config"
+        component={Config}
+      />
     </Tab.Navigator>
   )
 }
 
-export default function () {
+export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="TelaInicial">
@@ -64,7 +101,7 @@ export default function () {
         />
         <Stack.Screen
           name="ListProdutos"
-          component={Router}
+          component={Tabs}
           options={({ route }) => ({
             title: route.params?.title ? route.params.title : '',
             headerStyle: {

@@ -59,7 +59,7 @@ export default function Clientes({ navigation }) {
         <View>
           <View style={{ alignItems: 'center', width, height: '60%', }}>
             <LottieView
-              source={require('../assets/not-found.json')}
+              source={require('../images/not-found.json')}
               autoPlay={true}
               loop={true}
               style={{

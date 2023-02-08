@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,20 +6,17 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
-  Alert,
   TouchableOpacity,
-  Dimensions
+  Alert,
 } from 'react-native';
 import api from '../services/api';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from "react-native-dynamic-search-bar";
 import LottieView from 'lottie-react-native';
-import { buscarEstoquePorCategoria } from '../controle/ConfigStorage';
-
-const { width } = Dimensions.get("window");
+import { buscarUsaEstoquePorCategoria } from '../controle/ConfigStorage';
+import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 
 export default function ListProdutos({ navigation }) {
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -27,9 +24,31 @@ export default function ListProdutos({ navigation }) {
   const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
 
   async function getConfig() {
-    buscarEstoquePorCategoria().then(result => {
-      setUsaEstoquePorCategoria(JSON.parse(result));
-    })
+    try {
+      const response = await buscarUsaEstoquePorCategoria();
+      if (response) {
+        setUsaEstoquePorCategoria(JSON.parse(result));
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async function getMercador() {
+    if (loading) return;
+    setLoading(true)
+    try {
+      //caso cliente seja gold chaves, adicionar parametro &campo=gold para ordenar retorno da pesquisa.
+      const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
+
+      setData([...data, ...response.data.content])
+      setPage(page + 1);
+      setLoading(false);
+
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert('Erro ao buscar produtos. ' + error.message)
+    }
   }
 
   useEffect(() => {
@@ -39,24 +58,9 @@ export default function ListProdutos({ navigation }) {
   }, [navigation]);
 
   useEffect(() => {
-    loadApi();
+    getMercador();
   }, [data])
 
-  async function loadApi() {
-    if (loading) return;
-
-    setLoading(true)
-
-    const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
-
-    //campo=gold é para ordenar retorno da pesquisa para o cliente Gold Chaves
-    // const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}&CODTABPRE=1&campo=gold`)
-
-    setData([...data, ...response.data.content])
-    setPage(page + 1);
-    setLoading(false);
-
-  }
 
   function novaPesquisa() {
     setPage(0);
@@ -73,30 +77,21 @@ export default function ListProdutos({ navigation }) {
   }
 
   function ListItem({ data }) {
-
-    // const navigation = useNavigation();
-
-    function foto(linkfoto) {
-      if (linkfoto == null) {
-        return 'https://imagizer.imageshack.com/v2/730x450q90/924/qNmIzQ.jpg';
-      } else {
-        return 'https://' + linkfoto;
-      }
-    }
     return (
       <View style={styles.listItem}>
-        <View style={{ width: '100%', paddingTop: '70%' }}>
+        <View style={{ width: '90%', height: 250, alignSelf: 'center' }}>
           <Image
-            style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, resizeMode: 'contain' }}
+            resizeMode='center'
+            style={{ height: 250, borderWidth: 0.5, borderColor: '#000' }}
             source={{
-              uri: foto(data.linkFot),
+              uri: data.linkFot ? 'https://' + data.linkFot : 'https://higa.membros.supermercadozen.com.br/assets/tema01/img/produto-sem-foto.png'
             }}
           />
         </View>
         <Text style={styles.listText}>{data.codBar}</Text>
-        <Text></Text>
+        <Text />
         <Text style={styles.listText}>{data.mer}</Text>
-        <Text style={styles.listText}>R$ {data.valVenMin.toFixed(2).replace('.', ',')}</Text>
+        <Text style={styles.listText}>{ConvertNumberParaReais(data.valVenMin)}</Text>
         <View flexDirection={'row'} style={{ justifyContent: 'space-evenly' }}>
           {usaEstoquePorCategoria ?
             <View>
@@ -106,7 +101,7 @@ export default function ListProdutos({ navigation }) {
                 onPress={() => { navigation.navigate('Estoque', { codbar: data.codBar }) }}>
                 <Text style={styles.TextButton}>Estoque</Text>
               </TouchableOpacity>
-            </View> : null}
+            </View> : <></>}
           <View>
             <TouchableOpacity
               style={styles.CarrinhoButton}
@@ -124,7 +119,7 @@ export default function ListProdutos({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style='auto' />
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do produto"
@@ -134,33 +129,29 @@ export default function ListProdutos({ navigation }) {
         onSubmitEditing={() => novaPesquisa()}
       />
       <Text style={styles.title}>Lista de Produtos</Text>
-      {data.length > 0 ? <FlatList
-        contentContainerStyle={{ marginHorizontal: 20 }}
-        data={data}
-        keyExtractor={item => String(item.codBar)}
-        renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={({ distanceFromEnd }) => {
-          if (distanceFromEnd < 0) return;
-          loadApi()
-        }}
-        onEndReachedThreshold={0.01}
-        ListFooterComponent={<FooterList load={loading} />}
-      /> :
-        <View>
-          <View style={{ alignItems: 'center', width, height: '60%', }}>
-            <LottieView
-              source={require('../assets/not-found.json')}
-              autoPlay={true}
-              loop={true}
-              style={{
-                width, height: '100%',
-                resizeMode: 'contain',
-                alignSelf: 'center',
-                backgroundColor: '#fff',
-              }}
-            />
-          </View>
-          <Text style={{ textAlign: 'center', fontSize: 24 }}>Nenhum produto foi encontrado...</Text>
+      {data.length > 0 ?
+        <FlatList
+          contentContainerStyle={{ marginHorizontal: 20 }}
+          data={data}
+          keyExtractor={item => String(item.codBar)}
+          renderItem={({ item }) => <ListItem data={item} />}
+          onEndReached={({ distanceFromEnd }) => {
+            if (distanceFromEnd < 0) return;
+            getMercador();
+          }}
+          onEndReachedThreshold={0.01}
+          ListFooterComponent={<FooterList load={loading} />}
+        /> :
+        <View style={{ alignItems: 'center', width: '100%', height: '100%', flexDirection: 'column' }}>
+          <LottieView
+            source={require('../images/not-found.json')}
+            autoPlay={true}
+            loop={true}
+            style={{
+              width: 200, height: 200, marginTop: 30,
+            }}
+          />
+          <Text style={{ textAlign: 'center', marginTop: 30, fontSize: 24 }}>Nenhum produto foi encontrado...</Text>
         </View>
       }
     </View>
@@ -170,7 +161,7 @@ export default function ListProdutos({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
   },
   title: {
     textAlign: 'center',
@@ -181,8 +172,9 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: '#F3F3F3',
     padding: 22,
-    marginTop: 15,
+    marginTop: 10,
     borderRadius: 10,
+    marginBottom: 15,
   },
   listText: {
     fontSize: 16,

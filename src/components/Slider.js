@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     pagination: {
         flexDirection: 'row',
         position: 'absolute',
-        bottom: '0%',
+        bottom: 0,
         alignSelf: 'center',
     },
     pagingText: {

@@ -76,29 +76,27 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
     }
 
 
-    function grade() {
-        const grade =
+    function Grade() {
+        return (
             <ScrollView horizontal={true}>
                 <ScrollView
                     nestedScrollEnabled
                     bounces={false}
-                    contentContainerStyle={{ height: cores ? cores.length * 120 : 0  }}
+                    contentContainerStyle={{ height: cores ? cores.length * 120 : 0 }}
                 >
-                    <View style={{ }}>
+                    <View style={{}}>
                         <DataTable style={styles.modalView2}>
-                            <DataTable.Header style={{ marginLeft: '2%' }}>
-                                <DataTable.Title />
-                                <DataTable.Title />
-                                <DataTable.Title />
+                            <DataTable.Header style={{ backgroundColor: 'green' }}>
+                                <DataTable.Title style={{ width: 80, backgroundColor: 'red' }} />
                                 {tamanhos.map(tamanho => {
-                                    return <DataTable.Title key={tamanho} style={{marginLeft: '4%'}}>{tamanho}</DataTable.Title>
+                                    return <DataTable.Title key={tamanho} style={{  }}>{tamanho}</DataTable.Title>
                                 })}
                             </DataTable.Header>
                             {cores.map(cor => {
-                                return <DataTable.Row style={styles.modalView2} key={cor.cod}>
-                                    <View style={{ width: '20%', justifyContent: 'center'}}><Text>{cor.padmer}</Text></View>
+                                return <DataTable.Row style={styles.modalView3} key={cor.cod}>
+                                    <View style={{ width: 120, justifyContent: 'center', backgroundColor: 'red' }}><Text>{cor.padmer}</Text></View>
                                     {tamanhos.map(tamanho => {
-                                        return <DataTable.Cell style={{ }} key={tamanho}>
+                                        return <DataTable.Cell style={{}} key={tamanho}>
                                             <TextInput
                                                 style={styles.input}
                                                 value={number}
@@ -112,8 +110,8 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                         </DataTable>
                     </View>
                 </ScrollView>
-            </ScrollView>;
-        return grade;
+            </ScrollView>
+        );
     }
 
     return (
@@ -130,7 +128,7 @@ export default function GradeAtacado({ codbar, item, setItensCarrinho }) {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>GRADE</Text>
-                        {tamanhos !== undefined && cores !== undefined? grade() : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
+                        {tamanhos && cores ? <Grade /> : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => {
@@ -160,6 +158,7 @@ const styles = StyleSheet.create({
     centeredView: {
         justifyContent: "center",
         alignItems: "center",
+        marginTop: 30
     },
     modalView: {
         backgroundColor: "white",
@@ -176,6 +175,20 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     modalView2: {
+        marginTop: 10,
+        backgroundColor: "white",
+        alignItems: "center",
+        shadowColor: "#000",
+        minWidth: 500,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 10
+    },
+    modalView3: {
         marginTop: 10,
         backgroundColor: "white",
         alignItems: "center",

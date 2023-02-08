@@ -13,8 +13,8 @@ import {
     buscarUsaCorTamanho,
     gravarUsaGrade,
     buscarUsaGrade,
-    gravarEstoquePorCategoria,
-    buscarEstoquePorCategoria,
+    gravarUsaEstoquePorCategoria,
+    buscarUsaEstoquePorCategoria,
     gravarUsaControleEstoque,
     buscarUsaControleEstoque
 } from '../controle/ConfigStorage';
@@ -29,7 +29,7 @@ export default function Config({ navigation }) {
     async function Salvar() {
         await gravarUsaCorTamanho(usaCorTamanho.toString())
         await gravarUsaGrade(usaGrade.toString())
-        await gravarEstoquePorCategoria(usaEstoquePorCategoria.toString())
+        await gravarUsaEstoquePorCategoria(usaEstoquePorCategoria.toString())
         await gravarUsaControleEstoque(usaControleEstoque.toString())
 
         Alert.alert('Sucesso', 'Configurações salvas', [
@@ -53,7 +53,7 @@ export default function Config({ navigation }) {
                 setUsaGrade(JSON.parse(result));
             }
         })
-        buscarEstoquePorCategoria().then(result => {
+        buscarUsaEstoquePorCategoria().then(result => {
             if (result) {
                 setUsaEstoquePorCategoria(JSON.parse(result));
             }
