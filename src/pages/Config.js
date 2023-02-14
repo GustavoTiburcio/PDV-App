@@ -18,56 +18,70 @@ import {
     gravarUsaControleEstoque,
     buscarUsaControleEstoque
 } from '../controle/ConfigStorage';
+import api from '../services/api';
 
 export default function Config({ navigation }) {
-    const [endApi, setEndApi] = useState('');
+    const [endApi, setEndApi] = useState(api.defaults.baseURL);
     const [usaCorTamanho, setUsaCorTamanho] = useState(false);
     const [usaGrade, setUsaGrade] = useState(false);
     const [usaControleEstoque, setUsaControleEstoque] = useState(false);
     const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
 
     async function Salvar() {
-        await gravarUsaCorTamanho(usaCorTamanho.toString())
-        await gravarUsaGrade(usaGrade.toString())
-        await gravarUsaEstoquePorCategoria(usaEstoquePorCategoria.toString())
-        await gravarUsaControleEstoque(usaControleEstoque.toString())
+        // await gravarUsaCorTamanho(usaCorTamanho.toString());
+        // await gravarUsaGrade(usaGrade.toString());
+        // await gravarUsaEstoquePorCategoria(usaEstoquePorCategoria.toString());
+        // await gravarUsaControleEstoque(usaControleEstoque.toString());
 
-        Alert.alert('Sucesso', 'Configurações salvas', [
-            {
-                text: "Ok",
-                onPress: () => {
-                    navigation.navigate('Produtos')
-                },
-            },
-        ])
+        // Alert.alert('Sucesso', 'Configurações salvas', [
+        //     {
+        //         text: "Ok",
+        //         onPress: () => {
+        //             navigation.navigate('Produtos')
+        //         },
+        //     },
+        // ]);
+
+        navigation.pop();
     }
 
     async function getConfig() {
-        buscarUsaCorTamanho().then(result => {
-            if (result) {
-                setUsaCorTamanho(JSON.parse(result));   
-            }
-        })
-        buscarUsaGrade().then(result => {
-            if (result) {
-                setUsaGrade(JSON.parse(result));
-            }
-        })
-        buscarUsaEstoquePorCategoria().then(result => {
-            if (result) {
-                setUsaEstoquePorCategoria(JSON.parse(result));
-            }
-        })
-        buscarUsaControleEstoque().then(result => {
-            if (result) { 
-                setUsaControleEstoque(JSON.parse(result));
-            }
-        })
+        // buscarUsaCorTamanho().then(result => {
+        //     if (result) {
+        //         setUsaCorTamanho(JSON.parse(result));   
+        //     }
+        // })
+        // buscarUsaGrade().then(result => {
+        //     if (result) {
+        //         setUsaGrade(JSON.parse(result));
+        //     }
+        // })
+        // buscarUsaEstoquePorCategoria().then(result => {
+        //     if (result) {
+        //         setUsaEstoquePorCategoria(JSON.parse(result));
+        //     }
+        // })
+        // buscarUsaControleEstoque().then(result => {
+        //     if (result) { 
+        //         setUsaControleEstoque(JSON.parse(result));
+        //     }
+        // })
+
+        const response = await api.get('/configs');
+        const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
+        const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+
+        if (usaGrade) {
+            setUsaGrade(Boolean(usaGrade[0].val));
+        }
+        if (controlaEstoque) {
+            setUsaControleEstoque(!Boolean(controlaEstoque[0].val));
+        }
     }
 
     useEffect(() => {
         navigation.addListener('focus', () => {
-            getConfig()
+            getConfig();
         });
     }, [navigation]);
 
@@ -80,10 +94,10 @@ export default function Config({ navigation }) {
                     <Text style={styles.fieldText}>Endereço da API: </Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={text => { setEndApi(text) }}
                         value={endApi}
+                        onFocus={() => Alert.alert('Atenção suporte', 'Campo fixo.')}
                     />
-                    <View style={styles.checkBoxView}>
+                    {/* <View style={styles.checkBoxView}>
                         <Text style={styles.fieldText}>Usa cor e tamanho(Varejo)?</Text>
                         <Checkbox
                             value={usaCorTamanho}
@@ -96,17 +110,18 @@ export default function Config({ navigation }) {
                             }}
                             style={styles.checkBox}
                         />
-                    </View>
+                    </View> */}
                     <View style={styles.checkBoxView}>
                         <Text style={styles.fieldText}>Usa cor e tamanho(Grade)?</Text>
                         <Checkbox
                             value={usaGrade}
                             onValueChange={() => {
-                                setUsaGrade(!usaGrade)
-                                if (usaCorTamanho || usaEstoquePorCategoria) {
-                                    setUsaCorTamanho(false)
-                                    setUsaEstoquePorCategoria(false)
-                                }
+                                // setUsaGrade(!usaGrade)
+                                // if (usaCorTamanho || usaEstoquePorCategoria) {
+                                //     setUsaCorTamanho(false)
+                                //     setUsaEstoquePorCategoria(false)
+                                // }
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe ou tabela config. Parâmetro UsaGra');
                             }}
                             style={styles.checkBox}
                         />
@@ -116,12 +131,13 @@ export default function Config({ navigation }) {
                         <Checkbox
                             value={usaControleEstoque}
                             onValueChange={() => {
-                                setUsaControleEstoque(!usaControleEstoque)
+                                // setUsaControleEstoque(!usaControleEstoque)
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe ou tabela config. Parâmetro VenAciEst');
                             }}
                             style={styles.checkBox}
                         />
                     </View>
-                    <View style={styles.checkBoxView}>
+                    {/* <View style={styles.checkBoxView}>
                         <Text style={styles.fieldText}>Usa estoque por Categoria?</Text>
                         <Checkbox
                             value={usaEstoquePorCategoria}
@@ -134,15 +150,13 @@ export default function Config({ navigation }) {
                             }}
                             style={styles.checkBox}
                         />
-                    </View>
+                    </View> */}
                     <View>
                         <TouchableOpacity
                             style={styles.SalvarButton}
                             activeOpacity={0.5}
-                            onPress={() => {
-                                Salvar()
-                            }}>
-                            <Text style={styles.TextButton}>Salvar</Text>
+                            onPress={() => Salvar()}>
+                            <Text style={styles.TextButton}>Confirmar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -201,5 +215,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#FFF',
         textAlign: 'center',
+        fontWeight: 'bold'
     },
 });

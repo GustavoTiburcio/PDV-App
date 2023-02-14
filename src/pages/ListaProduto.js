@@ -16,9 +16,10 @@ import LottieView from 'lottie-react-native';
 import { buscarUsaEstoquePorCategoria } from '../controle/ConfigStorage';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 
-export default function ListProdutos({ navigation }) {
+export default function ListaProduto({ navigation }) {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('');
   const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
@@ -27,7 +28,7 @@ export default function ListProdutos({ navigation }) {
     try {
       const response = await buscarUsaEstoquePorCategoria();
       if (response) {
-        setUsaEstoquePorCategoria(JSON.parse(result));
+        setUsaEstoquePorCategoria(JSON.parse(response));
       }
     } catch (error) {
       console.log(error.message);
@@ -35,19 +36,20 @@ export default function ListProdutos({ navigation }) {
   }
 
   async function getMercador() {
-    if (loading) return;
-    setLoading(true)
+    if (footerLoading) return;
+    setFooterLoading(true);
     try {
       //caso cliente seja gold chaves, adicionar parametro &campo=gold para ordenar retorno da pesquisa.
-      const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`)
+      const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`);
 
-      setData([...data, ...response.data.content])
+      setData([...data, ...response.data.content]);
       setPage(page + 1);
-      setLoading(false);
+      setFooterLoading(false);
 
     } catch (error) {
       console.log(error.message);
-      Alert.alert('Erro ao buscar produtos. ' + error.message)
+      setFooterLoading(false);
+      Alert.alert('Erro ao buscar produtos. ' + error.message);
     }
   }
 
@@ -59,8 +61,7 @@ export default function ListProdutos({ navigation }) {
 
   useEffect(() => {
     getMercador();
-  }, [data])
-
+  }, [data]);
 
   function novaPesquisa() {
     setPage(0);
@@ -98,7 +99,7 @@ export default function ListProdutos({ navigation }) {
               <TouchableOpacity
                 style={styles.CarrinhoButton}
                 activeOpacity={0.5}
-                onPress={() => { navigation.navigate('Estoque', { codbar: data.codBar }) }}>
+                onPress={() => navigation.navigate('Estoque', { codbar: data.codBar })}>
                 <Text style={styles.TextButton}>Estoque</Text>
               </TouchableOpacity>
             </View> : <></>}
@@ -106,9 +107,7 @@ export default function ListProdutos({ navigation }) {
             <TouchableOpacity
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
-              onPress={() => {
-                navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer, valor: data.valVenMin })
-              }}>
+              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer, valor: data.valVenMin })}>
               <Text style={styles.TextButton}>Detalhes</Text>
             </TouchableOpacity>
           </View>
@@ -121,14 +120,13 @@ export default function ListProdutos({ navigation }) {
     <View style={styles.container}>
       <StatusBar style='auto' />
       <SearchBar
-        style={styles.SearchBar}
+        style={styles.searchBar}
         placeholder="Digite o nome do produto"
         onChangeText={(text) => setPesquisa(text)}
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
       />
-      <Text style={styles.title}>Lista de Produtos</Text>
       {data.length > 0 ?
         <FlatList
           contentContainerStyle={{ marginHorizontal: 20 }}
@@ -140,7 +138,7 @@ export default function ListProdutos({ navigation }) {
             getMercador();
           }}
           onEndReachedThreshold={0.01}
-          ListFooterComponent={<FooterList load={loading} />}
+          ListFooterComponent={<FooterList load={footerLoading} />}
         /> :
         <View style={{ alignItems: 'center', width: '100%', height: '100%', flexDirection: 'column' }}>
           <LottieView
@@ -181,7 +179,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     textAlign: 'center'
   },
-  SearchBar: {
+  searchBar: {
     backgroundColor: '#F3F3F3',
     marginTop: 20,
   },

@@ -8,7 +8,7 @@ import LottieView from 'lottie-react-native';
 const { width } = Dimensions.get("window");
 
 
-export default function Clientes({ navigation }) {
+export default function ListaCliente() {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -64,7 +64,6 @@ export default function Clientes({ navigation }) {
               loop={true}
               style={{
                 width, height: '100%',
-                resizeMode: 'contain',
                 alignSelf: 'center',
                 backgroundColor: '#fff',
               }}
@@ -109,7 +108,7 @@ function ListItem({ data }) {
           onPress={() => {
             let cliente = data;
             navigation.navigate({
-              name: 'Carrinho',
+              name: 'FinalizarCarrinho',
               params: { cliente },
               merge: true,
             });

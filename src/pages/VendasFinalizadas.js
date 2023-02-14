@@ -7,6 +7,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { reqPrintPDF, reqSharePDF } from '../components/printPDF';
+import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 
 export default function VendasFinalizadas() {
 
@@ -106,7 +107,7 @@ export default function VendasFinalizadas() {
             </Col>
             <Col size={25}>
               <Row style={styles.cell}>
-                <Text>R$ {item.valUni.toFixed(2).replace('.', ',')}</Text>
+                <Text>{ConvertNumberParaReais(item.valUni)}</Text>
               </Row>
             </Col>
           </Grid>
@@ -130,7 +131,7 @@ export default function VendasFinalizadas() {
         {data.visualizarItens ? <Text style={styles.listText}>Email: {data.cliente.ema}</Text> : null}
         {data.visualizarItens ? <Text style={styles.tableTitle} >Produtos</Text> : <Text></Text>}
         {data.visualizarItens ? filtrarItePed(data.cod) : null}
-        <Text style={styles.ValVenText}>Total: R$ {data.valPro.toFixed(2).replace('.', ',')}</Text>
+        <Text style={styles.ValVenText}>Total: {ConvertNumberParaReais(data.valPro)}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
           <TouchableOpacity
             style={styles.DetalhesButton}

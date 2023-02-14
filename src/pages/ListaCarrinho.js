@@ -18,7 +18,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const codbar = route.params?.codbar;
     const item = route.params?.mer;
 
-    //Valor vindo do card(ListProdutos), ficará errado se tiver variação de preço por cor/tamanho
+    //Valor vindo do card(ListaProduto), ficará errado se tiver variação de preço por cor/tamanho
     const valor = route.params?.valor;
 
     const [quantidade, setQuantidade] = useState();
@@ -209,7 +209,7 @@ const ListaCarrinho = ({ route, navigation }) => {
             <View style={styles.fields}>
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
                 <Text style={styles.item}>{item}</Text>
-                {!usaEstoquePorCategoria && !usaGrade && !usaCorTamanho && <Text>Estoque atual: {data?.detalhes[0]?.estoque ? parseFloat(data.detalhes[0].estoque).toFixed(2) : 0}</Text>}
+                {!usaEstoquePorCategoria && !usaGrade && !usaCorTamanho && <Text>Estoque atual: {data?.detalhes[0]?.estoque ? Number(data.detalhes[0].estoque).toFixed(2) : 0}</Text>}
                 {!usaCorTamanho && !usaGrade ?
                     <View>
                         <Text style={styles.text}>Quantidade:</Text>

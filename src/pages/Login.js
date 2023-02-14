@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Animatable from 'react-native-animatable'
 import api from '../services/api';
 import { gravarLogin, buscarLogin } from '../controle/LoginStorage';
+import { GestureHandlerRootView, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -14,69 +15,93 @@ export default function Login() {
 
   async function loginAuthenticate() {
     setLoading(true);
-    if (username != '' && password != '') {
-      const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`)
-      if (response.data == []) {
-        Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
-        setLoading(false);
-      } else {
-        setLoading(false);
-        gravarLogin(response.data);
-        navigation.navigate('ListProdutos', { title: `Bem-Vindo ${response.data.username}` });
-      }
-    } else {
-      Alert.alert('Campos em branco', 'Favor informar Usuário e Senha');
+    if (!username || !password) {
       setLoading(false);
+      Alert.alert('Usuário ou senha incorretos');
+      return;
     }
+
+    const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`);
+
+    if (!response.data) {
+      Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    gravarLogin(response.data);
+    navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
   }
 
   async function VerificarLogado() {
-    let login = await buscarLogin();
+    const login = await buscarLogin();
     if (login) {
-      navigation.navigate('ListProdutos', { title: `Bem-Vindo ${login.username}` })
+      navigation.navigate('ListaProduto', { title: `Bem-Vindo ${login.username}` })
     }
   }
+
+  function OpenConfig(event) {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      Alert.alert('Aviso', 'Deseja abrir janela de configuração?', [
+        { text: 'Sim', onPress: () => navigation.navigate('Config') },
+        { text: 'Não', style: 'cancel', }
+      ]);
+    }
+  };
 
   LogBox.ignoreLogs(["EventEmitter.removeListener"]);
 
   useEffect(() => {
-    VerificarLogado()
+    // VerificarLogado();
   }, [])
 
   return (
-    <View style={styles.container}>
-      <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-        <Text style={styles.message}>Bem-vindo(a)</Text>
-      </Animatable.View>
-      <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-        <Text style={styles.title}>Usuário</Text>
-        <TextInput
-          placeholder="Digite seu usuário..."
-          style={styles.input}
-          onChangeText={setUsername}
-          autoCorrect={false}
-        />
-        <Text style={styles.title}>Senha</Text>
-        <TextInput
-          placeholder="Digite sua senha..."
-          style={styles.input}
-          secureTextEntry={true}
-          returnKeyType='go'
-          onSubmitEditing={loginAuthenticate}
-          onChangeText={setPassword}
-        />
-        {loading ? <ActivityIndicator size='large' color="#38A69D" /> : null}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={loginAuthenticate}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
+          <Text style={styles.message}>Bem-vindo(a)</Text>
+        </Animatable.View>
+
+        <LongPressGestureHandler
+          onHandlerStateChange={OpenConfig}
+          minDurationMs={1500}
         >
-          <Text style={styles.buttonText}>Acessar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRegister} onPress={() => Alert.alert('Credenciais de acesso', 'Entre em contato com o nosso suporte para mais informações. (44) 3023-7230')}>
-          <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
-        </TouchableOpacity>
-      </Animatable.View>
-    </View>
+
+          <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+            <Text style={styles.title}>Usuário</Text>
+            <TextInput
+              placeholder="Digite seu usuário..."
+              style={styles.input}
+              onChangeText={setUsername}
+              autoCorrect={false}
+            />
+            <Text style={styles.title}>Senha</Text>
+            <TextInput
+              placeholder="Digite sua senha..."
+              style={styles.input}
+              secureTextEntry={true}
+              returnKeyType='go'
+              onSubmitEditing={loginAuthenticate}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={loginAuthenticate}
+            >
+              <Text style={styles.buttonText}>Acessar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonRegister} onPress={() => Alert.alert('Credenciais de acesso', 'Entre em contato com o nosso suporte para mais informações. (44) 3023-7230')}>
+              <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
+            </TouchableOpacity>
+            {loading &&
+              <View style={styles.loading}>
+                <ActivityIndicator size='large' color="#38A69D" />
+              </View>}
+          </Animatable.View>
+        </LongPressGestureHandler>
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -133,5 +158,8 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: '#a1a1a1'
-  }
+  },
+  loading: {
+    padding: 10
+  },
 })
