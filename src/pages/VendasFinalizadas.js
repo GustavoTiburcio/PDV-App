@@ -8,10 +8,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { reqPrintPDF, reqSharePDF } from '../components/printPDF';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function VendasFinalizadas() {
 
   const [data, setData] = useState([]);
+  const [footerLoading, setFooterLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState('');
@@ -19,33 +21,52 @@ export default function VendasFinalizadas() {
   const [refresh, setRefresh] = useState(false);
 
 
-  async function loadApi() {
-    if (loading) return;
+  async function getPedidos() {
+    if (footerLoading) return;
 
-    setLoading(true)
+    setFooterLoading(true);
 
-    const jsonValue = await AsyncStorage.getItem('@login_data')
-    const login = JSON.parse(jsonValue)
+    if (data.length === 0) {
+      setLoading(true);
+    }
 
-    const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`)
+    try {
+      const jsonValue = await AsyncStorage.getItem('@login_data');
+      const login = JSON.parse(jsonValue);
 
-    const cabPedAux = response.data.map((ped) => {
-      return {
-        cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep,
-        status: ped.status, valPro: ped.valPro, visualizarItens: false,
-        cliente: ped.cliente, itensPedido: ped.itensPedido
+      const response = await api.get(`/pedidos/listarPedidoPorCliente?page=${page}&nome=${login.username}`);
+
+      if (response.data.length === 0) {
+        setLoading(false);
+        setFooterLoading(false);
+        return;
       }
-    });
 
-    const cabPed = cabPedAux
-      .map(e => JSON.stringify(e))
-      .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
-      .map(e => JSON.parse(e));
+      const cabPedAux = response.data.map((ped) => {
+        return {
+          cod: ped.cod, dat: ped.dat, forPag: ped.forPag, nomrep: ped.nomrep,
+          status: ped.status, valPro: ped.valPro, visualizarItens: false,
+          cliente: ped.cliente, itensPedido: ped.itensPedido
+        }
+      });
 
-    setData([...data, ...cabPed]);
+      const cabPed = cabPedAux
+        .map(e => JSON.stringify(e))
+        .reduce((acc, cur) => (acc.includes(cur) || acc.push(cur), acc), [])
+        .map(e => JSON.parse(e));
 
-    setPage(page + 1);
-    setLoading(false);
+      setData([...data, ...cabPed]);
+
+      setPage(page + 1);
+      setFooterLoading(false);
+      setLoading(false);
+
+    } catch (error) {
+      console.log(error.message);
+      setFooterLoading(false);
+      setLoading(false);
+      Alert.alert('Erro ao buscar produtos. ' + error.message);
+    }
   }
 
   async function deletarPed(codped) {
@@ -183,7 +204,7 @@ export default function VendasFinalizadas() {
   }
 
   useEffect(() => {
-    loadApi();
+    getPedidos();
   }, [data])
 
   useEffect(() => {
@@ -197,6 +218,7 @@ export default function VendasFinalizadas() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+      <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do cliente"
@@ -212,11 +234,11 @@ export default function VendasFinalizadas() {
         keyExtractor={item => String(item.cod)}
         renderItem={({ item }) => <ListItem data={item} />}
         onEndReached={({ distanceFromEnd }) => {
-          if (distanceFromEnd < 0) return;
-          loadApi()
+          if (distanceFromEnd <= 0) return;
+          getPedidos();
         }}
-        onEndReachedThreshold={0.01}
-        ListFooterComponent={<FooterList load={loading} />}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={<FooterList load={footerLoading} />}
       />
     </View>
   );

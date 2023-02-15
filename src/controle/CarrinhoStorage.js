@@ -23,7 +23,7 @@ export const gravarItensCarrinho = async (itensCarrinho) => {
             itens.push(itensCarrinho);
         }
         await AsyncStorage.setItem('i', '1');
-        const jsonValue = JSON.stringify(itens)
+        const jsonValue = JSON.stringify(itens);
         await AsyncStorage.setItem('itensCarrinho', jsonValue)
     } catch (e) {
         console.log(e)

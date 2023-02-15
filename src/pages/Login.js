@@ -59,11 +59,11 @@ export default function Login() {
     const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
 
     if (usaGrade) {
-      const usagrade = Boolean(usaGrade[0].val);
+      const usagrade = Boolean(Number(usaGrade[0].val));
       await gravarUsaGrade(usagrade.toString());
     }
     if (controlaEstoque) {
-      const controlaestoque = !Boolean(controlaEstoque[0].val);
+      const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
       await gravarUsaControleEstoque(controlaestoque.toString());
     }
   }

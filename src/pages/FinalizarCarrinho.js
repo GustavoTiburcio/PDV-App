@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PrintPDF } from '../components/printPDF';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco } from '../controle/CarrinhoStorage';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 function FinalizarCarrinho({ route, navigation }) {
     var date = new Date();
@@ -84,7 +85,6 @@ function FinalizarCarrinho({ route, navigation }) {
                 trarednom: '', valpro: valorBruto, valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
             })
 
-            console.log(ped);
             const result = await postPedido(ped);
 
             if (result) {
@@ -104,7 +104,6 @@ function FinalizarCarrinho({ route, navigation }) {
                                     setDadosCliente(undefined);
                                     setLoading(false);
                                     navigation.pop();
-                                    Alert.alert("Sucesso", "Pedido finalizado.");
                                 },
                             },
                             {
@@ -115,7 +114,6 @@ function FinalizarCarrinho({ route, navigation }) {
                                     setDadosCliente(undefined);
                                     setLoading(false);
                                     navigation.pop();
-                                    Alert.alert("Sucesso", "Pedido finalizado.");
                                 }
                             }
                         ]
@@ -142,6 +140,7 @@ function FinalizarCarrinho({ route, navigation }) {
 
     return (
         <View style={styles.container}>
+            <Spinner visible={loading} />
             <View flexDirection="row">
                 <View>
                     <TouchableOpacity
@@ -229,15 +228,17 @@ function FinalizarCarrinho({ route, navigation }) {
                     <TextInput
                         style={styles.inputDesconto}
                         keyboardType="numeric"
-                        onChangeText={text => {
-                            setValJur(text.replace(',', '.'));
-                        }}
-                        onEndEditing={e => {
-                            if (e.nativeEvent.text == '') {
-                                setValJur('0');
-                            }
-                        }}
+                        // onChangeText={text => {
+                        //     setValJur(text.replace(',', '.'));
+                        // }}
+                        // onEndEditing={e => {
+                        //     if (e.nativeEvent.text == '') {
+                        //         setValJur('0');
+                        //     }
+                        // }}
                         value={valJur.replace('.', ',')}
+                        editable={false}
+                        selectTextOnFocus={false}
                     />
                 </View>
                 <View flexDirection="row">
@@ -258,8 +259,8 @@ function FinalizarCarrinho({ route, navigation }) {
                 </View>
             </View>
             <View style={{ width: '100%' }}>
-                <TouchableOpacity onPress={enviaPedido} style={{ padding: 15, marginTop: '5%', width: '100%', backgroundColor: '#38A69D' }}>
-                    <Text style={{ color: '#fff', textAlign: 'center', fontSize: 18, fontWeight: 'bold', textAlignVertical: 'center' }}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
+                <TouchableOpacity onPress={enviaPedido} style={styles.envioButton}>
+                    <Text style={styles.TextButton}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -294,7 +295,9 @@ const styles = StyleSheet.create({
     TextButton: {
         fontSize: 16,
         color: '#FFF',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold',
+        textAlignVertical: 'center'
     },
     inputText: {
         fontSize: 16,
@@ -328,6 +331,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         marginTop: 15,
     },
+    envioButton: {
+        padding: 15,
+        marginTop: '5%',
+        width: '100%',
+        backgroundColor: '#38A69D'
+    }
 });
 
 export default FinalizarCarrinho;

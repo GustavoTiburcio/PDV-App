@@ -28,7 +28,7 @@ export default function CadastroCliente({ navigation }) {
         })
         const cliente = {
             username: usuario.cgc, log: log, num: num, ema: usuario.ema, cgc: usuario.cgc, datnas: usuario.datnas, fon: usuario.fon, raz: usuario.raz,
-            password: 'operaz', insest: usuario.insest, fan: usuario.fan, bai: bai, cep: cep, cid: cid, uf: uf, comlog: comLog, id: usuario.id
+            password: 'z', insest: usuario.insest, fan: usuario.fan, bai: bai, cep: cep, cid: cid, uf: uf, comlog: comLog, id: usuario.id
         }
         try {
             const response = await api.post('/endusus/salvar', endUsu, {
@@ -54,7 +54,7 @@ export default function CadastroCliente({ navigation }) {
     async function SalvarCadastro() {
         const dadosCliente = JSON.stringify({
             cgc: cgc, ema: email, name: fan, username: cgc,
-            password: 'operaz', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan, tipusu: 'comum'
+            password: '123', fon: fon, datnas: '2000-01-01', insest: insest, raz: raz, fan: fan, tipusu: 'comum'
         })
         try {
             setLoading(true);

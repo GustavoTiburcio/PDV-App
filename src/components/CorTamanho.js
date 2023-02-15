@@ -38,7 +38,6 @@ export default function CorTamanho({ codbar, setCor, setTamanho }) {
         setTamanhos(tamanhos)
     }
 
-
     return (
         <View>
             <Text style={styles.text}>Cor:</Text>

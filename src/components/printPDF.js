@@ -64,7 +64,7 @@ const PrintPDF = async (itensCarrinho, dadosCliente, valorBruto, codPed, nomRep)
     <p></p>
     <p align="right"><b>Venda ${codPed}</b></p>
     </br>
-    <p align="center"><b>OPERA Z</b></p>
+    <p align="center"><b>Nome da empresa</b></p>
     </br>
     <p align="center"><b></b></p>
     </br>
@@ -174,7 +174,7 @@ async function reqPrintPDF(codped) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>OPERA Z</b></p>
+              <p align="center"><b>Nome da empresa</b></p>
               </br>
               <p align="center"><b></b></p>
               </br>
@@ -286,7 +286,7 @@ async function reqSharePDF(codped) {
               <p></p>
               <p align="right"><b>Venda ${codped}</b></p>
               </br>
-              <p align="center"><b>OPERA Z</b></p>
+              <p align="center"><b>Nome da empresa</b></p>
               </br>
               <p align="center"><b></b></p>
               </br>

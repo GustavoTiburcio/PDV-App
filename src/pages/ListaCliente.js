@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox, Dimensions } from 'react-native';
+import { Text, View, Button, ScrollView, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, LogBox, Dimensions, Platform } from 'react-native';
 import api from '../services/api';
 import SearchBar from "react-native-dynamic-search-bar";
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const { width } = Dimensions.get("window");
 
@@ -11,17 +12,41 @@ const { width } = Dimensions.get("window");
 export default function ListaCliente() {
 
   const [data, setData] = useState([]);
+  const [footerLoading, setFooterLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState('');
+  const [pesquisa, setPesquisa] = useState(' ');
 
   async function getClientes() {
-    if (loading) return;
-    setLoading(true)
-    const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`)
-    setData([...data, ...response.data.content])
-    setPage(page + 1);
-    setLoading(false);
+    if (footerLoading) return;
+
+    setFooterLoading(true);
+
+    if (data.length === 0) {
+      setLoading(true);
+    }
+
+    try {
+      const response = await api.get(`/usuarios/pesquisar?page=${page}&pesquisa=${pesquisa}`);
+
+      if (response.data?.content.length === 0) {
+        setLoading(false);
+        setFooterLoading(false);
+        return;
+      }
+
+      setData([...data, ...response.data.content]);
+      setPage(page + 1);
+      setFooterLoading(false);
+      setLoading(false);
+
+    } catch (error) {
+      console.log(error.message);
+      setFooterLoading(false);
+      setLoading(false);
+      Alert.alert('Erro ao buscar clientes. ' + error.message);
+    }
+
   }
 
   useEffect(() => {
@@ -35,6 +60,7 @@ export default function ListaCliente() {
 
   return (
     <View style={styles.container}>
+      <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
       <SearchBar
         style={styles.SearchBar}
         placeholder="Digite o nome do Cliente"
@@ -44,33 +70,34 @@ export default function ListaCliente() {
         onSubmitEditing={() => novaPesquisa()}
       />
       <Text style={styles.title}>Lista de Clientes</Text>
-      {data.length > 0 ? <FlatList
-        contentContainerStyle={{ marginHorizontal: 20 }}
-        data={data}
-        keyExtractor={item => String(item.id)}
-        renderItem={({ item }) => <ListItem data={item} />}
-        onEndReached={({ distanceFromEnd }) => {
-          if (distanceFromEnd < 0) return;
-          getClientes()
-        }}
-        onEndReachedThreshold={0.01}
-        ListFooterComponent={<FooterList load={loading} />}
-      /> :
-        <View>
-          <View style={{ alignItems: 'center', width, height: '60%', }}>
-            <LottieView
-              source={require('../images/not-found.json')}
-              autoPlay={true}
-              loop={true}
-              style={{
-                width, height: '100%',
-                alignSelf: 'center',
-                backgroundColor: '#fff',
-              }}
-            />
-          </View>
-          <Text style={{ textAlign: 'center', fontSize: 24 }}>Nenhum cliente foi encontrado...</Text>
-        </View>
+      {data.length > 0 ?
+        <FlatList
+          contentContainerStyle={{ marginHorizontal: 20 }}
+          data={data}
+          keyExtractor={item => String(item.id)}
+          renderItem={({ item }) => <ListItem data={item} />}
+          onEndReached={({ distanceFromEnd }) => {
+            if (distanceFromEnd <= 0) return;
+            getClientes();
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={<FooterList load={footerLoading} />}
+        /> : !loading ?
+          <View>
+            <View style={{ alignItems: 'center', width, height: '60%', }}>
+              <LottieView
+                source={require('../images/not-found.json')}
+                autoPlay={true}
+                loop={true}
+                style={{
+                  width, height: '100%',
+                  alignSelf: 'center',
+                  backgroundColor: '#fff',
+                }}
+              />
+            </View>
+            <Text style={{ textAlign: 'center', fontSize: 24 }}>Nenhum cliente foi encontrado...</Text>
+          </View> : <></>
       }
     </View>
   );

@@ -42,7 +42,8 @@ function Tabs() {
         },
         tabBarStyle: [
           {
-            display: "flex"
+            display: "flex",
+            height: Platform.OS === 'ios' ? '10%' : altura,
           },
           null
         ],
@@ -58,31 +59,9 @@ function Tabs() {
           if (route.name === 'Histórico') {
             return <FontAwesome name='history' size={30} color={color} />;
           }
-          // if (route.name === 'Config') {
-          //   return <FontAwesome name='gear' size={30} color={color} />;
-          // }
-
           return <Ionicons name={iconName} size={30} color={color} />;
         },
       })}
-      // tabBarOptions={{
-      //   activeTintColor: '#32264d',
-      //   inactiveTintColor: '#c1bccc',
-      //   activeBackgroundColor: '#ebebf5',
-      //   inactiveBackgroundColor: '#FFF',
-      //   style: {
-      //     elevation: 0,
-      //     shadowOpacity: 0,
-      //     height: Platform.OS === 'ios' ? '10%' : altura
-      //   },
-      //   tabStyle: {
-      //     alignItems: 'center',
-      //     justifyContent: 'center'
-      //   },
-      //   labelStyle: {
-      //     fontSize: 16,
-      //   },
-      // }}
     >
       <Tab.Screen
         name="Produtos"
@@ -96,10 +75,6 @@ function Tabs() {
         name="Histórico"
         component={VendasFinalizadas}
       />
-      {/* <Tab.Screen
-        name="Config"
-        component={Config}
-      /> */}
     </Tab.Navigator>
   )
 }
