@@ -8,7 +8,6 @@ import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/Ca
 import { buscarUsaCorTamanho, buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
 import { buscarLogin } from '../controle/LoginStorage';
 import Slider from '../components/Slider';
-import LottieView from 'lottie-react-native';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 
 const { width } = Dimensions.get("window");
@@ -103,7 +102,8 @@ const ListaCarrinho = ({ route, navigation }) => {
             return;
         }
         if (!quantidade) {
-            Alert.alert('Quantidade vazia', 'Faltou informar a quantidade');
+            Alert.alert('Quantidade vazia', 'Informe a quantidade');
+            return;
         }
 
         //Verificação de estoque por categoria, Exemplo de cliente que utiliza: Gold chaves
@@ -217,7 +217,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                             style={styles.textinput}
                             keyboardType="numeric"
                             autoFocus={true}
-                            placeholder="Informe a quantidade"
+                            placeholder="Quantidade"
                             onChangeText={value => setQuantidade(value)}>
                             {quantidade}
                         </TextInput>
@@ -263,7 +263,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                             style={styles.textinput}
                             keyboardType="numeric"
                             autoFocus={true}
-                            placeholder="Informe a quantidade"
+                            placeholder="Quantidade"
                             onChangeText={value => setQuantidade(value)}>
                             {quantidade}
                         </TextInput>
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-start'
     },
     textcadastro: {
         color: '#000000',

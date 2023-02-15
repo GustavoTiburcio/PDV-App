@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Image, ScrollView, Modal } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
 
 const { width } = Dimensions.get("window");
 //const height = width * 0.7; //70%
@@ -18,14 +17,18 @@ const Slider = (props) => {
             return props.fotos.map((item, i) => {
                 return (
                     <View key={i}>
-                        <TouchableWithoutFeedback onPress={() => {
-                            setOpen(true)
-                            setUri('https://' + item.linkfot)
-                        }}>
+                        <TouchableWithoutFeedback
+                            onPress={() => {
+                                setOpen(true);
+                                setUri('https://' + item.linkfot);
+                            }}                        
+                        >
+                        <View>
                             <Image
                                 style={styles.image}
                                 source={{ uri: 'https://' + item.linkfot }}
                             />
+                        </View>
                         </TouchableWithoutFeedback>
                         {uri &&
                             <Modal
@@ -36,12 +39,12 @@ const Slider = (props) => {
                                     setOpen(!open)
                                 }}
                             >
-                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', margin: 0 }}>
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                     <Image
-                                        style={{ width: '100%', height: '80%', borderRadius: 10 }}
+                                        style={{ width: '90%', height: '80%', resizeMode: 'contain', borderRadius: 10 }}
                                         source={{ uri: uri }}
                                     />
-                                    <View flexDirection={'row'}>
+                                    <View>
                                         <TouchableOpacity style={{ margin: 10 }} onPress={() => setOpen(false)}>
                                             <FontAwesome name="window-close" size={50} color='#FF0000' />
                                         </TouchableOpacity>
@@ -90,7 +93,8 @@ const styles = StyleSheet.create({
     container: {
         width,
         height: '35%',
-        marginTop: '2%'
+        marginTop: 10
+        // backgroundColor: '#FFF'
     },
     image: {
         width, height: '90%',

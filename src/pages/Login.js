@@ -5,6 +5,7 @@ import * as Animatable from 'react-native-animatable'
 import api from '../services/api';
 import { gravarLogin, buscarLogin } from '../controle/LoginStorage';
 import { GestureHandlerRootView, LongPressGestureHandler, State } from 'react-native-gesture-handler';
+import { gravarUsaControleEstoque, gravarUsaGrade } from '../controle/ConfigStorage';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ export default function Login() {
 
   const navigation = useNavigation();
 
-  async function loginAuthenticate() {
+  async function LoginAuthenticate() {
     setLoading(true);
     if (!username || !password) {
       setLoading(false);
@@ -28,20 +29,22 @@ export default function Login() {
       setLoading(false);
       return;
     }
-
     setLoading(false);
     gravarLogin(response.data);
     navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
+    return;
   }
 
   async function VerificarLogado() {
     const login = await buscarLogin();
     if (login) {
-      navigation.navigate('ListaProduto', { title: `Bem-Vindo ${login.username}` })
+      navigation.navigate('ListaProduto', { title: `Bem-Vindo ${login.username}` });
+      return;
     }
+    return;
   }
 
-  function OpenConfig(event) {
+  function AcessarTelaConfig(event) {
     if (event.nativeEvent.state === State.ACTIVE) {
       Alert.alert('Aviso', 'Deseja abrir janela de configuração?', [
         { text: 'Sim', onPress: () => navigation.navigate('Config') },
@@ -50,10 +53,26 @@ export default function Login() {
     }
   };
 
+  async function GetConfig() {
+    const response = await api.get('/configs');
+    const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
+    const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+
+    if (usaGrade) {
+      const usagrade = Boolean(usaGrade[0].val);
+      await gravarUsaGrade(usagrade.toString());
+    }
+    if (controlaEstoque) {
+      const controlaestoque = !Boolean(controlaEstoque[0].val);
+      await gravarUsaControleEstoque(controlaestoque.toString());
+    }
+  }
+
   LogBox.ignoreLogs(["EventEmitter.removeListener"]);
 
   useEffect(() => {
-    // VerificarLogado();
+    VerificarLogado();
+    GetConfig();
   }, [])
 
   return (
@@ -64,7 +83,7 @@ export default function Login() {
         </Animatable.View>
 
         <LongPressGestureHandler
-          onHandlerStateChange={OpenConfig}
+          onHandlerStateChange={AcessarTelaConfig}
           minDurationMs={1500}
         >
 
@@ -82,12 +101,12 @@ export default function Login() {
               style={styles.input}
               secureTextEntry={true}
               returnKeyType='go'
-              onSubmitEditing={loginAuthenticate}
+              onSubmitEditing={LoginAuthenticate}
               onChangeText={setPassword}
             />
             <TouchableOpacity
               style={styles.button}
-              onPress={loginAuthenticate}
+              onPress={LoginAuthenticate}
             >
               <Text style={styles.buttonText}>Acessar</Text>
             </TouchableOpacity>
