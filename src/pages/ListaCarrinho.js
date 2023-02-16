@@ -5,10 +5,11 @@ import api from '../services/api';
 import CorTamanho from '../components/CorTamanho';
 import GradeAtacado from '../components/GradeAtacado';
 import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/CarrinhoStorage';
-import { buscarUsaCorTamanho, buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
+import { buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
 import { buscarLogin } from '../controle/LoginStorage';
 import Slider from '../components/Slider';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const { width } = Dimensions.get("window");
 
@@ -21,7 +22,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [data, setData] = useState();
     const [cor, setCor] = useState();
     const [tamanho, setTamanho] = useState();
-    const [itensCarrinho, setItensCarrinho] = useState();
+    const [itensCarrinho, setItensCarrinho] = useState([]);
     const [fotos, setFotos] = useState([]);
     const [codigoProd, setCodigoProd] = useState();
     const [obs, setObs] = useState('');
@@ -35,6 +36,8 @@ const ListaCarrinho = ({ route, navigation }) => {
     //login
     const [dadosLogin, setDadosLogin] = useState();
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
     }, [data, fotos, quantidade, valorItem])
 
@@ -44,17 +47,26 @@ const ListaCarrinho = ({ route, navigation }) => {
     }, []);
 
     async function getData() {
-        const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
-        const prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor]);
-        const fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } });
+        setLoading(true);
+        try {
+            const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
+            const prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor]);
+            const fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } });
 
-        setCodigoProd(prod[0][0]);
-        setData(response.data);
-        setValorItem(response.data?.detalhes[0]?.valor.toFixed(2) ?? 0);
-        setFotos(fotos);
+            setCodigoProd(prod[0][0]);
+            setData(response.data);
+            setValorItem(response.data?.detalhes[0]?.valor.toFixed(2) ?? 0);
+            setFotos(fotos);
 
-        if (response.data?.cores.length > 0 || response.data?.tamanhos.length > 0) {
-            setUsaCorTamanho(true);
+            if (response.data?.cores.length > 0 || response.data?.tamanhos.length > 0) {
+                setUsaCorTamanho(true);
+            }
+            setLoading(false);
+
+        } catch (error) {
+            console.log(error.message);
+            setLoading(false);
+            Alert.alert('Erro ao buscar detalhe do produto. ' + error.message);
         }
     }
 
@@ -82,16 +94,15 @@ const ListaCarrinho = ({ route, navigation }) => {
         const itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
 
         if (usaGrade) {
+            if (!itensCarrinho) {
+                Alert.alert('Quantidade inválida', 'Faltou informar a quantidade dos produtos na grade.');
+                return;
+            }
             gravarItensCarrinhoUsaGrade(itensCarrinho).then(resultado => {
                 Alert.alert('Sucesso', 'Foi adicionado ao carrinho', [{ text: 'OK' }]);
                 navigation.pop();
                 return;
             })
-            return;
-        }
-        if (usaCorTamanho) {
-            console.log('usa cor e tamanho varejo');
-            Alert.alert('Opção em construção')
             return;
         }
         if (!quantidade) {
@@ -102,10 +113,16 @@ const ListaCarrinho = ({ route, navigation }) => {
             Alert.alert('Valor de venda', 'Informe o valor');
             return;
         }
-        if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
-            Alert.alert('Estoque insuficiente', 'Estoque atual: ' + data.detalhes[0].estoque);
+        if (usaCorTamanho) {
+            console.log('usa cor e tamanho varejo');
+            Alert.alert('Opção em construção')
             return;
         }
+        if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
+            Alert.alert('Estoque insuficiente', 'Estoque: ' + data?.detalhes[0]?.estoque);
+            return;
+        }
+
         gravarItensCarrinho(itens).then(resultado => {
             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
@@ -115,6 +132,7 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
+            <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
             {fotos.length > 0 ?
                 <Slider fotos={fotos} /> :
                 <View style={{ width, height: 250, alignSelf: 'center' }}>
@@ -165,7 +183,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     <View>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valorItem}</Text>
-                        <GradeAtacado codbar={codbar} item={item} setItensCarrinho={setItensCarrinho} />
+                        <GradeAtacado codbar={codbar} item={item} itensCarrinho={itensCarrinho} setItensCarrinho={setItensCarrinho} />
                         <TouchableOpacity
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}
@@ -175,7 +193,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     </View>
                     : <></>
                 }
-                {usaCorTamanho ?
+                {usaCorTamanho && usaGrade === false ?
                     <View>
                         <Text style={styles.text}>Quantidade:</Text>
                         <TextInput
@@ -189,18 +207,10 @@ const ListaCarrinho = ({ route, navigation }) => {
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valorItem}</Text>
                         <CorTamanho codbar={codbar} setCor={setCor} setTamanho={setTamanho} />
-                        <View>
-                            <TouchableOpacity
-                                style={styles.AdicionarButton}
-                                activeOpacity={0.5}
-                                onPress={() => { addItemCarrinho() }}>
-                                <Text style={styles.TextButton}>Adicionar {ConvertNumberParaReais((valorItem * (quantidade ? quantidade : 0)))}</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
                     : <></>
                 }
-                {!usaCorTamanho && !usaGrade ?
+                {!usaGrade ?
                     <View>
                         <TouchableOpacity
                             style={styles.AdicionarButton}
@@ -227,6 +237,7 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontSize: 20,
         marginTop: 15,
+        textTransform: 'uppercase'
     },
     text: {
         color: '#000000',
@@ -253,6 +264,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#FFF',
         textAlign: 'center',
+        fontWeight:'bold'
     },
 });
 
