@@ -94,7 +94,7 @@ const ListaCarrinho = ({ route, navigation }) => {
         const itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
 
         if (usaGrade) {
-            if (!itensCarrinho) {
+            if (itensCarrinho.length === 0) {
                 Alert.alert('Quantidade inválida', 'Faltou informar a quantidade dos produtos na grade.');
                 return;
             }
@@ -183,7 +183,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     <View>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valorItem}</Text>
-                        <GradeAtacado codbar={codbar} item={item} itensCarrinho={itensCarrinho} setItensCarrinho={setItensCarrinho} />
+                        <GradeAtacado codbar={codbar} item={item} itensCarrinho={itensCarrinho} setItensCarrinho={setItensCarrinho} setLoading={setLoading}/>
                         <TouchableOpacity
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}

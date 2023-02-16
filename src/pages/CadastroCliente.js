@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TextInput, ScrollView, TouchableOpacity, StyleSheet, LogBox, Alert, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 import { validaCpfCnpj, cnpj, cpf, validaEmail } from '../components/FormValidation'

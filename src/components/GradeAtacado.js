@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Modal, ScrollView, Text, Pressable, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Modal, ScrollView, Text, Pressable, View, TouchableOpacity, Keyboard } from 'react-native';
 import api from '../services/api';
 import { DataTable, TextInput } from 'react-native-paper';
 
-export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarrinho }) {
+export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarrinho, setLoading }) {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [cores, setCores] = useState();
     const [tamanhos, setTamanhos] = useState([]);
-    const [number, setNumber] = useState([]);
+    const [number, setNumber] = useState('');
     const [data, setData] = useState();
-    const [loading, setLoading] = useState(false);
+
+    const [inputs, setInputs] = useState([]);
+
+    const inputRef = useRef([]);
+
+    // let inputsValues = [];
 
     // let itensCarrinho = [];
 
@@ -24,6 +29,12 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
         setData(response.data);
         setCores(response.data.cores);
         setTamanhos(response.data.tamanhos);
+
+        const teste = response.data.cores.map(cor => {
+            return response.data.tamanhos.map(tamanho => '');
+        });
+
+        setInputs(teste);
     }
 
     function adicionaProdutoPelaGrade(cor, tamanho, quantidade) {
@@ -81,23 +92,44 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                                     </DataTable.Title>
                                 })}
                             </DataTable.Header>
-                            {cores.map(cor => {
+                            {cores.map((cor, indexCor) => {
                                 return <DataTable.Row style={styles.modalView3} key={cor.cod}>
                                     <View style={{ width: 120, justifyContent: 'center' }}><Text>{cor.padmer}</Text></View>
-                                    {tamanhos.map(tamanho => {
-                                        let quantidadeInserida = []
+                                    {tamanhos.map((tamanho, indexTamanho) => {
+                                        let quantidadeInserida = [];
                                         quantidadeInserida = itensCarrinho.filter((item) => item.cor === cor.padmer && item.tamanho === tamanho);
+
+                                        if (quantidadeInserida.length > 0) {
+                                            console.log(quantidadeInserida);
+                                        }
 
                                         let value = quantidadeInserida[0]?.quantidade ?? '';
 
                                         return <DataTable.Cell style={{ marginLeft: 2 }} key={tamanho}>
                                             <TextInput
                                                 style={styles.input}
-                                                value={value}
+                                                // value={value ? value : undefined}
+                                                value={inputs[indexCor][indexTamanho] ? inputs[indexCor][indexTamanho] : undefined}
+                                                // ref={el => inputRef.current[indexCor][indexTamanho] = el}
                                                 keyboardType='numeric'
-                                                onChangeText={(text) => { 
-                                                    adicionaProdutoPelaGrade(cor.padmer, tamanho, text);
-                                                    value = text; 
+                                                // onChange={(e) => {
+                                                //     const newState = [...inputs];
+                                                //     newState[indexCor][indexTamanho] = e.nativeEvent.text;
+                                                //     setInputs(newState);
+                                                //     if (e.nativeEvent.text) {
+                                                //         console.log('inseriu');
+                                                //         adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
+                                                //     }
+
+                                                // }}
+                                                onEndEditing={e => {
+                                                    const newState = [...inputs];
+                                                    newState[indexCor][indexTamanho] = e.nativeEvent.text;
+                                                    setInputs(newState);
+                                                    if (e.nativeEvent.text) {
+                                                        console.log('inseriu');
+                                                        adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
+                                                    }
                                                 }}
                                             />
                                         </DataTable.Cell>
@@ -118,26 +150,36 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                 transparent={true}
                 visible={modalVisible}
                 propagateSwipe={true}
-                onRequestClose={() => {
+                onRequestClose={async () => {
+                    // Keyboard.dismiss();
+                    if (modalVisible && itensCarrinho.length > 0) {
+                        await setItensCarrinho(itensCarrinho);
+                    }
                     setModalVisible(!modalVisible);
+                    // setTimeout(() => {
+                    //     setModalVisible(!modalVisible);
+                    // }, 200);
                 }}
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Informe a quantidade</Text>
+                        {tamanhos.length > 0 && cores.length > 0 ? <Text style={styles.modalText}>Informe a quantidade</Text> : <></>}
                         {tamanhos.length > 0 && cores.length > 0 ? <Grade /> : <Text style={styles.modalText}>Produto sem cores e tamanhos cadastrados</Text>}
-                        <Pressable
+                        <TouchableOpacity
                             style={[styles.button, styles.buttonClose]}
-                            onPress={() => {
+                            onPress={async () => {
+                                Keyboard.dismiss();
                                 if (modalVisible && itensCarrinho.length > 0) {
-                                    setItensCarrinho(itensCarrinho);
-                                    console.log(itensCarrinho);
+                                    await setItensCarrinho(itensCarrinho);
                                 }
-                                setModalVisible(!modalVisible);
+                                // setModalVisible(!modalVisible);
+                                setTimeout(() => {
+                                    setModalVisible(!modalVisible);
+                                }, 200);
                             }}
                         >
                             <Text style={styles.textStyle}>Confirmar</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
