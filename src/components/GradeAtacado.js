@@ -39,13 +39,13 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
 
     function adicionaProdutoPelaGrade(cor, tamanho, quantidade) {
         let codmer;
-        const codmerc = data.detalhes.filter(item => {
+        const codmerc = data?.detalhes.filter(item => {
             return item.cor === cor && item.tamanho === tamanho
         })
         if (quantidade) {
             if (codmerc != '') {
                 codmer = codmerc[0].codigo
-                let itemcarrinho = { codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho }
+                let itemcarrinho = { codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho, linkfot: data.fotos[0]?.linkfot }
                 let pos = itensCarrinho.findIndex(itensCarrinho => {
                     return itensCarrinho.codmer === codmer;
                 });
@@ -100,7 +100,7 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                                         quantidadeInserida = itensCarrinho.filter((item) => item.cor === cor.padmer && item.tamanho === tamanho);
 
                                         if (quantidadeInserida.length > 0) {
-                                            console.log(quantidadeInserida);
+                                            // console.log(quantidadeInserida);
                                         }
 
                                         let value = quantidadeInserida[0]?.quantidade ?? '';
@@ -127,7 +127,7 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                                                     newState[indexCor][indexTamanho] = e.nativeEvent.text;
                                                     setInputs(newState);
                                                     if (e.nativeEvent.text) {
-                                                        console.log('inseriu');
+                                                        // console.log('inseriu');
                                                         adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
                                                     }
                                                 }}

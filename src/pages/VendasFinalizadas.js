@@ -65,7 +65,7 @@ export default function VendasFinalizadas() {
       console.log(error.message);
       setFooterLoading(false);
       setLoading(false);
-      Alert.alert('Erro ao buscar produtos. ' + error.message);
+      Alert.alert('Erro ao buscar produtos.', error.message);
     }
   }
 
@@ -229,7 +229,7 @@ export default function VendasFinalizadas() {
       />
       <Text style={styles.title}>Histórico de vendas</Text>
       <FlatList
-        contentContainerStyle={{ marginHorizontal: 20 }}
+        contentContainerStyle={{ marginHorizontal: 20, paddingBottom: 20 }}
         data={data}
         keyExtractor={item => String(item.cod)}
         renderItem={({ item }) => <ListItem data={item} />}

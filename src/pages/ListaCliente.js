@@ -44,7 +44,7 @@ export default function ListaCliente() {
       console.log(error.message);
       setFooterLoading(false);
       setLoading(false);
-      Alert.alert('Erro ao buscar clientes. ' + error.message);
+      Alert.alert('Erro ao buscar clientes.', error.message);
     }
 
   }
@@ -72,7 +72,7 @@ export default function ListaCliente() {
       <Text style={styles.title}>Lista de Clientes</Text>
       {data.length > 0 ?
         <FlatList
-          contentContainerStyle={{ marginHorizontal: 20 }}
+          contentContainerStyle={{ marginHorizontal: 20, paddingBottom: 20 }}
           data={data}
           keyExtractor={item => String(item.id)}
           renderItem={({ item }) => <ListItem data={item} />}
