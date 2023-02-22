@@ -25,16 +25,21 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
 
 
     async function getListarDetalhes() {
-        const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
-        setData(response.data);
-        setCores(response.data.cores);
-        setTamanhos(response.data.tamanhos);
-
-        const teste = response.data.cores.map(cor => {
-            return response.data.tamanhos.map(tamanho => '');
-        });
-
-        setInputs(teste);
+        try {
+            const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
+            setData(response.data);
+            setCores(response.data.cores);
+            setTamanhos(response.data.tamanhos);
+    
+            const teste = response.data.cores.map(cor => {
+                return response.data.tamanhos.map(tamanho => '');
+            });
+    
+            setInputs(teste);
+            
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function adicionaProdutoPelaGrade(cor, tamanho, quantidade) {

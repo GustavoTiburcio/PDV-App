@@ -13,17 +13,41 @@ export default function Config() {
     const [endApi, setEndApi] = useState(api.defaults.baseURL);
     const [usaGrade, setUsaGrade] = useState(false);
     const [usaControleEstoque, setUsaControleEstoque] = useState(false);
+    const [alteraValVen, setAlteraValVen] = useState(false);
+    const [limPorDes, setLimPorDes] = useState('100');
 
     async function getConfig() {
-        const response = await api.get('/configs');
-        const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
-        const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+        try {
+            const response = await api.get('/configs');
 
-        if (usaGrade) {
-            setUsaGrade(Boolean(usaGrade[0].val));
-        }
-        if (controlaEstoque) {
-            setUsaControleEstoque(!Boolean(controlaEstoque[0].val));
+            //Usa grade de cor/tamanho
+            const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
+
+            //Controla estoque, não vende produto com estoque negativo/zerado
+            const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+
+            //Permite vendedor alterar valor de venda
+            const alteraValVen = response.data.filter((config) => config.con === 'AltValVen');
+
+            //Limita porcentagem de desconto permitida
+            const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
+
+            if (usaGrade) {
+                setUsaGrade(Boolean(usaGrade[0].val));
+            }
+            if (controlaEstoque) {
+                const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
+                setUsaControleEstoque(controlaestoque);
+            }
+            if (alteraValVen) {
+                const alteraValorVenda = Boolean(Number(alteraValVen[0].val));
+                setAlteraValVen(alteraValorVenda);
+            }
+            if (limitePorcentagemDesconto) {
+                setLimPorDes(limitePorcentagemDesconto[0].val);
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -47,7 +71,7 @@ export default function Config() {
                         <Checkbox
                             value={usaGrade}
                             onValueChange={() => {
-                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe ou tabela config da API. Parâmetro UsaGra');
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro UsaGra');
                             }}
                             style={styles.checkBox}
                         />
@@ -57,9 +81,27 @@ export default function Config() {
                         <Checkbox
                             value={usaControleEstoque}
                             onValueChange={() => {
-                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe ou tabela config da API. Parâmetro VenAciEst');
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro VenAciEst');
                             }}
                             style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView}>
+                        <Text style={styles.fieldText}>Pode alterar valor de venda?</Text>
+                        <Checkbox
+                            value={alteraValVen}
+                            onValueChange={() => {
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro AltValVen');
+                            }}
+                            style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView} flexDirection='column'>
+                        <Text style={styles.fieldText}>Porcentagem Limite de Desconto: </Text>
+                        <TextInput
+                            style={styles.input}
+                            value={limPorDes}
+                            onFocus={() => Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro LimPorDes')}
                         />
                     </View>
                 </View>

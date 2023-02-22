@@ -10,8 +10,12 @@ export default function Estoque({ route, navigation }) {
   const [data, setData] = useState({});
 
   async function getListarEstoque() {
-    const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-    setData(response.data)
+    try {
+      const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
+      setData(response.data)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {

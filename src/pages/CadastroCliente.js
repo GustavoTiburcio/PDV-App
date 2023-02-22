@@ -73,12 +73,17 @@ export default function CadastroCliente({ navigation }) {
 
     //Validações de formulários
     async function BuscaEnd(cep) {
-        const response = await api.get(`https://viacep.com.br/ws/${cep}/json/`)
-        setBai(response.data.bairro)
-        setCid(response.data.localidade)
-        setLog(response.data.logradouro)
-        setUf(response.data.uf)
-        setCodIbge(response.data.ibge)
+        try {
+            const response = await api.get(`https://viacep.com.br/ws/${cep}/json/`)
+            setBai(response.data.bairro)
+            setCid(response.data.localidade)
+            setLog(response.data.logradouro)
+            setUf(response.data.uf)
+            setCodIbge(response.data.ibge)
+            
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     LogBox.ignoreLogs([

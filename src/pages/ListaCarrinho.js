@@ -5,7 +5,7 @@ import api from '../services/api';
 import CorTamanho from '../components/CorTamanho';
 import GradeAtacado from '../components/GradeAtacado';
 import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/CarrinhoStorage';
-import { buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque } from '../controle/ConfigStorage';
+import { buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque, buscarAlteraValorVenda } from '../controle/ConfigStorage';
 import { buscarLogin } from '../controle/LoginStorage';
 import Slider from '../components/Slider';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
@@ -32,6 +32,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [usaGrade, setUsaGrade] = useState(false);
     const [usaControleEstoque, setUsaControleEstoque] = useState(false)
     const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
+    const [alteraValVen, setAlteraValVen] = useState(false);
 
     //login
     const [dadosLogin, setDadosLogin] = useState();
@@ -71,22 +72,31 @@ const ListaCarrinho = ({ route, navigation }) => {
     }
 
     async function getConfig() {
-        const login = await buscarLogin();
-        const usaestoqueporcategoria = await buscarUsaEstoquePorCategoria();
-        const usagrade = await buscarUsaGrade();
-        const usacontroleestoque = await buscarUsaControleEstoque();
+        try {
+            const login = await buscarLogin();
+            const usaestoqueporcategoria = await buscarUsaEstoquePorCategoria();
+            const usagrade = await buscarUsaGrade();
+            const usacontroleestoque = await buscarUsaControleEstoque();
+            const alteraValorVenda = await buscarAlteraValorVenda();
 
-        if (login) {
-            setDadosLogin(login);
-        }
-        if (usaestoqueporcategoria) {
-            setUsaEstoquePorCategoria(JSON.parse(usaestoqueporcategoria));
-        }
-        if (usagrade) {
-            setUsaGrade(JSON.parse(usagrade));
-        }
-        if (usacontroleestoque) {
-            setUsaControleEstoque(JSON.parse(usacontroleestoque));
+            if (login) {
+                setDadosLogin(login);
+            }
+            if (usaestoqueporcategoria) {
+                setUsaEstoquePorCategoria(JSON.parse(usaestoqueporcategoria));
+            }
+            if (usagrade) {
+                setUsaGrade(JSON.parse(usagrade));
+            }
+            if (usacontroleestoque) {
+                setUsaControleEstoque(JSON.parse(usacontroleestoque));
+            }
+            if (alteraValorVenda) {
+                setAlteraValVen(JSON.parse(alteraValorVenda));
+            }
+
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -110,7 +120,11 @@ const ListaCarrinho = ({ route, navigation }) => {
             return;
         }
         if (!Number(valorItem)) {
-            Alert.alert('Valor de venda', 'Informe o valor');
+            if (alteraValVen === false) {
+                Alert.alert('Produto sem valor de venda', 'Avise o responsável pelo cadastro de produtos.');
+                return;
+            }
+            Alert.alert('Valor de venda zerado', 'Informe o valor');
             return;
         }
         if (usaCorTamanho) {
@@ -167,6 +181,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                             placeholder="Valor do produto"
                             onChangeText={value => setValorItem(value.replace(',', '.'))}
                             value={valorItem}
+                            editable={alteraValVen}
                         />
                         <Text style={styles.text}>Observação:</Text>
                         <TextInput

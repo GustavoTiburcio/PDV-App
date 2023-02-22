@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator, LogBox } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, LogBox } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import * as Animatable from 'react-native-animatable'
 import api from '../services/api';
-import { gravarLogin, buscarLogin } from '../controle/LoginStorage';
+import { gravarLogin, buscarLogin, limparLogin } from '../controle/LoginStorage';
 import { GestureHandlerRootView, LongPressGestureHandler, State } from 'react-native-gesture-handler';
-import { gravarUsaControleEstoque, gravarUsaGrade } from '../controle/ConfigStorage';
+import { gravarAlteraValorVenda, gravarLimitePorcentagemDesconto, gravarUsaControleEstoque, gravarUsaGrade } from '../controle/ConfigStorage';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -15,33 +16,59 @@ export default function Login() {
   const navigation = useNavigation();
 
   async function LoginAuthenticate() {
-    setLoading(true);
-    if (!username || !password) {
-      setLoading(false);
-      Alert.alert('Usuário ou senha incorretos');
-      return;
-    }
+    try {
+      setLoading(true);
+      if (!username || !password) {
+        setLoading(false);
+        Alert.alert('Usuário ou senha incorretos');
+        return;
+      }
 
-    const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`);
+      const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`);
 
-    if (!response.data) {
-      Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+      if (!response.data) {
+        Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+        setLoading(false);
+        return;
+      }
       setLoading(false);
+      gravarLogin(response.data);
+      navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
       return;
+
+    } catch (error) {
+      console.log(error);
     }
-    setLoading(false);
-    gravarLogin(response.data);
-    navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
-    return;
   }
 
   async function VerificarLogado() {
-    const login = await buscarLogin();
-    if (login) {
-      navigation.navigate('ListaProduto', { title: `Bem-Vindo ${login.username}` });
+    try {
+      setLoading(true);
+
+      const login = await buscarLogin();
+
+      if (login) {
+        const response = await api.get(`/usuarios/loginProvisorio?username=${login.username}&password=${login.password}`);
+
+        if (!response.data) {
+          limparLogin();
+          Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+          setLoading(false);
+          return;
+        }
+        
+        setLoading(false);
+        gravarLogin(response.data);
+        navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
+        return;
+      }
+
+      setLoading(false);
       return;
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
-    return;
   }
 
   function AcessarTelaConfig(event) {
@@ -54,17 +81,39 @@ export default function Login() {
   };
 
   async function GetConfig() {
-    const response = await api.get('/configs');
-    const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
-    const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+    try {
+      const response = await api.get('/configs');
 
-    if (usaGrade) {
-      const usagrade = Boolean(Number(usaGrade[0].val));
-      await gravarUsaGrade(usagrade.toString());
-    }
-    if (controlaEstoque) {
-      const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
-      await gravarUsaControleEstoque(controlaestoque.toString());
+      //Usa grade de cor/tamanho
+      const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
+
+      //Controla estoque, não vende produto com estoque negativo/zerado
+      const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
+
+      //Permite vendedor alterar valor de venda
+      const alteraValVen = response.data.filter((config) => config.con === 'AltValVen');
+
+      //Limita porcentagem de desconto permitida
+      const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
+
+      if (usaGrade) {
+        const usagrade = Boolean(Number(usaGrade[0].val));
+        await gravarUsaGrade(usagrade.toString());
+      }
+      if (controlaEstoque) {
+        const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
+        await gravarUsaControleEstoque(controlaestoque.toString());
+      }
+      if (alteraValVen) {
+        const alteraValorVenda = Boolean(Number(alteraValVen[0].val));
+        await gravarAlteraValorVenda(alteraValorVenda.toString());
+      }
+      if (limitePorcentagemDesconto) {
+        await gravarLimitePorcentagemDesconto(limitePorcentagemDesconto[0].val);
+      }
+
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -78,6 +127,7 @@ export default function Login() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
+        <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
         <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
           <Text style={styles.message}>Bem-vindo(a)</Text>
         </Animatable.View>
@@ -113,10 +163,6 @@ export default function Login() {
             <TouchableOpacity style={styles.buttonRegister} onPress={() => Alert.alert('Credenciais de acesso', 'Entre em contato com o nosso suporte para mais informações. (44) 3023-7230')}>
               <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
             </TouchableOpacity>
-            {loading &&
-              <View style={styles.loading}>
-                <ActivityIndicator size='large' color="#38A69D" />
-              </View>}
           </Animatable.View>
         </LongPressGestureHandler>
       </View>

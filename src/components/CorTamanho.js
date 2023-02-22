@@ -31,11 +31,16 @@ export default function CorTamanho({ codbar, setCor, setTamanho }) {
     }, [valueTamanho, valueCor])
 
     async function getListarDetalhes() {
-        const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`)
-        const cores = response.data.cores.map(item => { return { label: item.padmer, value: item.padmer } })
-        const tamanhos = response.data.tamanhos.map(item => { return { label: item, value: item } })
-        setCores(cores);
-        setTamanhos(tamanhos)
+        try {
+            const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
+            const cores = response.data.cores.map(item => { return { label: item.padmer, value: item.padmer } });
+            const tamanhos = response.data.tamanhos.map(item => { return { label: item, value: item } });
+            setCores(cores);
+            setTamanhos(tamanhos);
+            
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

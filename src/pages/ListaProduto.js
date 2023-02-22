@@ -121,7 +121,7 @@ export default function ListaProduto({ navigation }) {
             <TouchableOpacity
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
-              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer, valor: data.valVenMin })}>
+              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer.toUpperCase(), valor: data.valVenMin })}>
               <Text style={styles.TextButton}>Detalhes</Text>
             </TouchableOpacity>
           </View>

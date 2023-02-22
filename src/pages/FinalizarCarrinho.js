@@ -6,6 +6,7 @@ import { PrintPDF } from '../components/printPDF';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco } from '../controle/CarrinhoStorage';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { buscarLimitePorcentagemDesconto } from '../controle/ConfigStorage';
 
 function FinalizarCarrinho({ route, navigation }) {
     var date = new Date();
@@ -23,6 +24,8 @@ function FinalizarCarrinho({ route, navigation }) {
     const [valJur, setValJur] = useState('0');
     const [valFre, setValFre] = useState('0');
     const [loading, setLoading] = useState(false);
+
+    const [limPorDes, setLimPorDes] = useState(100);
 
     async function buscarItens() {
         await buscarItensCarrinhoNoBanco().then(resultado => {
@@ -49,6 +52,20 @@ function FinalizarCarrinho({ route, navigation }) {
             }
         } catch (e) {
             console.log('Erro ao ler login')
+        }
+    }
+
+    async function getConfig() {
+        try {
+            const limitePorDes = await buscarLimitePorcentagemDesconto();
+
+            if (limPorDes) {
+                setLimPorDes(Number(limitePorDes));
+            }
+
+
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -129,6 +146,7 @@ function FinalizarCarrinho({ route, navigation }) {
 
     useEffect(() => {
         getLoginData();
+        getConfig();
         buscarItens();
     }, []);
 
@@ -195,6 +213,13 @@ function FinalizarCarrinho({ route, navigation }) {
                         style={styles.inputDesconto}
                         keyboardType="numeric"
                         onChangeText={text => {
+                            const porDes = Number(text.replace(',', '.'));
+
+                            if (porDes > limPorDes) {
+                                Alert.alert('Desconto não permitido', 'Desconto máximo permitido: ' + limPorDes + '%');
+                                setPorDes('0');
+                                return;
+                            }
                             setPorDes(text.replace(',', '.'));
                         }}
                         onEndEditing={e => {

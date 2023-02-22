@@ -82,7 +82,7 @@ function Carrinho({ navigation }) {
                     <Image
                         style={styles.image}
                         source={{
-                            uri: 'https://' + item.linkfot
+                            uri: item?.linkfot ? 'https://' + item.linkfot : 'https://higa.membros.supermercadozen.com.br/assets/tema01/img/produto-sem-foto.png'
                         }}
                     />
                 </View>
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     imageView: {
-        width: '25%',
+        width: '23%',
         height: '90%',
         marginLeft: 5
     },
@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
         resizeMode: 'contain'
     },
     produtoInfoView: {
+        marginLeft:3,
         width: '45%',
         height: '80%',
         justifyContent: 'space-evenly'

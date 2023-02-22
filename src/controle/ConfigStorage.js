@@ -77,6 +77,44 @@ export const buscarUsaControleEstoque = async () => {
         console.log(error.message);
     }
 }
+export const gravarAlteraValorVenda = async (alteraValorVenda) => {
+    try {
+        await AsyncStorage.removeItem('alteraValorVenda')
+        await AsyncStorage.setItem('alteraValorVenda', alteraValorVenda);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarAlteraValorVenda = async () => {
+    try {
+        const value = await AsyncStorage.getItem('alteraValorVenda');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarLimitePorcentagemDesconto = async (limitePorcentagemDesconto) => {
+    try {
+        await AsyncStorage.removeItem('limitePorcentagemDesconto')
+        await AsyncStorage.setItem('limitePorcentagemDesconto', limitePorcentagemDesconto);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarLimitePorcentagemDesconto = async () => {
+    try {
+        const value = await AsyncStorage.getItem('limitePorcentagemDesconto');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 export const gravarUsaEstoquePorCategoria = async (usaEstoquePorCategoria) => {
     try {
         await AsyncStorage.removeItem('usaEstoquePorCategoria')
