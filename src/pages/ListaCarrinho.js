@@ -91,7 +91,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     }
 
     const addItemCarrinho = () => {
-        const itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs };
+        const itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs, linkfot: fotos[0]?.linkfot };
 
         if (usaGrade) {
             if (itensCarrinho.length === 0) {
@@ -105,11 +105,11 @@ const ListaCarrinho = ({ route, navigation }) => {
             })
             return;
         }
-        if (!quantidade) {
+        if (!Number(quantidade)) {
             Alert.alert('Quantidade vazia', 'Informe a quantidade');
             return;
         }
-        if (!valorItem) {
+        if (!Number(valorItem)) {
             Alert.alert('Valor de venda', 'Informe o valor');
             return;
         }
@@ -183,7 +183,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     <View>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valorItem}</Text>
-                        <GradeAtacado codbar={codbar} item={item} itensCarrinho={itensCarrinho} setItensCarrinho={setItensCarrinho} setLoading={setLoading}/>
+                        <GradeAtacado codbar={codbar} item={item} itensCarrinho={itensCarrinho} setItensCarrinho={setItensCarrinho} setLoading={setLoading} />
                         <TouchableOpacity
                             style={styles.AdicionarButton}
                             activeOpacity={0.5}
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#FFF',
         textAlign: 'center',
-        fontWeight:'bold'
+        fontWeight: 'bold'
     },
 });
 

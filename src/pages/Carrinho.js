@@ -77,37 +77,34 @@ function Carrinho({ navigation }) {
 
     function ListItem({ item }) {
         return (
-            <View style={{ flexDirection: 'row', alignItems: 'center', width: '95%', height: 100, backgroundColor: '#FFF', alignSelf: 'center', borderRadius: 5, elevation: 5 }}>
-                <View style={{ width: '25%', height: '90%', marginLeft: 5 }}>
+            <View style={styles.itemContainer}>
+                <View style={styles.imageView}>
                     <Image
-                        style={{
-                            width: '100%', height: '100%',
-                            resizeMode: 'contain'
-                        }}
+                        style={styles.image}
                         source={{
                             uri: 'https://' + item.linkfot
                         }}
                     />
                 </View>
-                <View style={{ width: '45%', height: '80%', justifyContent: 'space-evenly' }}>
-                    <Text style={{ fontSize: 12 }}>
+                <View style={styles.produtoInfoView}>
+                    <Text style={styles.produtoText}>
                         {item.item}
                     </Text>
                     {item?.cor &&
-                        <Text style={{ fontSize: 12 }}>
+                        <Text style={styles.produtoText}>
                             Cor: {item.cor}
                         </Text>
                     }
                     {item?.tamanho &&
-                        <Text style={{ fontSize: 12 }}>
+                        <Text style={styles.produtoText}>
                             Tamanho: {item.tamanho}
                         </Text>
                     }
-                    <Text style={{ color: '#808080', fontSize: 12 }}>
+                    <Text style={styles.produtoValorText}>
                         {ConvertNumberParaReais(item.valor)}
                     </Text>
                 </View>
-                <View style={{ flexDirection: 'row', width: '28%', height: '80%', alignItems: 'center', justifyContent: 'space-around' }}>
+                <View style={styles.buttonsView}>
                     <TouchableOpacity onPress={() => DecrementarQuantidade(item)}>
                         <FontAwesome
                             name='minus-circle'
@@ -115,7 +112,7 @@ function Carrinho({ navigation }) {
                             color='#c91e1e'
                         />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 25 }}>{item.quantidade}</Text>
+                    <Text style={styles.quantidadeText}>{item.quantidade}</Text>
                     <TouchableOpacity onPress={() => IncrementarQuantidade(item)}>
                         <FontAwesome
                             name='plus-circle'
@@ -150,7 +147,7 @@ function Carrinho({ navigation }) {
                 <FlatList
                     data={itensCarrinho}
                     contentContainerStyle={styles.flatListContainer}
-                    keyExtractor={item => String(item.codmer)}
+                    keyExtractor={(item, index) => String(index)}
                     scrollEnabled={true}
                     renderItem={({ item }) => <ListItem item={item} />}
                     ItemSeparatorComponent={({ highlighted }) => (
@@ -268,6 +265,50 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#FFF',
         fontSize: 18
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '95%',
+        height: 100,
+        backgroundColor: '#FFF',
+        alignSelf: 'center',
+        borderRadius: 5,
+        elevation: 5
+    },
+    imageView: {
+        width: '25%',
+        height: '90%',
+        marginLeft: 5
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'contain'
+    },
+    produtoInfoView: {
+        width: '45%',
+        height: '80%',
+        justifyContent: 'space-evenly'
+    },
+    produtoText: {
+        fontSize: 12,
+        textTransform: 'uppercase'
+    },
+    produtoValorText: {
+        color: '#808080',
+        fontSize: 12,
+        fontWeight: 'bold'
+    },
+    buttonsView: {
+        flexDirection: 'row',
+        width: '28%',
+        height: '80%',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
+    quantidadeText: {
+        fontSize: 25
     }
 });
 export default Carrinho;
