@@ -6,7 +6,7 @@ import CorTamanho from '../components/CorTamanho';
 import GradeAtacado from '../components/GradeAtacado';
 import { gravarItensCarrinhoUsaGrade, gravarItensCarrinho } from '../controle/CarrinhoStorage';
 import { buscarUsaGrade, buscarUsaEstoquePorCategoria, buscarUsaControleEstoque, buscarAlteraValorVenda } from '../controle/ConfigStorage';
-import { buscarLogin } from '../controle/LoginStorage';
+// import { buscarLogin } from '../controle/LoginStorage';
 import Slider from '../components/Slider';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -20,8 +20,8 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [quantidade, setQuantidade] = useState();
     const [valorItem, setValorItem] = useState('0');
     const [data, setData] = useState();
-    const [cor, setCor] = useState();
-    const [tamanho, setTamanho] = useState();
+    const [cor, setCor] = useState(null);
+    const [tamanho, setTamanho] = useState(null);
     const [itensCarrinho, setItensCarrinho] = useState([]);
     const [fotos, setFotos] = useState([]);
     const [codigoProd, setCodigoProd] = useState();
@@ -35,7 +35,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const [alteraValVen, setAlteraValVen] = useState(false);
 
     //login
-    const [dadosLogin, setDadosLogin] = useState();
+    // const [dadosLogin, setDadosLogin] = useState();
 
     const [loading, setLoading] = useState(false);
 
@@ -51,19 +51,22 @@ const ListaCarrinho = ({ route, navigation }) => {
         setLoading(true);
         try {
             const response = await api.get(`/mercador/listarParaDetalhes?codbar=${codbar}`);
-            const prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor]);
-            const fotos = response.data.fotos.map(fotos => { return { linkfot: fotos.linkfot } });
 
-            setCodigoProd(prod[0][0]);
-            setData(response.data);
-            setValorItem(response.data?.detalhes[0]?.valor.toFixed(2) ?? 0);
-            setFotos(fotos);
+            if (response?.data) {
+                const prod = response.data.detalhes.map(item => [item.codigo, item.codbar, item.valor]);
+                const fotos = response.data.fotos.map(foto => foto);
 
-            if (response.data?.cores.length > 0 || response.data?.tamanhos.length > 0) {
-                setUsaCorTamanho(true);
+                setCodigoProd(prod[0][0]);
+                setData(response.data);
+                setValorItem(response.data?.detalhes[0]?.valor.toFixed(2) ?? 0);
+                setFotos(fotos);
+
+                if (response.data?.cores.length > 0 || response.data?.tamanhos.length > 0) {
+                    setUsaCorTamanho(true);
+                }
+                setLoading(false);
             }
             setLoading(false);
-
         } catch (error) {
             console.log(error.message);
             setLoading(false);
@@ -73,15 +76,15 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     async function getConfig() {
         try {
-            const login = await buscarLogin();
+            // const login = await buscarLogin();
             const usaestoqueporcategoria = await buscarUsaEstoquePorCategoria();
             const usagrade = await buscarUsaGrade();
             const usacontroleestoque = await buscarUsaControleEstoque();
             const alteraValorVenda = await buscarAlteraValorVenda();
 
-            if (login) {
-                setDadosLogin(login);
-            }
+            // if (login) {
+            //     setDadosLogin(login);
+            // }
             if (usaestoqueporcategoria) {
                 setUsaEstoquePorCategoria(JSON.parse(usaestoqueporcategoria));
             }
@@ -96,12 +99,12 @@ const ListaCarrinho = ({ route, navigation }) => {
             }
 
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
         }
     }
 
     const addItemCarrinho = () => {
-        const itens = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs, linkfot: fotos[0]?.linkfot };
+        let itemCarrinho = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs, linkfot: fotos[0]?.linkfot };
 
         if (usaGrade) {
             if (itensCarrinho.length === 0) {
@@ -128,16 +131,34 @@ const ListaCarrinho = ({ route, navigation }) => {
             return;
         }
         if (usaCorTamanho) {
-            console.log('usa cor e tamanho varejo');
-            Alert.alert('Opção em construção')
-            return;
+            const prod = data.detalhes.filter((produto) => produto.cor === cor && produto.tamanho === tamanho);
+
+            const padmer = data.cores.filter(padmer => padmer.padmer === cor);
+
+            const fotoProduto = fotos.filter(foto => foto.codpad === padmer[0].cod);
+
+            itemCarrinho = {
+                codmer: prod[0].codigo, quantidade: quantidade, item: item,
+                valor: valorItem, cor: cor, tamanho: tamanho,
+                linkfot: fotoProduto.length > 0 ? fotoProduto[0].linkfot : data.fotos[0]?.linkfot
+            }
+
+            if (prod.length > 0) {
+                gravarItensCarrinho(itemCarrinho).then(resultado => {
+                    Alert.alert('Sucesso', item + ' ' + cor + ' ' + tamanho + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
+                    navigation.pop();
+                    return;
+                });
+            }
+            Alert.alert('Falha ao inserir', 'Não foi possível encontrar cadastro do tamanho/cor');
+            return
         }
         if (usaControleEstoque && data.detalhes[0].estoque >= quantidade) {
             Alert.alert('Estoque insuficiente', 'Estoque: ' + data?.detalhes[0]?.estoque);
             return;
         }
 
-        gravarItensCarrinho(itens).then(resultado => {
+        gravarItensCarrinho(itemCarrinho).then(resultado => {
             Alert.alert('Sucesso', item + ' Foi adicionado ao carrinho', [{ text: 'OK' }]);
             navigation.pop();
             return;
