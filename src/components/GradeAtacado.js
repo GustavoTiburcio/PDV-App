@@ -30,13 +30,13 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
             setData(response.data);
             setCores(response.data.cores);
             setTamanhos(response.data.tamanhos);
-    
+
             const teste = response.data.cores.map(cor => {
                 return response.data.tamanhos.map(tamanho => '');
             });
-    
+
             setInputs(teste);
-            
+
         } catch (error) {
             console.log(error);
         }
@@ -44,39 +44,54 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
 
     function adicionaProdutoPelaGrade(cor, tamanho, quantidade) {
         let codmer;
+
         const codmerc = data?.detalhes.filter(item => {
             return item.cor === cor && item.tamanho === tamanho
-        })
-        if (quantidade) {
-            if (codmerc != '') {
-                codmer = codmerc[0].codigo
-                let itemcarrinho = { codmer: codmer, quantidade: quantidade, item: item, valor: codmerc[0].valor, cor: cor, tamanho: tamanho, linkfot: data.fotos[0]?.linkfot }
-                let pos = itensCarrinho.findIndex(itensCarrinho => {
-                    return itensCarrinho.codmer === codmer;
-                });
-                if (pos == '-1') {
-                    itensCarrinho.push(itemcarrinho);
-                } else {
-                    let itemRemovido = itensCarrinho.splice(pos, 1)
-                    itensCarrinho.push(itemcarrinho);
+        });
+
+        const padmer = data?.cores.filter(padmer => padmer.padmer === cor);
+        
+        const fotoProduto = data?.fotos.filter(foto => foto.codpad === padmer[0].cod);
+
+        //adiciona produto já alterando quantidade se já existir
+        if (quantidade && quantidade !== '0') {
+            if (codmerc.length > 0) {
+                codmer = codmerc[0].codigo;
+
+                const itemcarrinho = {
+                    codmer: codmer, quantidade: quantidade, item: item,
+                    valor: codmerc[0].valor, cor: cor, tamanho: tamanho, linkfot: fotoProduto.length > 0 ? fotoProduto[0].linkfot : data.fotos[0]?.linkfot
                 }
 
-            } else {
-                //console.log('Não encontrado produto ' + cor + ' ' + tamanho);
-            }
-        } else {
-            if (codmerc != '') {
-                codmer = codmerc[0].codigo
-                let pos = itensCarrinho.findIndex(itensCarrinho => {
+                const pos = itensCarrinho.findIndex(itensCarrinho => {
                     return itensCarrinho.codmer === codmer;
                 });
-                if (pos != '-1') {
-                    let itemRemovido = itensCarrinho.splice(pos, 1)
+
+                if (pos == '-1') {
+                    itensCarrinho.push(itemcarrinho);
+                    return;
                 }
-            } else {
-                //console.log('Não encontrado produto ' + cor + ' ' + tamanho);
+                const itemRemovido = itensCarrinho.splice(pos, 1)
+                itensCarrinho.push(itemcarrinho);
+                return;
             }
+            return;
         }
+
+        //remove produto inserido ao mudar pra vazio a quantidade
+        if (codmerc.length > 0) {
+            codmer = codmerc[0].codigo
+
+            const pos = itensCarrinho.findIndex(itensCarrinho => {
+                return itensCarrinho.codmer === codmer;
+            });
+            if (pos != '-1') {
+                const itemRemovido = itensCarrinho.splice(pos, 1);
+                return;
+            }
+            return;
+        }
+        return;
     }
 
     function Grade() {
@@ -117,25 +132,23 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                                                 value={inputs[indexCor][indexTamanho] ? inputs[indexCor][indexTamanho] : undefined}
                                                 // ref={el => inputRef.current[indexCor][indexTamanho] = el}
                                                 keyboardType='numeric'
-                                                // onChange={(e) => {
-                                                //     const newState = [...inputs];
-                                                //     newState[indexCor][indexTamanho] = e.nativeEvent.text;
-                                                //     setInputs(newState);
-                                                //     if (e.nativeEvent.text) {
-                                                //         console.log('inseriu');
-                                                //         adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
-                                                //     }
-
-                                                // }}
-                                                onEndEditing={e => {
+                                                onChange={(e) => {
                                                     const newState = [...inputs];
                                                     newState[indexCor][indexTamanho] = e.nativeEvent.text;
                                                     setInputs(newState);
-                                                    if (e.nativeEvent.text) {
-                                                        // console.log('inseriu');
-                                                        adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
-                                                    }
+                                                    console.log('inseriu');
+                                                    adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
                                                 }}
+                                            // onBlur={e => {
+                                            //     console.log('doido')
+                                            //     const newState = [...inputs];
+                                            //     newState[indexCor][indexTamanho] = e.nativeEvent.text;
+                                            //     setInputs(newState);
+                                            //     if (e.nativeEvent.text) {
+                                            //         // console.log('inseriu');
+                                            //         adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
+                                            //     }
+                                            // }}
                                             />
                                         </DataTable.Cell>
                                     })}
@@ -156,14 +169,14 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                 visible={modalVisible}
                 propagateSwipe={true}
                 onRequestClose={async () => {
-                    // Keyboard.dismiss();
+                    Keyboard.dismiss();
                     if (modalVisible && itensCarrinho.length > 0) {
                         await setItensCarrinho(itensCarrinho);
                     }
-                    setModalVisible(!modalVisible);
-                    // setTimeout(() => {
-                    //     setModalVisible(!modalVisible);
-                    // }, 200);
+                    // setModalVisible(!modalVisible);
+                    setTimeout(() => {
+                        setModalVisible(!modalVisible);
+                    }, 200);
                 }}
             >
                 <View style={styles.centeredView}>
