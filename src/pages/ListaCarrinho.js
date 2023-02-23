@@ -149,6 +149,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     navigation.pop();
                     return;
                 });
+                return;
             }
             Alert.alert('Falha ao inserir', 'Não foi possível encontrar cadastro do tamanho/cor');
             return
