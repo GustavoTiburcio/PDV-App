@@ -37,7 +37,7 @@ export default function CadastroCliente({ navigation }) {
                 }
             })
             navigation.navigate({
-                name: 'Carrinho',
+                name: 'FinalizarCarrinho',
                 params: { cliente },
                 merge: true,
             });

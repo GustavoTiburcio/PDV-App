@@ -14,8 +14,10 @@ function Carrinho({ navigation }) {
 
     async function excluirCarrinho() {
         const result = await limparItensCarrinhoNoBanco();
-        setItensCarrinho([]);
-        setValorBruto(0);
+        if (result) {
+            setItensCarrinho([]);
+            setValorBruto(0);
+        }
     }
 
     async function buscarItens() {
@@ -28,7 +30,10 @@ function Carrinho({ navigation }) {
                 );
                 setValorBruto(setValorBrutoInicial);
                 setItensCarrinho(resultado);
+                return;
             }
+            setItensCarrinho([]);
+            setValorBruto(0);
         });
     }
 

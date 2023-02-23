@@ -52,11 +52,11 @@ export default function Login() {
 
         if (!response.data) {
           limparLogin();
-          Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+          Alert.alert('Usuário ou senha incorretos', 'Faça login novamente.')
           setLoading(false);
           return;
         }
-        
+
         setLoading(false);
         gravarLogin(response.data);
         navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });

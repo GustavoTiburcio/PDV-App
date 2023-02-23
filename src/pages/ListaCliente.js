@@ -74,7 +74,7 @@ export default function ListaCliente() {
         <FlatList
           contentContainerStyle={{ marginHorizontal: 20, paddingBottom: 20 }}
           data={data}
-          keyExtractor={item => String(item.id)}
+          keyExtractor={(item, index) => String(index)}
           renderItem={({ item }) => <ListItem data={item} />}
           onEndReached={({ distanceFromEnd }) => {
             if (distanceFromEnd <= 0) return;

@@ -72,16 +72,20 @@ function FinalizarCarrinho({ route, navigation }) {
     function CalculaValorLiquido() {
         let VlrJur = 0;
         let VlrFre = 0;
+
         if (valJur && valJur !== '') {
             VlrJur = Number(valJur);
         }
         if (valFre && valFre !== '') {
             VlrFre = Number(valFre);
         }
-        let valorDesconto = Number(Number(Number(valorBruto / 100 * porDes).toFixed(2)) + Number(valDes));
+
+        const valorDesconto = Number(Number(Number(valorBruto / 100 * porDes).toFixed(2)) + Number(valDes));
+
         if (isNaN(valorDesconto)) {
             return valorBruto + Number(VlrJur) + Number(VlrFre);
         }
+
         return Number(valorBruto - valorDesconto + Number(VlrJur) + Number(VlrFre));
     }
 
@@ -105,43 +109,51 @@ function FinalizarCarrinho({ route, navigation }) {
             const result = await postPedido(ped);
 
             if (result) {
-                const limparCarrinhoStorage = await limparItensCarrinhoNoBanco();
+                // const limparCarrinhoStorage = await limparItensCarrinhoNoBanco();
+                limparItensCarrinhoNoBanco().then(resultado => {
+                    if (resultado) {
+                        setItensCarrinho(null);
+                        setValorBruto(0);
+                        setDadosCliente(undefined);
+                        setLoading(false);
 
-                if (limparCarrinhoStorage) {
-                    Alert.alert(
-                        "Venda finalizada",
-                        "Deseja imprimir?",
-                        [
-                            {
-                                text: "Sim",
-                                onPress: () => {
-                                    PrintPDF(itensCarrinho, cliente, valorBruto, result.cod, nomRep);
-                                    setItensCarrinho(null);
-                                    setValorBruto(0);
-                                    setDadosCliente(undefined);
-                                    setLoading(false);
-                                    navigation.pop();
+                        Alert.alert(
+                            "Venda finalizada",
+                            "Deseja imprimir?",
+                            [
+                                {
+                                    text: "Sim",
+                                    onPress: () => {
+                                        PrintPDF(itensCarrinho, cliente, valorBruto, result.cod, nomRep);
+                                        navigation.pop();
+                                    },
                                 },
-                            },
-                            {
-                                text: "Não",
-                                onPress: () => {
-                                    setItensCarrinho(null);
-                                    setValorBruto(0);
-                                    setDadosCliente(undefined);
-                                    setLoading(false);
-                                    navigation.pop();
+                                {
+                                    text: "Não",
+                                    onPress: () => {
+                                        navigation.pop();
+                                    }
                                 }
-                            }
-                        ]
-                    );
-                }
+                            ]
+                        );
+                    }
+                });
+
             }
         } catch (error) {
             setLoading(false);
             Alert.alert('Erro ao finalizar', error.message);
             console.log(error.message);
         }
+    }
+
+    function VerificaDescontoLimite(porcentagemDesconto, valorDesconto) {
+        const valorDescontoLimite = Number((valorBruto * (Number(limPorDes) / 100)).toFixed(2));
+
+        const valDesconto = Number(Number(Number(valorBruto / 100 * porcentagemDesconto).toFixed(2)) + Number(valorDesconto));
+
+        return valDesconto > valorDescontoLimite ? true : false
+
     }
 
     useEffect(() => {
@@ -213,9 +225,7 @@ function FinalizarCarrinho({ route, navigation }) {
                         style={styles.inputDesconto}
                         keyboardType="numeric"
                         onChangeText={text => {
-                            const porDes = Number(text.replace(',', '.'));
-
-                            if (porDes > limPorDes) {
+                            if (VerificaDescontoLimite(text.replace(',', '.'), valDes)) {
                                 Alert.alert('Desconto não permitido', 'Desconto máximo permitido: ' + limPorDes + '%');
                                 setPorDes('0');
                                 return;
@@ -228,6 +238,7 @@ function FinalizarCarrinho({ route, navigation }) {
                             }
                         }}
                         value={porDes.replace('.', ',')}
+                        maxLength={4}
                     />
                 </View>
                 <View flexDirection="row">
@@ -236,6 +247,11 @@ function FinalizarCarrinho({ route, navigation }) {
                         style={styles.inputDesconto}
                         keyboardType="numeric"
                         onChangeText={text => {
+                            if (VerificaDescontoLimite(porDes, text.replace(',', '.'))) {
+                                Alert.alert('Desconto não permitido', 'Desconto máximo permitido: ' + limPorDes + '%');
+                                setValDes('0');
+                                return;
+                            }
                             setValDes(text.replace(',', '.'));
                         }}
                         onEndEditing={e => {
