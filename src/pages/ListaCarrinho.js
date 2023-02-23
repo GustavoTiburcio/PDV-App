@@ -106,7 +106,7 @@ const ListaCarrinho = ({ route, navigation }) => {
     const addItemCarrinho = () => {
         let itemCarrinho = { codmer: codigoProd, quantidade: quantidade, item: item, valor: valorItem, obs: obs, linkfot: fotos[0]?.linkfot };
 
-        if (usaGrade) {
+        if (usaGrade && usaCorTamanho) {
             if (itensCarrinho.length === 0) {
                 Alert.alert('Quantidade inválida', 'Faltou informar a quantidade dos produtos na grade.');
                 return;
@@ -184,7 +184,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                 <Text style={{ alignSelf: 'center' }}> {codbar} </Text>
                 <Text style={styles.item}>{item}</Text>
                 {!usaEstoquePorCategoria && !usaGrade && !usaCorTamanho && <Text>Estoque atual: {data?.detalhes[0]?.estoque ? Number(data.detalhes[0].estoque).toFixed(2) : 0}</Text>}
-                {!usaCorTamanho && !usaGrade ?
+                {!usaCorTamanho && !usaGrade || (usaGrade && !usaCorTamanho) ?
                     <View>
                         <Text style={styles.text}>Quantidade:</Text>
                         <TextInput
@@ -215,7 +215,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     </View>
                     : <></>
                 }
-                {usaGrade ?
+                {usaGrade && usaCorTamanho ?
                     <View>
                         <Text style={styles.text}>Valor R$:</Text>
                         <Text style={styles.textinput}>{valorItem}</Text>
@@ -229,7 +229,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     </View>
                     : <></>
                 }
-                {usaCorTamanho && usaGrade === false ?
+                {usaCorTamanho && !usaGrade ?
                     <View>
                         <Text style={styles.text}>Quantidade:</Text>
                         <TextInput
@@ -246,7 +246,7 @@ const ListaCarrinho = ({ route, navigation }) => {
                     </View>
                     : <></>
                 }
-                {!usaGrade ?
+                {!usaGrade || (usaGrade && !usaCorTamanho) ?
                     <View>
                         <TouchableOpacity
                             style={styles.AdicionarButton}

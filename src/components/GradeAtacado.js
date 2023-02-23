@@ -136,16 +136,13 @@ export default function GradeAtacado({ codbar, item, itensCarrinho, setItensCarr
                                                     const newState = [...inputs];
                                                     newState[indexCor][indexTamanho] = e.nativeEvent.text;
                                                     setInputs(newState);
-                                                    console.log('inseriu');
                                                     adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
                                                 }}
                                             // onBlur={e => {
-                                            //     console.log('doido')
                                             //     const newState = [...inputs];
                                             //     newState[indexCor][indexTamanho] = e.nativeEvent.text;
                                             //     setInputs(newState);
                                             //     if (e.nativeEvent.text) {
-                                            //         // console.log('inseriu');
                                             //         adicionaProdutoPelaGrade(cor.padmer, tamanho, e.nativeEvent.text);
                                             //     }
                                             // }}
