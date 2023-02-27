@@ -76,15 +76,11 @@ const ListaCarrinho = ({ route, navigation }) => {
 
     async function getConfig() {
         try {
-            // const login = await buscarLogin();
             const usaestoqueporcategoria = await buscarUsaEstoquePorCategoria();
             const usagrade = await buscarUsaGrade();
             const usacontroleestoque = await buscarUsaControleEstoque();
             const alteraValorVenda = await buscarAlteraValorVenda();
 
-            // if (login) {
-            //     setDadosLogin(login);
-            // }
             if (usaestoqueporcategoria) {
                 setUsaEstoquePorCategoria(JSON.parse(usaestoqueporcategoria));
             }
@@ -131,7 +127,7 @@ const ListaCarrinho = ({ route, navigation }) => {
             return;
         }
         if (usaCorTamanho) {
-            const prod = data.detalhes.filter((produto) => produto.cor === cor && produto.tamanho === tamanho);
+            const prod = data.detalhes.filter(produto => produto.cor === cor && produto.tamanho === tamanho);
 
             const padmer = data.cores.filter(padmer => padmer.padmer === cor);
 

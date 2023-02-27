@@ -20,25 +20,6 @@ export const buscarLinkBanco = async () => {
         console.log(error.message);
     }
 }
-export const gravarUsaCorTamanho = async (usaCorTamanho) => {
-    try {
-        await AsyncStorage.removeItem('usaCorTamanho')
-        await AsyncStorage.setItem('usaCorTamanho', usaCorTamanho);
-    } catch (e) {
-        console.log(e)
-    }
-}
-export const buscarUsaCorTamanho = async () => {
-    try {
-        const value = await AsyncStorage.getItem('usaCorTamanho');
-        if (value) {
-            return value;
-        }
-        return;
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 export const gravarUsaGrade = async (usaGrade) => {
     try {
         await AsyncStorage.removeItem('usaGrade')
@@ -50,6 +31,25 @@ export const gravarUsaGrade = async (usaGrade) => {
 export const buscarUsaGrade = async () => {
     try {
         const value = await AsyncStorage.getItem('usaGrade');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+export const gravarUsaTabPre = async (usaTabPre) => {
+    try {
+        await AsyncStorage.removeItem('usaTabPre')
+        await AsyncStorage.setItem('usaTabPre', usaTabPre);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarUsaTabPre = async () => {
+    try {
+        const value = await AsyncStorage.getItem('usaTabPre');
         if (value) {
             return value;
         }

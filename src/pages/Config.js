@@ -4,24 +4,32 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    Alert
+    Alert,
+    Platform
 } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import api from '../services/api';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Config() {
+    const [loading, setLoading] = useState(false);
     const [endApi, setEndApi] = useState(api.defaults.baseURL);
     const [usaGrade, setUsaGrade] = useState(false);
+    const [usaTabPre, setUsaTabPre] = useState(false);
     const [usaControleEstoque, setUsaControleEstoque] = useState(false);
     const [alteraValVen, setAlteraValVen] = useState(false);
     const [limPorDes, setLimPorDes] = useState('100');
 
     async function getConfig() {
         try {
+            setLoading(true);
             const response = await api.get('/configs');
 
             //Usa grade de cor/tamanho
             const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
+
+            //Usa tabela de preco
+            const usaTabPre = response.data.filter((config) => config.con === 'UsaTabPre');
 
             //Controla estoque, não vende produto com estoque negativo/zerado
             const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
@@ -35,6 +43,10 @@ export default function Config() {
             if (usaGrade) {
                 setUsaGrade(Boolean(usaGrade[0].val));
             }
+            if (usaTabPre) {
+                const usaTabelaPreco = Boolean(Number(usaTabPre[0].val));
+                setUsaTabPre(usaTabelaPreco.toString());
+              }
             if (controlaEstoque) {
                 const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
                 setUsaControleEstoque(controlaestoque);
@@ -47,7 +59,10 @@ export default function Config() {
                 setLimPorDes(limitePorcentagemDesconto[0].val);
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            setLoading(false);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -57,6 +72,7 @@ export default function Config() {
 
     return (
         <View style={styles.container}>
+            <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
             <Text style={styles.title}>Configurações</Text>
             <View style={styles.form}>
                 <View>
@@ -72,6 +88,16 @@ export default function Config() {
                             value={usaGrade}
                             onValueChange={() => {
                                 Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro UsaGra');
+                            }}
+                            style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView}>
+                        <Text style={styles.fieldText}>Usa tabela de preço?</Text>
+                        <Checkbox
+                            value={usaTabPre}
+                            onValueChange={() => {
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro UsaTabPre');
                             }}
                             style={styles.checkBox}
                         />

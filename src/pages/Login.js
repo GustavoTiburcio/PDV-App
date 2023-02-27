@@ -5,7 +5,7 @@ import * as Animatable from 'react-native-animatable'
 import api from '../services/api';
 import { gravarLogin, buscarLogin, limparLogin } from '../controle/LoginStorage';
 import { GestureHandlerRootView, LongPressGestureHandler, State } from 'react-native-gesture-handler';
-import { gravarAlteraValorVenda, gravarLimitePorcentagemDesconto, gravarUsaControleEstoque, gravarUsaGrade } from '../controle/ConfigStorage';
+import { gravarAlteraValorVenda, gravarLimitePorcentagemDesconto, gravarUsaControleEstoque, gravarUsaGrade, gravarUsaTabPre } from '../controle/ConfigStorage';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Login() {
@@ -87,6 +87,9 @@ export default function Login() {
       //Usa grade de cor/tamanho
       const usaGrade = response.data.filter((config) => config.con === 'UsaGra');
 
+      //Usa tabela de preco
+      const usaTabPre = response.data.filter((config) => config.con === 'UsaTabPre');
+
       //Controla estoque, não vende produto com estoque negativo/zerado
       const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
 
@@ -99,6 +102,10 @@ export default function Login() {
       if (usaGrade) {
         const usagrade = Boolean(Number(usaGrade[0].val));
         await gravarUsaGrade(usagrade.toString());
+      }
+      if (usaTabPre) {
+        const usaTabelaPreco = Boolean(Number(usaTabPre[0].val));
+        await gravarUsaTabPre(usaTabelaPreco.toString());
       }
       if (controlaEstoque) {
         const controlaestoque = !Boolean(Number(controlaEstoque[0].val));

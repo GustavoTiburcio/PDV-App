@@ -17,6 +17,8 @@ import LottieView from 'lottie-react-native';
 // import { buscarUsaEstoquePorCategoria } from '../controle/ConfigStorage';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 import Spinner from 'react-native-loading-spinner-overlay';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { buscarUsaTabPre } from '../controle/ConfigStorage';
 
 export default function ListaProduto({ navigation }) {
   const [data, setData] = useState([]);
@@ -25,17 +27,29 @@ export default function ListaProduto({ navigation }) {
   const [page, setPage] = useState(0);
   const [pesquisa, setPesquisa] = useState(' ');
   // const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
+  const [usaTabPre, setUsaTabPre] = useState(false);
 
-  // async function getConfig() {
-  //   try {
-  //     const response = await buscarUsaEstoquePorCategoria();
-  //     if (response) {
-  //       setUsaEstoquePorCategoria(JSON.parse(response));
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
+  const [openPicker, setOpenPicker] = useState(false);
+  const [valuePicker, setValuePicker] = useState(null);
+  const [tabelasPreco, setTabelasPreco] = useState([
+    { label: 'Atacado', value: 'Atacado' },
+    { label: 'Varejo', value: 'Varejo' },
+  ]);
+
+  async function getConfig() {
+    try {
+      // const response = await buscarUsaEstoquePorCategoria();
+      // if (response) {
+      //   setUsaEstoquePorCategoria(JSON.parse(response));
+      // }
+      const usaTabelaPreco = await buscarUsaTabPre();
+      if (usaTabelaPreco) {
+        setUsaTabPre(JSON.parse(usaTabelaPreco));
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   async function getMercador() {
     if (footerLoading) return;
@@ -82,6 +96,16 @@ export default function ListaProduto({ navigation }) {
     )
   }
 
+  function ValorDeVenda({ data }) {
+    if (valuePicker === 'Atacado') {
+      return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVen1)}</Text>
+    }
+    if (valuePicker === 'Varejo') {
+      return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVen2)}</Text>
+    }
+    return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVenMin)}</Text>
+  }
+
   function ListItem({ data }) {
     return (
       <View style={styles.listItem}>
@@ -90,16 +114,15 @@ export default function ListaProduto({ navigation }) {
         }}>
           <Image
             resizeMode='center'
-            style={{ height: 250, borderWidth: 0.2, borderColor: '#000', resizeMode: 'contain', borderRadius: 10 }}
+            style={{ height: 250, resizeMode: 'contain' }}
             source={{
               uri: data.linkFot ? 'https://' + data.linkFot : 'https://higa.membros.supermercadozen.com.br/assets/tema01/img/produto-sem-foto.png'
             }}
           />
         </View>
         <Text style={{ textAlign: 'center' }}>{data.codBar}</Text>
-        <Text />
         <Text style={styles.listText}>{data.mer}</Text>
-        <Text style={styles.listText}>{ConvertNumberParaReais(data.valVenMin)}</Text>
+        <ValorDeVenda data={data} />
         <Text />
         <View
           style={{
@@ -107,7 +130,7 @@ export default function ListaProduto({ navigation }) {
             borderBottomWidth: StyleSheet.hairlineWidth,
           }}
         />
-        <View flexDirection={'row'} style={{ justifyContent: 'space-evenly' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
           {/* {usaEstoquePorCategoria ?
             <View>
               <TouchableOpacity
@@ -121,7 +144,7 @@ export default function ListaProduto({ navigation }) {
             <TouchableOpacity
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
-              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer.toUpperCase(), valor: data.valVenMin })}>
+              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer.toUpperCase() })}>
               <Text style={styles.TextButton}>Detalhes</Text>
             </TouchableOpacity>
           </View>
@@ -130,20 +153,41 @@ export default function ListaProduto({ navigation }) {
     )
   }
 
-  // useEffect(() => {
-  //   navigation.addListener('focus', () => {
-  //     getConfig();
-  //   });
-  // }, [navigation]);
-
   useEffect(() => {
     getMercador();
   }, [data]);
+
+  useEffect(() => {
+    getConfig();
+  }, []);
+  
 
   return (
     <View style={styles.container}>
       <StatusBar style='auto' />
       <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
+      {usaTabPre && <View style={{ flexDirection: 'row', marginLeft: '5%', marginTop: 10 }}>
+        <Text style={styles.text}>Tabela:</Text>
+        <DropDownPicker
+          style={styles.picker}
+          dropDownDirection="BOTTOM"
+          placeholder="Selecionar"
+          open={openPicker}
+          value={valuePicker}
+          items={tabelasPreco}
+          setOpen={() => { setOpenPicker(!openPicker) }}
+          setValue={setValuePicker}
+          setItems={setTabelasPreco}
+          dropDownContainerStyle={{
+            width: '50%', marginLeft: 10
+          }}
+          ListEmptyComponent={() => (
+            <View style={{ justifyContent: 'center' }}>
+              <ActivityIndicator size="large" color="#38A69D" />
+            </View>
+          )}
+        />
+      </View>}
       <SearchBar
         style={styles.searchBar}
         placeholder="Digite o nome do produto"
@@ -228,5 +272,14 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
     fontWeight: 'bold'
-  }
+  },
+  text: {
+    color: '#555555',
+    fontSize: 16,
+    marginTop: 15,
+  },
+  picker: {
+    width: '50%',
+    marginLeft: 10
+  },
 });
