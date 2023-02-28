@@ -37,6 +37,7 @@ export default function ListaProduto({ navigation }) {
   ]);
 
   async function getConfig() {
+    setLoading(true);
     try {
       // const response = await buscarUsaEstoquePorCategoria();
       // if (response) {
@@ -48,6 +49,10 @@ export default function ListaProduto({ navigation }) {
       }
     } catch (error) {
       console.log(error.message);
+      setLoading(false);
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -72,13 +77,16 @@ export default function ListaProduto({ navigation }) {
 
       setData([...data, ...response.data.content]);
       setPage(page + 1);
-      setFooterLoading(false);
-      setLoading(false);
+
     } catch (error) {
       console.log(error.message);
       setFooterLoading(false);
       setLoading(false);
       Alert.alert('Erro ao buscar produtos.', error.message);
+    }
+    finally {
+      setFooterLoading(false);
+      setLoading(false);
     }
   }
 
@@ -144,7 +152,7 @@ export default function ListaProduto({ navigation }) {
             <TouchableOpacity
               style={styles.CarrinhoButton}
               activeOpacity={0.5}
-              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer.toUpperCase() })}>
+              onPress={() => navigation.navigate('ListaCarrinho', { codbar: data.codBar, mer: data.mer.toUpperCase(), tabPre: valuePicker })}>
               <Text style={styles.TextButton}>Detalhes</Text>
             </TouchableOpacity>
           </View>
@@ -160,34 +168,34 @@ export default function ListaProduto({ navigation }) {
   useEffect(() => {
     getConfig();
   }, []);
-  
 
   return (
     <View style={styles.container}>
       <StatusBar style='auto' />
       <Spinner visible={loading} size={Platform.OS === 'android' ? 50 : 'large'} />
-      {usaTabPre && <View style={{ flexDirection: 'row', marginLeft: '5%', marginTop: 10 }}>
-        <Text style={styles.text}>Tabela:</Text>
-        <DropDownPicker
-          style={styles.picker}
-          dropDownDirection="BOTTOM"
-          placeholder="Selecionar"
-          open={openPicker}
-          value={valuePicker}
-          items={tabelasPreco}
-          setOpen={() => { setOpenPicker(!openPicker) }}
-          setValue={setValuePicker}
-          setItems={setTabelasPreco}
-          dropDownContainerStyle={{
-            width: '50%', marginLeft: 10
-          }}
-          ListEmptyComponent={() => (
-            <View style={{ justifyContent: 'center' }}>
-              <ActivityIndicator size="large" color="#38A69D" />
-            </View>
-          )}
-        />
-      </View>}
+      {usaTabPre &&
+        <View style={{ flexDirection: 'row', marginLeft: '5%', marginTop: 10 }}>
+          <Text style={styles.text}>Tabela:</Text>
+          <DropDownPicker
+            style={styles.picker}
+            dropDownDirection="BOTTOM"
+            placeholder="Selecionar"
+            open={openPicker}
+            value={valuePicker}
+            items={tabelasPreco}
+            setOpen={() => { setOpenPicker(!openPicker) }}
+            setValue={setValuePicker}
+            setItems={setTabelasPreco}
+            dropDownContainerStyle={{
+              width: '50%', marginLeft: 10
+            }}
+            ListEmptyComponent={() => (
+              <View style={{ justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color="#38A69D" />
+              </View>
+            )}
+          />
+        </View>}
       <SearchBar
         style={styles.searchBar}
         placeholder="Digite o nome do produto"
@@ -195,6 +203,7 @@ export default function ListaProduto({ navigation }) {
         onSearchPress={() => novaPesquisa()}
         returnKeyType="go"
         onSubmitEditing={() => novaPesquisa()}
+        onClearPress={() => setPesquisa('')}
       />
       {data.length > 0 ?
         <FlatList

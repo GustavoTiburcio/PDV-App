@@ -27,7 +27,7 @@ export default function Login() {
       const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`);
 
       if (!response.data) {
-        Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas')
+        Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas');
         setLoading(false);
         return;
       }
@@ -38,6 +38,8 @@ export default function Login() {
 
     } catch (error) {
       console.log(error);
+      Alert.alert('Falha no login', error.message);
+      setLoading(false);
     }
   }
 
@@ -52,7 +54,7 @@ export default function Login() {
 
         if (!response.data) {
           limparLogin();
-          Alert.alert('Usuário ou senha incorretos', 'Faça login novamente.')
+          Alert.alert('Usuário ou senha incorretos', 'Faça login novamente.');
           setLoading(false);
           return;
         }
@@ -67,6 +69,7 @@ export default function Login() {
       return;
     } catch (error) {
       console.log(error);
+      Alert.alert('Falha no login', error.message);
       setLoading(false);
     }
   }
@@ -89,6 +92,7 @@ export default function Login() {
 
       //Usa tabela de preco
       const usaTabPre = response.data.filter((config) => config.con === 'UsaTabPre');
+      console.log(usaTabPre);
 
       //Controla estoque, não vende produto com estoque negativo/zerado
       const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
@@ -129,7 +133,7 @@ export default function Login() {
   useEffect(() => {
     VerificarLogado();
     GetConfig();
-  }, [])
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

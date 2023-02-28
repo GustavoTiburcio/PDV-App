@@ -168,6 +168,7 @@ export default function CadastroCliente({ navigation }) {
                                 }
                             }}
                             value={email}
+                            keyboardType='email-address'
                         />
                     </View>
                     <View flexDirection="row">

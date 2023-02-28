@@ -41,12 +41,13 @@ export default function Config() {
             const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
 
             if (usaGrade) {
-                setUsaGrade(Boolean(usaGrade[0].val));
+                const usagrade = Boolean(Number(usaGrade[0].val));
+                setUsaGrade(usagrade);
             }
             if (usaTabPre) {
                 const usaTabelaPreco = Boolean(Number(usaTabPre[0].val));
-                setUsaTabPre(usaTabelaPreco.toString());
-              }
+                setUsaTabPre(usaTabelaPreco);
+            }
             if (controlaEstoque) {
                 const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
                 setUsaControleEstoque(controlaestoque);

@@ -225,10 +225,11 @@ async function reqPrintPDF(codped) {
 };
 
 async function reqSharePDF(codped) {
-    const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
-    async function createPDF() {
-        var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
-            return `<tr>
+    try {
+        const response = await api.get(`pedidos/listarParaImprimir?cod=${codped}`)
+        async function createPDF() {
+            var PrintItems = response.data.Pedidos[0].itensPedido.map(function (item) {
+                return `<tr>
           <td style={{ fontSize: "36px" , maxWidth:"180px"}}>
               <b>${item.mer} ${item.pad} ${item.codtam}</b>
           </td>
@@ -242,9 +243,9 @@ async function reqSharePDF(codped) {
               <b>${(item.qua * item.valUni).toFixed(2).replace('.', ',')}</b>
           </td>
           </tr>`;
-        });
+            });
 
-        const htmlContent = `
+            const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -320,16 +321,15 @@ async function reqSharePDF(codped) {
           </html>
         `;
 
-        try {
             const { uri } = await Print.printToFileAsync({
                 html: htmlContent,
                 width: 1000, height: 1500
             });
             Sharing.shareAsync(uri)
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    createPDF();
+        };
+        createPDF();
+    } catch (error) {
+        console.error(error);
+    }
 };
 export { PrintPDF, reqPrintPDF, reqSharePDF }

@@ -107,14 +107,15 @@ export const deletarItenCarrinhoNoBanco = async (itemCarrinho) => {
         let itens = [];
         const getJsonValue = await AsyncStorage.getItem('itensCarrinho');
         itens = JSON.parse(getJsonValue);
-        const itensSalva = itens.filter(item => ((item.codmer != itemCarrinho.codmer)));
+        const itensSalva = itens.filter(item => (item.codmer != itemCarrinho.codmer) || (item.codmer === itemCarrinho.codmer && item.valor != itemCarrinho.valor));
         if (itensSalva.length === 0) {
             await AsyncStorage.removeItem('itensCarrinho');
-            await AsyncStorage.removeItem('i'); //* */
-        } else {
-            const jsonValue = JSON.stringify(itensSalva);
-            await AsyncStorage.setItem('itensCarrinho', jsonValue);
+            await AsyncStorage.removeItem('i');
+            return;
         }
+        const jsonValue = JSON.stringify(itensSalva);
+        await AsyncStorage.setItem('itensCarrinho', jsonValue);
+
     } catch (e) {
         console.log(e)
     }

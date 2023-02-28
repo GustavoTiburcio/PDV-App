@@ -112,9 +112,9 @@ export default function VendasFinalizadas() {
       return items.cod == codped;
     });
 
-    const itens = pedidofiltrado[0].itensPedido.map(item => {
+    const itens = pedidofiltrado[0].itensPedido.map((item, index) => {
       return (
-        <View key={item.codmer}>
+        <View key={index}>
           <Grid>
             <Col size={15} style={{}}>
               <Row style={styles.cell}>
@@ -159,10 +159,10 @@ export default function VendasFinalizadas() {
             activeOpacity={0.5}
             onPress={() => {
               if (data.visualizarItens == false) {
-                data.visualizarItens = true;
+                data['visualizarItens'] = true;
                 setRefresh(true);
               } else {
-                data.visualizarItens = false;
+                data['visualizarItens'] = false;
                 setRefresh(true);
               }
             }}>
@@ -231,7 +231,7 @@ export default function VendasFinalizadas() {
       <FlatList
         contentContainerStyle={{ marginHorizontal: 20, paddingBottom: 20 }}
         data={data}
-        keyExtractor={item => String(item.cod)}
+        keyExtractor={(item, index) => String(index)}
         renderItem={({ item }) => <ListItem data={item} />}
         onEndReached={({ distanceFromEnd }) => {
           if (distanceFromEnd <= 0) return;
