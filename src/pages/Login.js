@@ -92,7 +92,7 @@ export default function Login() {
 
       //Usa tabela de preco
       const usaTabPre = response.data.filter((config) => config.con === 'UsaTabPre');
-      console.log(usaTabPre);
+      // console.log(usaTabPre);
 
       //Controla estoque, não vende produto com estoque negativo/zerado
       const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
