@@ -15,23 +15,23 @@ export default function Login() {
 
   const navigation = useNavigation();
 
-  async function LoginAuthenticate() {
+  async function LoginAuthenticate(login, senha) {
     try {
       setLoading(true);
-      if (!username || !password) {
+      if (!login || !senha) {
         setLoading(false);
         Alert.alert('Usuário ou senha incorretos');
         return;
       }
 
-      const response = await api.get(`/usuarios/loginProvisorio?username=${username}&password=${password}`);
+      const response = await api.get(`/usuarios/loginProvisorio?username=${login}&password=${senha}`);
 
       if (!response.data) {
+        limparLogin();
         Alert.alert('Usuário ou senha incorretos', 'Verifique as credenciais informadas');
-        setLoading(false);
         return;
       }
-      setLoading(false);
+
       gravarLogin(response.data);
       navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
       return;
@@ -39,38 +39,22 @@ export default function Login() {
     } catch (error) {
       console.log(error);
       Alert.alert('Falha no login', error.message);
+    }
+    finally {
       setLoading(false);
     }
   }
 
   async function VerificarLogado() {
     try {
-      setLoading(true);
-
       const login = await buscarLogin();
 
       if (login) {
-        const response = await api.get(`/usuarios/loginProvisorio?username=${login.username}&password=${login.password}`);
-
-        if (!response.data) {
-          limparLogin();
-          Alert.alert('Usuário ou senha incorretos', 'Faça login novamente.');
-          setLoading(false);
-          return;
-        }
-
-        setLoading(false);
-        gravarLogin(response.data);
-        navigation.navigate('ListaProduto', { title: `Bem-Vindo ${response.data.username}` });
-        return;
+        LoginAuthenticate(login?.username, login?.password);
       }
-
-      setLoading(false);
-      return;
     } catch (error) {
       console.log(error);
       Alert.alert('Falha no login', error.message);
-      setLoading(false);
     }
   }
 
@@ -92,7 +76,6 @@ export default function Login() {
 
       //Usa tabela de preco
       const usaTabPre = response.data.filter((config) => config.con === 'UsaTabPre');
-      // console.log(usaTabPre);
 
       //Controla estoque, não vende produto com estoque negativo/zerado
       const controlaEstoque = response.data.filter((config) => config.con === 'VenAciEst');
@@ -167,7 +150,7 @@ export default function Login() {
             />
             <TouchableOpacity
               style={styles.button}
-              onPress={LoginAuthenticate}
+              onPress={() => LoginAuthenticate(username, password)}
             >
               <Text style={styles.buttonText}>Acessar</Text>
             </TouchableOpacity>
