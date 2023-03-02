@@ -242,6 +242,25 @@ function FinalizarCarrinho({ route, navigation }) {
                     />
                 </View>
                 <View flexDirection="row">
+                    <Text style={styles.inputText}>Frete R$..: </Text>
+                    <TextInput
+                        style={styles.inputDesconto}
+                        keyboardType="numeric"
+                        onChangeText={text => {
+                            setValFre(text.replace(',', '.'));
+                        }}
+                        onEndEditing={e => {
+                            if (e.nativeEvent.text == '') {
+                                setValFre('0');
+                            }
+                        }}
+                        value={valFre.replace('.', ',')}
+                    />
+                </View>
+            </View>
+            {/* Comentado por conta da ocorrencia 175745
+                <View flexDirection="row" style={styles.discountView}>
+                <View flexDirection="row">
                     <Text style={styles.inputText}>Desconto R$: </Text>
                     <TextInput
                         style={styles.inputDesconto}
@@ -262,43 +281,25 @@ function FinalizarCarrinho({ route, navigation }) {
                         value={valDes.replace('.', ',')}
                     />
                 </View>
-            </View>
-            <View flexDirection="row" style={styles.discountView}>
                 <View flexDirection="row">
                     <Text style={styles.inputText}>Juros R$..: </Text>
                     <TextInput
                         style={styles.inputDesconto}
                         keyboardType="numeric"
-                        // onChangeText={text => {
-                        //     setValJur(text.replace(',', '.'));
-                        // }}
-                        // onEndEditing={e => {
-                        //     if (e.nativeEvent.text == '') {
-                        //         setValJur('0');
-                        //     }
-                        // }}
+                        onChangeText={text => {
+                            setValJur(text.replace(',', '.'));
+                        }}
+                        onEndEditing={e => {
+                            if (e.nativeEvent.text == '') {
+                                setValJur('0');
+                            }
+                        }}
                         value={valJur.replace('.', ',')}
                         editable={false}
                         selectTextOnFocus={false}
                     />
                 </View>
-                <View flexDirection="row">
-                    <Text style={styles.inputText}>Frete R$..: </Text>
-                    <TextInput
-                        style={styles.inputDesconto}
-                        keyboardType="numeric"
-                        onChangeText={text => {
-                            setValFre(text.replace(',', '.'));
-                        }}
-                        onEndEditing={e => {
-                            if (e.nativeEvent.text == '') {
-                                setValFre('0');
-                            }
-                        }}
-                        value={valFre.replace('.', ',')}
-                    />
-                </View>
-            </View>
+            </View> */}
             <View style={{ width: '100%' }}>
                 <TouchableOpacity onPress={enviaPedido} style={styles.envioButton}>
                     <Text style={styles.TextButton}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
@@ -371,6 +372,7 @@ const styles = StyleSheet.create({
     discountView: {
         justifyContent: 'space-evenly',
         marginTop: 15,
+        width: '100%'
     },
     envioButton: {
         padding: 15,
