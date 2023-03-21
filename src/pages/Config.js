@@ -40,23 +40,23 @@ export default function Config() {
             //Limita porcentagem de desconto permitida
             const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
 
-            if (usaGrade) {
+            if (usaGrade.length > 0) {
                 const usagrade = Boolean(Number(usaGrade[0].val));
                 setUsaGrade(usagrade);
             }
-            if (usaTabPre) {
+            if (usaTabPre.length > 0) {
                 const usaTabelaPreco = Boolean(Number(usaTabPre[0].val));
                 setUsaTabPre(usaTabelaPreco);
             }
-            if (controlaEstoque) {
+            if (controlaEstoque.length > 0) {
                 const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
                 setUsaControleEstoque(controlaestoque);
             }
-            if (alteraValVen) {
+            if (alteraValVen.length > 0) {
                 const alteraValorVenda = Boolean(Number(alteraValVen[0].val));
                 setAlteraValVen(alteraValorVenda);
             }
-            if (limitePorcentagemDesconto) {
+            if (limitePorcentagemDesconto.length > 0) {
                 setLimPorDes(limitePorcentagemDesconto[0].val);
             }
         } catch (error) {

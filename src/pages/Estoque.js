@@ -3,10 +3,9 @@ import { View, StyleSheet, Text } from 'react-native';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import api from '../services/api';
 
-export default function Estoque({ route, navigation }) {
+export default function Estoque({ route }) {
 
   const codbar = route.params?.codbar;
-  let teste;
   const [data, setData] = useState({});
 
   async function getListarEstoque() {
@@ -35,19 +34,19 @@ export default function Estoque({ route, navigation }) {
             <Row style={styles.cell}>
             </Row>
             <Row style={styles.cell}>
-              <Text>Categoria 1</Text>
+              <Text>Matriz</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Categoria 2</Text>
+              <Text>ANDRE RHU 8G64</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Categoria 3</Text>
+              <Text>ALEXANDRE RHT 4C46</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Categoria 4</Text>
+              <Text>FABIO RHT 4G42</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>Categoria 5</Text>
+              <Text>CILAS BDY 0682</Text>
             </Row>
           </Col>
           <Col size={25}>

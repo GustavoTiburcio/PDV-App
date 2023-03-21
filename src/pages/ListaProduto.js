@@ -139,7 +139,7 @@ export default function ListaProduto({ navigation }) {
           }}
         />
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          {/* {usaEstoquePorCategoria ?
+          {api.defaults.baseURL === 'http://192.168.25.167:8087/api' || api.defaults.baseURL === 'http://tifire.sytes.net:8087/api' ?
             <View>
               <TouchableOpacity
                 style={styles.CarrinhoButton}
@@ -147,7 +147,7 @@ export default function ListaProduto({ navigation }) {
                 onPress={() => navigation.navigate('Estoque', { codbar: data.codBar })}>
                 <Text style={styles.TextButton}>Estoque</Text>
               </TouchableOpacity>
-            </View> : <></>} */}
+            </View> : <></>}
           <View>
             <TouchableOpacity
               style={styles.CarrinhoButton}

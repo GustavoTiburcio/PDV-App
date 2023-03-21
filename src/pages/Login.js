@@ -86,23 +86,23 @@ export default function Login() {
       //Limita porcentagem de desconto permitida
       const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
 
-      if (usaGrade) {
+      if (usaGrade.length > 0) {
         const usagrade = Boolean(Number(usaGrade[0].val));
         await gravarUsaGrade(usagrade.toString());
       }
-      if (usaTabPre) {
+      if (usaTabPre.length > 0) {
         const usaTabelaPreco = Boolean(Number(usaTabPre[0].val));
         await gravarUsaTabPre(usaTabelaPreco.toString());
       }
-      if (controlaEstoque) {
+      if (controlaEstoque.length > 0) {
         const controlaestoque = !Boolean(Number(controlaEstoque[0].val));
         await gravarUsaControleEstoque(controlaestoque.toString());
       }
-      if (alteraValVen) {
+      if (alteraValVen.length > 0) {
         const alteraValorVenda = Boolean(Number(alteraValVen[0].val));
         await gravarAlteraValorVenda(alteraValorVenda.toString());
       }
-      if (limitePorcentagemDesconto) {
+      if (limitePorcentagemDesconto.length > 0) {
         await gravarLimitePorcentagemDesconto(limitePorcentagemDesconto[0].val);
       }
 
