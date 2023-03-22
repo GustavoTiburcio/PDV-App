@@ -25,7 +25,7 @@ export default function ListaProduto({ navigation }) {
   const [footerLoading, setFooterLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [pesquisa, setPesquisa] = useState(' ');
+  const [pesquisa, setPesquisa] = useState('');
   // const [usaEstoquePorCategoria, setUsaEstoquePorCategoria] = useState(false);
   const [usaTabPre, setUsaTabPre] = useState(false);
 
@@ -66,8 +66,11 @@ export default function ListaProduto({ navigation }) {
     }
 
     try {
-      //caso cliente seja gold chaves, adicionar parametro &campo=gold para ordenar retorno da pesquisa.
-      const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}`);
+
+      //caso cliente seja gold chaves, adicionar parametro &campo=gold para filtrar retorno da pesquisa.
+      const goldChaves = api.defaults.baseURL === 'http://192.168.25.167:8087/api' || api.defaults.baseURL === 'http://tifire.sytes.net:8087/api' ? '&campo=gold' : '';
+
+      const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}${goldChaves}`);
 
       if (response.data?.content.length === 0) {
         setLoading(false);
