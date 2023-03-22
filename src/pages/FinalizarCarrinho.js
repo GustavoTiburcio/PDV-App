@@ -103,13 +103,12 @@ function FinalizarCarrinho({ route, navigation }) {
             });
             const ped = JSON.stringify({
                 cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-                trarednom: '', valpro: valorBruto, valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
-            })
+                trarednom: '', valpro: Number(valorBruto.toFixed(2)), valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
+            });
 
             const result = await postPedido(ped);
 
             if (result) {
-                // const limparCarrinhoStorage = await limparItensCarrinhoNoBanco();
                 limparItensCarrinhoNoBanco().then(resultado => {
                     if (resultado) {
                         setItensCarrinho(null);
@@ -137,9 +136,11 @@ function FinalizarCarrinho({ route, navigation }) {
                             ]
                         );
                     }
+                    setLoading(false);
                 });
-
             }
+
+            setLoading(false);
         } catch (error) {
             setLoading(false);
             Alert.alert('Erro ao finalizar', error.message);
