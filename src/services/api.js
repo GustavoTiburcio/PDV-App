@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL_PINDUFOODS_INTERNO, API_URL_GOLDCHAVES_INTERNO } from '@env';
 
 const api = axios.create({
-      baseURL: 'http://192.168.25.167:8091/api'
+      baseURL: API_URL_PINDUFOODS_INTERNO
 });
 
 export default api;

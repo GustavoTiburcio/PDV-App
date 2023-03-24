@@ -19,6 +19,7 @@ import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { buscarUsaTabPre } from '../controle/ConfigStorage';
+import { API_URL_GOLDCHAVES, API_URL_GOLDCHAVES_INTERNO } from '@env';
 
 export default function ListaProduto({ navigation }) {
   const [data, setData] = useState([]);
@@ -68,7 +69,7 @@ export default function ListaProduto({ navigation }) {
     try {
 
       //caso cliente seja gold chaves, adicionar parametro &campo=gold para filtrar retorno da pesquisa.
-      const goldChaves = api.defaults.baseURL === 'http://192.168.25.167:8087/api' || api.defaults.baseURL === 'http://tifire.sytes.net:8087/api' ? '&campo=gold' : '';
+      const goldChaves = api.defaults.baseURL === API_URL_GOLDCHAVES || api.defaults.baseURL === API_URL_GOLDCHAVES_INTERNO ? '&campo=gold' : '';
 
       const response = await api.get(`/mercador/listarProdutosCard?page=${page}&PESQUISA=${pesquisa}${goldChaves}`);
 

@@ -134,3 +134,22 @@ export const buscarUsaEstoquePorCategoria = async () => {
         console.log(error.message);
     }
 }
+export const gravarUsaTraRed = async (UsaTraRed) => {
+    try {
+        await AsyncStorage.removeItem('UsaTraRed')
+        await AsyncStorage.setItem('UsaTraRed', UsaTraRed);
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const buscarUsaTraRed = async () => {
+    try {
+        const value = await AsyncStorage.getItem('UsaTraRed');
+        if (value) {
+            return value;
+        }
+        return;
+    } catch (error) {
+        console.log(error.message);
+    }
+}

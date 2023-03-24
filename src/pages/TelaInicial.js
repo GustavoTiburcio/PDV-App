@@ -3,16 +3,33 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity
 } from 'react-native';
 
 import * as Animatable from 'react-native-animatable';
 
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
+import api from '../services/api';
+import {
+  API_URL_GOLDCHAVES, API_URL_GOLDCHAVES_INTERNO,
+  API_URL_PINDUFOODS, API_URL_PINDUFOODS_INTERNO,
+  API_URL_PAPERPLAS, API_URL_PAPERPLAS_INTERNO
+} from '@env';
 
 export default function TelaInicial() {
   const navigation = useNavigation();
+
+  function LogoPorCliente() {
+    if (api.defaults.baseURL === API_URL_GOLDCHAVES || api.defaults.baseURL === API_URL_GOLDCHAVES_INTERNO) {
+      return 'https://imagizer.imageshack.com/img924/5123/ciUHTV.jpg'
+    }
+    if (api.defaults.baseURL === API_URL_PINDUFOODS || api.defaults.baseURL === API_URL_PINDUFOODS_INTERNO) {
+      return 'https://imagizer.imageshack.com/img922/5654/ENd4qQ.png'
+    }
+    if (api.defaults.baseURL === API_URL_PAPERPLAS || api.defaults.baseURL === API_URL_PAPERPLAS_INTERNO) {
+      return 'https://imagizer.imageshack.com/img923/2646/Oc8IEE.jpg'
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -20,11 +37,12 @@ export default function TelaInicial() {
       <View style={styles.containerLogo}>
         <Animatable.Image
           animation="flipInY"
-          source={require('../images/logo.jpg')}
+          source={{uri: LogoPorCliente()}}
           style={{ width: '85%', height: '25%', borderRadius: 10 }}
           resizeMode="contain"
         />
       </View>
+
       <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>
         <Text style={styles.title}>Ponto de Venda Móvel</Text>
         <Text style={styles.text}>A mobilidade aumenta a qualidade das vendas. </Text>

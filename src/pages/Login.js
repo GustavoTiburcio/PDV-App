@@ -5,7 +5,10 @@ import * as Animatable from 'react-native-animatable'
 import api from '../services/api';
 import { gravarLogin, buscarLogin, limparLogin } from '../controle/LoginStorage';
 import { GestureHandlerRootView, LongPressGestureHandler, State } from 'react-native-gesture-handler';
-import { gravarAlteraValorVenda, gravarLimitePorcentagemDesconto, gravarUsaControleEstoque, gravarUsaGrade, gravarUsaTabPre } from '../controle/ConfigStorage';
+import {
+  gravarAlteraValorVenda, gravarLimitePorcentagemDesconto, gravarUsaTraRed,
+  gravarUsaControleEstoque, gravarUsaGrade, gravarUsaTabPre
+} from '../controle/ConfigStorage';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Login() {
@@ -86,6 +89,9 @@ export default function Login() {
       //Limita porcentagem de desconto permitida
       const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
 
+      //Usa transportadora de redespacho
+      const usaTransRed = response.data.filter((config) => config.con === 'UsaTraRed');
+
       if (usaGrade.length > 0) {
         const usagrade = Boolean(Number(usaGrade[0].val));
         await gravarUsaGrade(usagrade.toString());
@@ -104,6 +110,10 @@ export default function Login() {
       }
       if (limitePorcentagemDesconto.length > 0) {
         await gravarLimitePorcentagemDesconto(limitePorcentagemDesconto[0].val);
+      }
+      if (usaTransRed.length > 0) {
+        const usaTransportadoraRedespacho = Boolean(Number(usaTransRed[0].val));
+        await gravarUsaTraRed(usaTransportadoraRedespacho.toString());
       }
 
     } catch (error) {

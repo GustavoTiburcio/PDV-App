@@ -19,6 +19,7 @@ export default function Config() {
     const [usaControleEstoque, setUsaControleEstoque] = useState(false);
     const [alteraValVen, setAlteraValVen] = useState(false);
     const [limPorDes, setLimPorDes] = useState('100');
+    const [usaTraRed, setUsaTraRed] = useState();
 
     async function getConfig() {
         try {
@@ -40,6 +41,9 @@ export default function Config() {
             //Limita porcentagem de desconto permitida
             const limitePorcentagemDesconto = response.data.filter((config) => config.con === 'LimPorDes');
 
+            //Usa transportadora de redespacho
+            const usaTransRed = response.data.filter((config) => config.con === 'UsaTraRed');
+
             if (usaGrade.length > 0) {
                 const usagrade = Boolean(Number(usaGrade[0].val));
                 setUsaGrade(usagrade);
@@ -58,6 +62,10 @@ export default function Config() {
             }
             if (limitePorcentagemDesconto.length > 0) {
                 setLimPorDes(limitePorcentagemDesconto[0].val);
+            }
+            if (usaTransRed.length > 0) {
+                const usaTransportadoraRedespacho = Boolean(Number(usaTransRed[0].val));
+                setUsaTraRed(usaTransportadoraRedespacho);
             }
         } catch (error) {
             console.log(error);
@@ -119,6 +127,16 @@ export default function Config() {
                             value={alteraValVen}
                             onValueChange={() => {
                                 Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro AltValVen');
+                            }}
+                            style={styles.checkBox}
+                        />
+                    </View>
+                    <View style={styles.checkBoxView}>
+                        <Text style={styles.fieldText}>Usa transportadora de redespacho?</Text>
+                        <Checkbox
+                            value={usaTraRed}
+                            onValueChange={() => {
+                                Alert.alert('Atenção', 'Configurações devem ser feitas pelo sigepe(Configurações > Config Site) ou tabela config da API. Parâmetro UsaTraRed');
                             }}
                             style={styles.checkBox}
                         />

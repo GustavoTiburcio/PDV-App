@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, TouchableOpacity, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Alert, TouchableOpacity, Text, TextInput, ScrollView } from 'react-native';
 import { postPedido } from '../services/requisicaoInserePedido';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PrintPDF } from '../components/printPDF';
 import { buscarItensCarrinhoNoBanco, limparItensCarrinhoNoBanco } from '../controle/CarrinhoStorage';
 import { ConvertNumberParaReais } from '../utils/ConvertNumberParaReais';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { buscarLimitePorcentagemDesconto } from '../controle/ConfigStorage';
+import { buscarLimitePorcentagemDesconto, buscarUsaTraRed } from '../controle/ConfigStorage';
+import api from '../services/api';
+import { API_URL_PAPERPLAS, API_URL_PAPERPLAS_INTERNO } from '@env';
 
 function FinalizarCarrinho({ route, navigation }) {
     var date = new Date();
@@ -16,16 +18,27 @@ function FinalizarCarrinho({ route, navigation }) {
     const [valorBruto, setValorBruto] = useState(0);
     const [nomRep, setNomRep] = useState('');
     const [codcat, setCodCat] = useState();
-    const [cliente, setDadosCliente] = useState();
     const [dadosLogin, setDadosLogin] = useState({});
-    const [obs, setObs] = useState('');
+
+
+    const [loading, setLoading] = useState(false);
+
+    //inputs
+    const [cliente, setDadosCliente] = useState('');
+    const [traRedNom, setTraRedNom] = useState('');
+    const [traRedEnd, setTraRedEnd] = useState('');
+    const [traRedCgc, setTraRedCgc] = useState('');
+    const [traRedFon, setTraRedFon] = useState('');
     const [porDes, setPorDes] = useState('0');
     const [valDes, setValDes] = useState('0');
     const [valJur, setValJur] = useState('0');
     const [valFre, setValFre] = useState('0');
-    const [loading, setLoading] = useState(false);
+    const [refCom, setRefCom] = useState('');
+    const [obs, setObs] = useState('');
 
+    //configs
     const [limPorDes, setLimPorDes] = useState(100);
+    const [usaTraRed, setUsaTraRed] = useState(false);
 
     async function buscarItens() {
         await buscarItensCarrinhoNoBanco().then(resultado => {
@@ -58,11 +71,14 @@ function FinalizarCarrinho({ route, navigation }) {
     async function getConfig() {
         try {
             const limitePorDes = await buscarLimitePorcentagemDesconto();
+            const usaTransRed = await buscarUsaTraRed();
 
             if (limPorDes) {
                 setLimPorDes(Number(limitePorDes));
             }
-
+            if (usaTransRed) {
+                setUsaTraRed(JSON.parse(usaTransRed));
+            }
 
         } catch (error) {
             console.log(error);
@@ -102,8 +118,8 @@ function FinalizarCarrinho({ route, navigation }) {
                 return { obs: iten.obs, qua: iten.quantidade, valuni: iten.valor, mercador: { cod: iten.codmer, mer: iten.item } };
             });
             const ped = JSON.stringify({
-                cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: '', traredend: '', traredfon: '',
-                trarednom: '', valpro: Number(valorBruto.toFixed(2)), valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
+                cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: traRedCgc, traredend: traRedEnd, traredfon: traRedFon,
+                trarednom: traRedNom, valpro: Number(valorBruto.toFixed(2)), valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
             });
 
             const result = await postPedido(ped);
@@ -172,94 +188,150 @@ function FinalizarCarrinho({ route, navigation }) {
     return (
         <View style={styles.container}>
             <Spinner visible={loading} />
-            <View flexDirection="row">
-                <View>
-                    <TouchableOpacity
-                        style={styles.Clientes}
-                        activeOpacity={0.5}
-                        onPress={() => {
-                            navigation.navigate('ListaCliente');
-                        }}>
-                        <Text style={styles.TextButton}>Selecionar Cliente</Text>
-                    </TouchableOpacity>
-                </View>
-                <View>
-                    <TouchableOpacity
-                        style={styles.NovoCliente}
-                        activeOpacity={0.5}
-                        onPress={() => {
-                            navigation.navigate('CadastroCliente');
-                        }}>
-                        <Text style={styles.TextButton}>Novo cliente</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View flexDirection="row" style={styles.clienteView}>
-                <Text style={styles.inputText}> Cliente: </Text>
-                <TextInput
-                    style={styles.input}
-                    multiline
-                    onFocus={() => { Alert.alert('Utilize os botões Buscar Cliente e Novo Cliente') }}
-                    editable={cliente ? true : false}
-                    numberOfLines={3}
-                    onChangeText={text => { }}
-                    placeholder={'Utilize os botões Buscar Cliente e Novo Cliente'}
-                    value={cliente ? cliente.raz + ' - ' + cliente.fan : ''}
-                />
-            </View>
-            <View flexDirection="row" style={styles.obsView}>
-                <Text style={styles.inputText}> Obs.....: </Text>
-                <TextInput
-                    style={styles.input}
-                    multiline
-                    editable={true}
-                    placeholder={'Observações'}
-                    numberOfLines={3}
-                    onChangeText={text => { setObs(text) }}
-                    value={obs}
-                />
-            </View>
-            <View flexDirection="row" style={styles.discountView}>
+            <ScrollView>
                 <View flexDirection="row">
-                    <Text style={styles.inputText}>Desconto %: </Text>
-                    <TextInput
-                        style={styles.inputDesconto}
-                        keyboardType="numeric"
-                        onChangeText={text => {
-                            if (VerificaDescontoLimite(text.replace(',', '.'), valDes)) {
-                                Alert.alert('Desconto não permitido', 'Desconto máximo permitido: ' + limPorDes + '%');
-                                setPorDes('0');
-                                return;
-                            }
-                            setPorDes(text.replace(',', '.'));
-                        }}
-                        onEndEditing={e => {
-                            if (e.nativeEvent.text == '') {
-                                setPorDes('0');
-                            }
-                        }}
-                        value={porDes.replace('.', ',')}
-                        maxLength={4}
-                    />
+                    <View>
+                        <TouchableOpacity
+                            style={styles.Clientes}
+                            activeOpacity={0.5}
+                            onPress={() => {
+                                navigation.navigate('ListaCliente');
+                            }}>
+                            <Text style={styles.TextButton}>Selecionar Cliente</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <TouchableOpacity
+                            style={styles.NovoCliente}
+                            activeOpacity={0.5}
+                            onPress={() => {
+                                navigation.navigate('CadastroCliente');
+                            }}>
+                            <Text style={styles.TextButton}>Novo cliente</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View flexDirection="row">
-                    <Text style={styles.inputText}>Frete R$..: </Text>
-                    <TextInput
-                        style={styles.inputDesconto}
-                        keyboardType="numeric"
-                        onChangeText={text => {
-                            setValFre(text.replace(',', '.'));
-                        }}
-                        onEndEditing={e => {
-                            if (e.nativeEvent.text == '') {
-                                setValFre('0');
-                            }
-                        }}
-                        value={valFre.replace('.', ',')}
-                    />
-                </View>
-            </View>
-            {/* Comentado por conta da ocorrencia 175745
+                <View style={{ width: '95%', marginLeft: '3%' }}>
+                    <View style={styles.clienteView}>
+                        <Text style={styles.inputText}>Cliente:</Text>
+                        <TextInput
+                            style={styles.input}
+                            multiline
+                            onFocus={() => { Alert.alert('Utilize os botões Buscar Cliente e Novo Cliente') }}
+                            editable={cliente ? true : false}
+                            numberOfLines={2}
+                            onChangeText={text => { }}
+                            placeholder={'Utilize os botões Buscar Cliente e Novo Cliente'}
+                            value={cliente ? cliente.raz + ' - ' + cliente.fan : ''}
+                        />
+                    </View>
+                    {usaTraRed &&
+                        <View style={{ marginTop: 10 }}>
+                            <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17, marginBottom: 10 }}>Transportadora</Text>
+                            <View>
+                                <Text style={styles.inputText}>Nome da Transportadora:</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setTraRedNom}
+                                    placeholder={'Nome da transportadora'}
+                                    value={traRedNom}
+                                />
+                            </View>
+                            <View>
+                                <Text style={styles.inputText}>Endereço:</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setTraRedEnd}
+                                    placeholder={'Endereço da transportadora'}
+                                    value={traRedEnd}
+                                />
+                            </View>
+                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+                                <View>
+                                    <Text style={styles.inputText}>CNPJ:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={setTraRedCgc}
+                                        placeholder={'CNPJ da transportadora'}
+                                        value={traRedCgc}
+                                    />
+                                </View>
+                                <View>
+                                    <Text style={styles.inputText}>Fone:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={setTraRedFon}
+                                        placeholder={'Fone da transportadora'}
+                                        value={traRedFon}
+                                    />
+                                </View>
+                            </View>
+                        </View>}
+                    {api.defaults.baseURL === API_URL_PAPERPLAS || api.defaults.baseURL === API_URL_PAPERPLAS_INTERNO &&
+                        <View style={styles.obsView}>
+                            <Text style={styles.inputText}>Referências Comerciais:</Text>
+                            <TextInput
+                                style={styles.input}
+                                multiline
+                                placeholder={'Referências Comerciais(Razão social, telefone...)'}
+                                numberOfLines={2}
+                                onChangeText={setRefCom}
+                                value={refCom}
+                            />
+                        </View>}
+                    <View style={styles.obsView}>
+                        <Text style={styles.inputText}>Observações:</Text>
+                        <TextInput
+                            style={styles.input}
+                            multiline
+                            editable={true}
+                            placeholder={'Observações do pedido'}
+                            numberOfLines={2}
+                            onChangeText={text => { setObs(text) }}
+                            value={obs}
+                        />
+                    </View>
+                    <View flexDirection="row" style={styles.discountView}>
+                        <View flexDirection="row">
+                            <Text style={styles.inputText}>Desconto %:</Text>
+                            <TextInput
+                                style={styles.inputDesconto}
+                                keyboardType="numeric"
+                                onChangeText={text => {
+                                    if (VerificaDescontoLimite(text.replace(',', '.'), valDes)) {
+                                        Alert.alert('Desconto não permitido', 'Desconto máximo permitido: ' + limPorDes + '%');
+                                        setPorDes('0');
+                                        return;
+                                    }
+                                    setPorDes(text.replace(',', '.'));
+                                }}
+                                onEndEditing={e => {
+                                    if (e.nativeEvent.text == '') {
+                                        setPorDes('0');
+                                    }
+                                }}
+                                value={porDes.replace('.', ',')}
+                                maxLength={4}
+                            />
+                        </View>
+                        <View flexDirection="row">
+                            <Text style={styles.inputText}>Frete R$..:</Text>
+                            <TextInput
+                                style={styles.inputDesconto}
+                                keyboardType="numeric"
+                                onChangeText={text => {
+                                    setValFre(text.replace(',', '.'));
+                                }}
+                                onEndEditing={e => {
+                                    if (e.nativeEvent.text == '') {
+                                        setValFre('0');
+                                    }
+                                }}
+                                value={valFre.replace('.', ',')}
+                            />
+                        </View>
+                    </View>
+                    {/* Comentado por conta da ocorrencia 175745
                 <View flexDirection="row" style={styles.discountView}>
                 <View flexDirection="row">
                     <Text style={styles.inputText}>Desconto R$: </Text>
@@ -301,11 +373,13 @@ function FinalizarCarrinho({ route, navigation }) {
                     />
                 </View>
             </View> */}
-            <View style={{ width: '100%' }}>
-                <TouchableOpacity onPress={enviaPedido} style={styles.envioButton}>
-                    <Text style={styles.TextButton}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
-                </TouchableOpacity>
-            </View>
+                </View>
+                <View style={{ width: '100%' }}>
+                    <TouchableOpacity onPress={enviaPedido} style={styles.envioButton}>
+                        <Text style={styles.TextButton}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </View>
     );
 }
@@ -346,17 +420,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#000000',
     },
-    clienteView: {
-        marginTop: '5%',
-    },
     obsView: {
-        marginTop: '5%',
+        marginTop: 10,
     },
     input: {
-        padding: 20,
-        width: '80%',
+        padding: 5,
+        width: '100%',
         borderWidth: 1,
-        padding: 10,
         borderRadius: 10,
         textAlignVertical: 'top'
     },
@@ -371,8 +441,8 @@ const styles = StyleSheet.create({
         padding: 10
     },
     discountView: {
-        justifyContent: 'space-evenly',
-        marginTop: 15,
+        justifyContent: 'space-around',
+        marginTop: 10,
         width: '100%'
     },
     envioButton: {
