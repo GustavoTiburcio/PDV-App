@@ -34,6 +34,7 @@ function FinalizarCarrinho({ route, navigation }) {
     const [valJur, setValJur] = useState('0');
     const [valFre, setValFre] = useState('0');
     const [refCom, setRefCom] = useState('');
+    const [praPag, setPraPag] = useState('');
     const [obs, setObs] = useState('');
 
     //configs
@@ -226,65 +227,77 @@ function FinalizarCarrinho({ route, navigation }) {
                         />
                     </View>
                     {usaTraRed &&
-                        <View style={{ marginTop: 10 }}>
-                            <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17, marginBottom: 10 }}>Transportadora</Text>
-                            <View>
-                                <Text style={styles.inputText}>Nome da Transportadora:</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    onChangeText={setTraRedNom}
-                                    placeholder={'Nome da transportadora'}
-                                    value={traRedNom}
-                                />
-                            </View>
-                            <View>
-                                <Text style={styles.inputText}>Endereço:</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    onChangeText={setTraRedEnd}
-                                    placeholder={'Endereço da transportadora'}
-                                    value={traRedEnd}
-                                />
-                            </View>
-                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+                        <>
+                            <View style={{ marginTop: 10 }}>
+                                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17, marginBottom: 10 }}>Transportadora</Text>
                                 <View>
-                                    <Text style={styles.inputText}>CNPJ:</Text>
+                                    <Text style={styles.inputText}>Nome da Transportadora:</Text>
                                     <TextInput
                                         style={styles.input}
-                                        onChangeText={setTraRedCgc}
-                                        placeholder={'CNPJ da transportadora'}
-                                        value={traRedCgc}
+                                        onChangeText={setTraRedNom}
+                                        placeholder={'Nome da transportadora'}
+                                        value={traRedNom}
                                     />
                                 </View>
                                 <View>
-                                    <Text style={styles.inputText}>Fone:</Text>
+                                    <Text style={styles.inputText}>Endereço:</Text>
                                     <TextInput
                                         style={styles.input}
-                                        onChangeText={setTraRedFon}
-                                        placeholder={'Fone da transportadora'}
-                                        value={traRedFon}
+                                        onChangeText={setTraRedEnd}
+                                        placeholder={'Endereço da transportadora'}
+                                        value={traRedEnd}
                                     />
                                 </View>
+                                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+                                    <View>
+                                        <Text style={styles.inputText}>CNPJ:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            onChangeText={setTraRedCgc}
+                                            placeholder={'CNPJ da transportadora'}
+                                            value={traRedCgc}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text style={styles.inputText}>Fone:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            onChangeText={setTraRedFon}
+                                            placeholder={'Fone da transportadora'}
+                                            value={traRedFon}
+                                        />
+                                    </View>
+                                </View>
                             </View>
-                        </View>}
-                    {api.defaults.baseURL === API_URL_PAPERPLAS || api.defaults.baseURL === API_URL_PAPERPLAS_INTERNO &&
-                        <View style={styles.obsView}>
-                            <Text style={styles.inputText}>Referências Comerciais:</Text>
-                            <TextInput
-                                style={styles.input}
-                                multiline
-                                placeholder={'Referências Comerciais(Razão social, telefone...)'}
-                                numberOfLines={2}
-                                onChangeText={setRefCom}
-                                value={refCom}
-                            />
-                        </View>}
+                            <View style={styles.obsView}>
+                                <Text style={styles.inputText}>Referências Comerciais:</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    multiline
+                                    placeholder={'Referências Comerciais(Razão social, telefone...)'}
+                                    numberOfLines={2}
+                                    onChangeText={setRefCom}
+                                    value={refCom}
+                                />
+                            </View>
+                        </>
+                    }
+                    <View style={styles.obsView}>
+                        <Text style={styles.inputText}>Prazo de Pagamento:</Text>
+                        <TextInput
+                            style={styles.input}
+                            multiline
+                            placeholder={'Prazo de pagamento'}
+                            numberOfLines={2}
+                            onChangeText={setPraPag}
+                            value={praPag}
+                        />
+                    </View>
                     <View style={styles.obsView}>
                         <Text style={styles.inputText}>Observações:</Text>
                         <TextInput
                             style={styles.input}
                             multiline
-                            editable={true}
                             placeholder={'Observações do pedido'}
                             numberOfLines={2}
                             onChangeText={text => { setObs(text) }}
@@ -374,7 +387,7 @@ function FinalizarCarrinho({ route, navigation }) {
                 </View>
             </View> */}
                 </View>
-                <View style={{ width: '100%' }}>
+                <View style={{ width: '100%', marginBottom: 10 }}>
                     <TouchableOpacity onPress={enviaPedido} style={styles.envioButton}>
                         <Text style={styles.TextButton}>Finalizar {ConvertNumberParaReais(CalculaValorLiquido())}</Text>
                     </TouchableOpacity>
