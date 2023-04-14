@@ -33,8 +33,8 @@ export default function ListaProduto({ navigation }) {
   const [openPicker, setOpenPicker] = useState(false);
   const [valuePicker, setValuePicker] = useState(null);
   const [tabelasPreco, setTabelasPreco] = useState([
+    { label: 'Padrão', value: 'Padrão' },
     { label: 'Atacado', value: 'Atacado' },
-    { label: 'Varejo', value: 'Varejo' },
   ]);
 
   async function getConfig() {
@@ -109,10 +109,10 @@ export default function ListaProduto({ navigation }) {
   }
 
   function ValorDeVenda({ data }) {
-    if (valuePicker === 'Atacado') {
+    if (valuePicker === 'Padrão') {
       return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVen1)}</Text>
     }
-    if (valuePicker === 'Varejo') {
+    if (valuePicker === 'Atacado') {
       return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVen2)}</Text>
     }
     return <Text style={styles.listText}>{ConvertNumberParaReais(data.valVenMin)}</Text>

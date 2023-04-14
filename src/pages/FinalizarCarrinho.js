@@ -120,7 +120,7 @@ function FinalizarCarrinho({ route, navigation }) {
             });
             const ped = JSON.stringify({
                 cod: '', codcat: codcat, dathor: dathor, forpag: 'À vista', nomrep: nomRep, obs: obs, sta: 'Pagamento Futuro', traredcgc: traRedCgc, traredend: traRedEnd, traredfon: traRedFon,
-                trarednom: traRedNom, valpro: Number(valorBruto.toFixed(2)), valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
+                trarednom: traRedNom, prapag: praPag, refcom: refCom, valpro: Number(valorBruto.toFixed(2)), valdes: valDes, perdes: porDes, valfre: valFre, appuser, itensPedido
             });
 
             const result = await postPedido(ped);
