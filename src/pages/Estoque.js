@@ -48,25 +48,37 @@ export default function Estoque({ route }) {
             <Row style={styles.cell}>
               <Text>CILAS BDY 0682</Text>
             </Row>
+            <Row style={styles.cell}>
+              <Text>-</Text>
+            </Row>
+            <Row style={styles.cell}>
+              <Text>SALA</Text>
+            </Row>
           </Col>
           <Col size={25}>
             <Row style={styles.cell}>
               <Text>Quantidade</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>{data.estest1}</Text>
+              <Text>{data?.estest1 || '0'}</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>{data.estest2}</Text>
+              <Text>{data?.estest2 || '0'}</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>{data.estest3}</Text>
+              <Text>{data?.estest3 || '0'}</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>{data.estest4}</Text>
+              <Text>{data?.estest4 || '0'}</Text>
+            </Row>
+            <Row style={styles.cell }>
+              <Text>{data?.estest5 || '0'}</Text>
             </Row>
             <Row style={styles.cell}>
-              <Text>{data.estest5}</Text>
+              <Text>{data?.estest6 || '0'}</Text>
+            </Row>
+            <Row style={styles.cell}>
+              <Text>{data?.estest7 || '0'}</Text>
             </Row>
           </Col>
         </Grid>
